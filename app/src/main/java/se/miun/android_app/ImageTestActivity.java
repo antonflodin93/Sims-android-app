@@ -5,10 +5,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -17,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class CoordinateTestActivity extends AppCompatActivity implements SensorEventListener, View.OnTouchListener {
+public class ImageTestActivity extends AppCompatActivity implements SensorEventListener, View.OnTouchListener {
 
     // Image that is going to be the pointer that indicates the person location
     private ImageView indicatorImage;
@@ -130,6 +127,8 @@ public class CoordinateTestActivity extends AppCompatActivity implements SensorE
 
         // Place the indicator at the position
         indicatorImage.layout(x, y, x+INDICATORSIZE, y+INDICATORSIZE);
-        Toast.makeText(CoordinateTestActivity.this, x + ", " + y , Toast.LENGTH_SHORT).show();
+        Toast.makeText(ImageTestActivity.this, x + ", " + y , Toast.LENGTH_SHORT).show();
     }
+
+
 }

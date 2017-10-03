@@ -32,7 +32,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             this.startActivity(myIntent);
         } else if(view.getId() == R.id.testCoordinateSystemBtn){
             // Start the coordinate system test activity
-            Intent myIntent = new Intent(getApplicationContext(), CoordinateTestActivity.class);
+            Intent myIntent = new Intent(getApplicationContext(), ImageTestActivity.class);
             this.startActivity(myIntent);
         } else if(view.getId() == R.id.databaseTestBtn){
             // Start Database test activity
