@@ -11,9 +11,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -24,6 +26,8 @@ public class ImageTestActivity extends AppCompatActivity implements SensorEventL
 
     // Image that is going to be the pointer that indicates the person location
     private ImageView indicatorImage;
+
+    private ImageView maskMapImage;
 
     private static int INDICATORSIZE = 100;
 
@@ -61,13 +65,23 @@ public class ImageTestActivity extends AppCompatActivity implements SensorEventL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imagetest);
 
-        // TextView that will tell the user the degree
-        currentDegreesText = (TextView) findViewById(R.id.currentDegreesText);
-
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         indicatorImage = (ImageView) findViewById(R.id.indicatorImage);
         mapImage = (ImageView) findViewById(R.id.mapImage);
-        mapImage.setOnTouchListener(this);
+        //mapImage.setOnTouchListener(this);
+
+        FrameLayout layout = (FrameLayout) findViewById(R.id.mapFrameLayout);
+        maskMapImage = new ImageView(this);
+        maskMapImage.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        maskMapImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        maskMapImage.setVisibility(View.INVISIBLE);
+        maskMapImage.setOnTouchListener(this);
+
+        // Adds the view to the layout
+        layout.addView(maskMapImage);
+
     }
 
     @Override
@@ -91,8 +105,6 @@ public class ImageTestActivity extends AppCompatActivity implements SensorEventL
     public void onSensorChanged(SensorEvent sensorEvent) {
         // Get the angle around the z-axis rotated by the user
         float degree = Math.round(sensorEvent.values[0]- offsetdegrees);
-
-        currentDegreesText.setText("Heading: " + Float.toString(degree) + " degrees");
 
         // Create a rotation animation
         RotateAnimation ra = new RotateAnimation(

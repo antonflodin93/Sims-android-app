@@ -1,40 +1,26 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#fff" >
-
-    <TextView
-        android:id="@+id/currentDegreesText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"
-        android:layout_marginTop="20dp"
-        android:visibility="gone"
-        />
-
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id = "@+id/mapFrameLayout"
+    >
 
     <ImageView
         android:id="@+id/mapImage"
-        android:clickable="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/currentDegreesText"
-        android:layout_centerHorizontal="true"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:scaleType="fitXY"
-        android:src="@drawable/map" />
+        android:clickable="true"
+        android:src="@drawable/map"
+        />
 
 
     <ImageView
         android:id="@+id/indicatorImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/currentDegreesText"
         android:layout_centerHorizontal="true"
         android:src="@drawable/indicator"
         android:visibility="gone"
  />
 
-</RelativeLayout>
+</FrameLayout>
