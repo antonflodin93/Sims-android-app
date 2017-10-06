@@ -32,6 +32,16 @@
         android:layout_marginStart="69dp"
         android:text="Database test" />
 
+    <Button
+        android:id="@+id/retrofitTestBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="100dp"
+        android:layout_marginStart="150dp"
+
+        android:text="Retrofit Test" />
+
 
 </RelativeLayout>
 

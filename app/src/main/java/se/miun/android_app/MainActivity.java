@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends Activity implements View.OnClickListener{
-    private Button rangeTestBtn, testCoordinateSystemBtn, databaseTestBtn;
+    private Button rangeTestBtn, testCoordinateSystemBtn, databaseTestBtn, retrofitTestBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +21,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         testCoordinateSystemBtn.setOnClickListener(this);
         databaseTestBtn = (Button) findViewById(R.id.databaseTestBtn);
         databaseTestBtn.setOnClickListener(this);
+        retrofitTestBtn = (Button) findViewById(R.id.retrofitTestBtn);
+        retrofitTestBtn.setOnClickListener(this);
     }
 
     @Override
@@ -37,6 +39,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
         } else if(view.getId() == R.id.databaseTestBtn){
             // Start Database test activity
             Intent myIntent = new Intent(getApplicationContext(), DatabaseTestActivity.class);
+            this.startActivity(myIntent);
+        } else if(view.getId() == R.id.retrofitTestBtn) {
+            // Start Retrofit test activity
+            Intent myIntent = new Intent(getApplicationContext(), RetrofitTestActivity.class);
             this.startActivity(myIntent);
         }
     }
