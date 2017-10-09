@@ -7,13 +7,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import se.miun.android_app.model.Employee;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
 
+    // Stores the employees
     private List<Employee> employees;
+
     public RecyclerAdapter(List<Employee> employees){
-        this.employees = employees;
+        this.employees = new ArrayList<>();
+
+        // Iterate through employees and insert in list.
+        for(Employee e : employees){
+            this.employees.add(e);
+        }
+
+        //this.employees = employees;
     }
 
 
@@ -25,8 +37,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        holder.Id.setText(employees.get(position).getId());
-        holder.Name.setText(employees.get(position).getName());
+
+        holder.id.setText(employees.get(position).getId());
+        holder.name.setText(employees.get(position).getFirstName() + " " + employees.get(position).getLastName());
     }
 
     @Override
@@ -35,11 +48,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView Id, Name;
+        TextView id, name;
         public MyViewHolder(View itemView) {
             super(itemView);
-            Id = (TextView)itemView.findViewById(R.id.id);
-            Name = (TextView)itemView.findViewById(R.id.name);
+
+            // Init the fields for each row
+            id = (TextView)itemView.findViewById(R.id.id);
+            name = (TextView)itemView.findViewById(R.id.name);
+
+
 
         }
     }
