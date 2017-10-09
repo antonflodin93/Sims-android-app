@@ -11,6 +11,6 @@ import se.miun.android_app.model.Employee;
 public interface ApiInterface {
 
     // Gets all the employees
-    @GET("webapi/employees")
+    @GET("employees")
     Call<List<Employee>> getEmployees();
 }

@@ -18,14 +18,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
     private List<Employee> employees;
 
     public RecyclerAdapter(List<Employee> employees){
-        this.employees = new ArrayList<>();
 
-        // Iterate through employees and insert in list.
-        for(Employee e : employees){
-            this.employees.add(e);
-        }
-
-        //this.employees = employees;
+        this.employees = employees;
     }
 
 
