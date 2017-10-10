@@ -1,4 +1,4 @@
-package se.miun.android_app;
+package se.miun.android_app.Api;
 
 
 import java.util.List;
@@ -18,9 +18,11 @@ public interface ApiInterface {
 
     // Gets all the employees
     @GET("employees/{id}")
-    Call<Employee> getEmployeeById(@Path("id") int id);;
+    Call<Employee> getEmployeeById(@Path("id") int id);
 
     // Insert employee into the database
     @POST("employees")
     Call<Employee> insertEmployee(@Body Employee employee);
+
+
 }

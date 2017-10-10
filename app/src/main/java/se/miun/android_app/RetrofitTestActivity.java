@@ -16,6 +16,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import se.miun.android_app.Api.ApiClient;
+import se.miun.android_app.Api.ApiInterface;
 import se.miun.android_app.model.Employee;
 
 
@@ -77,7 +79,7 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
             public void onResponse(Call<Employee> call, Response<Employee> response) {
 
                 // Initialize the employeeslist
-                employees = new ArrayList<Employee>();
+                employees = new ArrayList<>();
 
                 // Add the employee from the response to the list
                 employees.add(response.body());
