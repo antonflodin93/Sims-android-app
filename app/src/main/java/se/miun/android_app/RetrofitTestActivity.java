@@ -7,11 +7,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 import se.miun.android_app.model.Employee;
 
 
@@ -37,15 +39,16 @@ public class RetrofitTestActivity extends Activity {
         recyclerView.setHasFixedSize(true);
 
 
-        // Create instance of apiinterface
-        apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        // Create instance of apiinterface using retrofit instance
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        apiInterface = retrofit.create(ApiInterface.class);
 
         // Make call to get all employees
         Call<List<Employee>> call = apiInterface.getEmployees();
 
         call.enqueue(new Callback<List<Employee>>() {
             @Override
-
             public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
                 // Return the list of employees
                 employees = response.body();
@@ -62,5 +65,7 @@ public class RetrofitTestActivity extends Activity {
                         Toast.LENGTH_LONG).show();
             }
         });
+
+
     }
 }

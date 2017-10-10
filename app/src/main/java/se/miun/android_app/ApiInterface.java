@@ -13,4 +13,8 @@ public interface ApiInterface {
     // Gets all the employees
     @GET("employees")
     Call<List<Employee>> getEmployees();
+
+    // Gets all the employees
+    @GET("employees/{id}")
+    Call<List<Employee>> getEmployeeById();
 }
