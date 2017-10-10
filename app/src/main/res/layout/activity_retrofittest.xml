@@ -10,4 +10,30 @@
         android:scrollbars="vertical"
 
         ></android.support.v7.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/listAllBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:text="List All" />
+
+    <Button
+        android:id="@+id/listOneBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/listAllBtn"
+        android:text="List One" />
+
+    <Button
+        android:id="@+id/insertOneBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/listOneBtn"
+        android:text="Insert one" />
+
+
 </RelativeLayout>

@@ -26,5 +26,8 @@ public class Employee {
         return Id;
     }
 
-
+    public Employee(String firstName, String lastName) {
+        FirstName = firstName;
+        LastName = lastName;
+    }
 }
