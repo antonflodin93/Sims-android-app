@@ -45,7 +45,11 @@ public class RetrofitTestActivity extends Activity {
         apiInterface = retrofit.create(ApiInterface.class);
 
         // Make call to get all employees
-        Call<List<Employee>> call = apiInterface.getEmployees();
+        //Call<List<Employee>> call = apiInterface.getEmployees();
+
+        //MAYBE THIS WILL WORK AFTER ALL
+        String id = "2";
+        Call<List<Employee>> call = apiInterface.getEmployeeById(id);
 
         call.enqueue(new Callback<List<Employee>>() {
             @Override
