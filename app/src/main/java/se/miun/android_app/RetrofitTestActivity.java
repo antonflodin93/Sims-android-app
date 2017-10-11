@@ -27,7 +27,7 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
     private RecyclerAdapter adapter;
     private List<Employee> employees;
     private ApiInterface apiInterface;
-    private Button insertOneBtn, listOneBtn, listAllBtn;
+    private Button insertOneBtn, listOneBtn, listAllBtn, deleteLatestBtn;
     Context mContext;
 
 
@@ -45,6 +45,8 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
         listOneBtn.setOnClickListener(this);
         listAllBtn = (Button) findViewById(R.id.listAllBtn);
         listAllBtn.setOnClickListener(this);
+        deleteLatestBtn = (Button) findViewById(R.id.deleteLatestBtn);
+        deleteLatestBtn.setOnClickListener(this);
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -63,15 +65,51 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
             insertOne();
         } else if(view.getId() == R.id.listOneBtn){
             listOne();
-        } if(view.getId() == R.id.listAllBtn){
+        } else if(view.getId() == R.id.listAllBtn){
             listAll();
+        } else if(view.getId() == R.id.deleteLatestBtn){
+            deleteOne();
         }
+
+
 
 
     }
 
+    private void deleteOne() {
+        // Get latest employee id
+        int id = Integer.parseInt(employees.get(employees.size()-1).getId());
+        Call<Employee> call = apiInterface.deleteEmployeeById(id);
+
+        call.enqueue(new Callback<Employee>() {
+            @Override
+            public void onResponse(Call<Employee> call, Response<Employee> response) {
+
+                // Initialize the employeeslist
+                employees = new ArrayList<>();
+
+                // Add the employee from the response to the list
+                employees.add(response.body());
+
+                // Initialize the adapter and set it with the employeelist
+                adapter = new RecyclerAdapter(employees);
+                recyclerView.setAdapter(adapter);
+
+            }
+
+            @Override
+            public void onFailure(Call<Employee> call, Throwable t) {
+                // Some bug, needs to be checked
+                //Toast.makeText(mContext, t.getMessage(),
+                 //       Toast.LENGTH_LONG).show();
+                listAll();
+            }
+        });
+    }
+
     private void listOne() {
-        int id = 6;
+        // Get latest employee id
+        int id = Integer.parseInt(employees.get(employees.size()-1).getId());
         Call<Employee> call = apiInterface.getEmployeeById(id);
 
         call.enqueue(new Callback<Employee>() {

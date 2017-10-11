@@ -35,5 +35,13 @@
         android:layout_toEndOf="@+id/listOneBtn"
         android:text="Insert one" />
 
+    <Button
+        android:id="@+id/deleteLatestBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/insertOneBtn"
+        android:text="Delete latest" />
+
 
 </RelativeLayout>

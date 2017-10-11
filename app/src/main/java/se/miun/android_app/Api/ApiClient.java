@@ -1,6 +1,9 @@
 package se.miun.android_app.Api;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -15,11 +18,14 @@ public class ApiClient {
     {
 
         // If a instance has not been set
-        if (retrofit==null)
-        {
+        if (retrofit==null) {
+            Gson gson = new GsonBuilder()
+                    .setLenient()
+                    .create();
+
             // Set the instance of retrofit using the base url
             retrofit = new Retrofit.Builder().baseUrl(BASE_URL).
-                    addConverterFactory(GsonConverterFactory.create()).build();
+                    addConverterFactory(GsonConverterFactory.create(gson)).build();
         }
         return retrofit;
     }
