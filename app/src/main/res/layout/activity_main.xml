@@ -22,15 +22,6 @@
         android:layout_toEndOf="@+id/rangeTestBtn"
         android:text="Coordinate System Test" />
 
-    <Button
-        android:id="@+id/databaseTestBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="77dp"
-        android:layout_marginStart="69dp"
-        android:text="Database test" />
 
     <Button
         android:id="@+id/retrofitTestBtn"

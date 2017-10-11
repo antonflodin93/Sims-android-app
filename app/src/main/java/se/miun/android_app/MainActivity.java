@@ -19,8 +19,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
         rangeTestBtn.setOnClickListener(this);
         testCoordinateSystemBtn = (Button) findViewById(R.id.testCoordinateSystemBtn);
         testCoordinateSystemBtn.setOnClickListener(this);
-        databaseTestBtn = (Button) findViewById(R.id.databaseTestBtn);
-        databaseTestBtn.setOnClickListener(this);
         retrofitTestBtn = (Button) findViewById(R.id.retrofitTestBtn);
         retrofitTestBtn.setOnClickListener(this);
     }
@@ -35,10 +33,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
         } else if(view.getId() == R.id.testCoordinateSystemBtn){
             // Start the coordinate system test activity
             Intent myIntent = new Intent(getApplicationContext(), ImageTestActivity.class);
-            this.startActivity(myIntent);
-        } else if(view.getId() == R.id.databaseTestBtn){
-            // Start Database test activity
-            Intent myIntent = new Intent(getApplicationContext(), DatabaseTestActivity.class);
             this.startActivity(myIntent);
         } else if(view.getId() == R.id.retrofitTestBtn) {
             // Start Retrofit test activity

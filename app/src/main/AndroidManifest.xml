@@ -20,7 +20,6 @@
         </activity>
         <activity android:name=".ImageTestActivity" />
         <activity android:name=".RangetestActivity" />
-        <activity android:name=".DatabaseTestActivity" />
         <activity android:name=".RetrofitTestActivity" />
         <activity android:name=".EmployeeLayoutActivity"></activity>
     </application>
