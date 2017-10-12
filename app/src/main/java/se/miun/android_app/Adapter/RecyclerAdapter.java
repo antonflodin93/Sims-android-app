@@ -1,4 +1,4 @@
-package se.miun.android_app;
+package se.miun.android_app.Adapter;
 
 
 import android.support.v7.widget.RecyclerView;
@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import se.miun.android_app.R;
 import se.miun.android_app.model.Employee;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {

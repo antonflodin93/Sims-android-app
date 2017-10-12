@@ -1,4 +1,4 @@
-package se.miun.android_app;
+package se.miun.android_app.testing;
 
 import android.app.Activity;
 import android.os.RemoteException;
@@ -15,6 +15,9 @@ import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 import java.util.Collection;
+
+import se.miun.android_app.R;
+import se.miun.android_app.testing.BeaconDistance;
 
 public class RangetestActivity extends Activity implements BeaconConsumer {
     protected static final String TAG = "RangingActivity";

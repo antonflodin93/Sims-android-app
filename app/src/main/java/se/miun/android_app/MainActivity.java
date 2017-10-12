@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import se.miun.android_app.testing.ImageTestActivity;
+import se.miun.android_app.testing.RangetestActivity;
+import se.miun.android_app.testing.RetrofitTestActivity;
+
 public class MainActivity extends Activity implements View.OnClickListener{
     private Button rangeTestBtn, testCoordinateSystemBtn, databaseTestBtn, retrofitTestBtn;
 

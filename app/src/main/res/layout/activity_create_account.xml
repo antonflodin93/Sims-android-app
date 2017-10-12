@@ -4,12 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".testing.RangetestActivity">
+    tools:context="se.miun.android_app.CreateAccountActivity">
 
-    <EditText
-        android:id="@+id/distanceList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="top|left"
-        android:editable="false" />
 </android.support.constraint.ConstraintLayout>

@@ -1,4 +1,4 @@
-package se.miun.android_app;
+package se.miun.android_app.testing;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,6 +18,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
+import se.miun.android_app.R;
+import se.miun.android_app.Adapter.RecyclerAdapter;
 import se.miun.android_app.model.Employee;
 
 

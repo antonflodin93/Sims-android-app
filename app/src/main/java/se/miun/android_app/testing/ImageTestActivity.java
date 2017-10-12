@@ -1,4 +1,4 @@
-package se.miun.android_app;
+package se.miun.android_app.testing;
 
 import android.content.DialogInterface;
 import android.graphics.Point;
@@ -14,13 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import se.miun.android_app.R;
 
 public class ImageTestActivity extends AppCompatActivity implements SensorEventListener, View.OnTouchListener {
 

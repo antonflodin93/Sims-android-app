@@ -1,4 +1,4 @@
-package se.miun.android_app;
+package se.miun.android_app.testing;
 import org.altbeacon.beacon.Beacon;
 import java.util.Collection;
 
