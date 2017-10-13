@@ -24,7 +24,9 @@
         <activity android:name=".EmployeeLayoutActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".testing.OnTouchTestActivity" />
-        <activity android:name=".RegisterAccountActivity"></activity>
+      <!--  <activity android:name=".CreateAccountActivity" /> -->
+        <activity android:name=".RegisterAccountActivity" />
+        <activity android:name=".testing.BluetoothLogger"></activity>
     </application>
 
 </manifest>

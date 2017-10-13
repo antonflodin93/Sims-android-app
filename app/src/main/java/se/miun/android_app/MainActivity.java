@@ -6,13 +6,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import se.miun.android_app.testing.BluetoothLogger;
 import se.miun.android_app.testing.ImageTestActivity;
-import se.miun.android_app.testing.OnTouchTestActivity;
+//import se.miun.android_app.testing.OnTouchTestActivity;
 import se.miun.android_app.testing.RangetestActivity;
 import se.miun.android_app.testing.RetrofitTestActivity;
 
 public class MainActivity extends Activity implements View.OnClickListener{
-    private Button rangeTestBtn, testCoordinateSystemBtn, databaseTestBtn, retrofitTestBtn, ontouchTestBtn;
+    private Button rangeTestBtn, testCoordinateSystemBtn, databaseTestBtn, retrofitTestBtn, ontouchTestBtn, bluetoothLogger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         retrofitTestBtn.setOnClickListener(this);
         ontouchTestBtn = (Button) findViewById(R.id.ontouchTestBtn);
         ontouchTestBtn.setOnClickListener(this);
+        bluetoothLogger =(Button) findViewById(R.id.bluetoothLoggerButton);
+        bluetoothLogger.setOnClickListener(this);
     }
 
     @Override
@@ -46,9 +49,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
             Intent myIntent = new Intent(getApplicationContext(), RetrofitTestActivity.class);
             this.startActivity(myIntent);
         }
-          else if(view.getId() == R.id.ontouchTestBtn) {
+/*          else if(view.getId() == R.id.ontouchTestBtn) {
             // Start Retrofit test activity
             Intent myIntent = new Intent(getApplicationContext(), OnTouchTestActivity.class);
+            this.startActivity(myIntent);
+        }*/
+        else if(view.getId() == R.id.bluetoothLoggerButton) {
+            //Start Bluetooth logging activity
+            Intent myIntent = new Intent(getApplicationContext(), BluetoothLogger.class);
             this.startActivity(myIntent);
         }
     }

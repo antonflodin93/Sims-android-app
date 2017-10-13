@@ -43,6 +43,15 @@
 
         android:text="OnTouch Test" />
 
+    <Button
+        android:id="@+id/bluetoothLoggerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/ontouchTestBtn"
+        android:layout_below="@+id/testCoordinateSystemBtn"
+        android:layout_marginTop="101dp"
+        android:text="@string/bluetooth_logger" />
+
 
 </RelativeLayout>
 
