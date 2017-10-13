@@ -7,11 +7,12 @@ import android.view.View;
 import android.widget.Button;
 
 import se.miun.android_app.testing.ImageTestActivity;
+import se.miun.android_app.testing.OnTouchTestActivity;
 import se.miun.android_app.testing.RangetestActivity;
 import se.miun.android_app.testing.RetrofitTestActivity;
 
 public class MainActivity extends Activity implements View.OnClickListener{
-    private Button rangeTestBtn, testCoordinateSystemBtn, databaseTestBtn, retrofitTestBtn;
+    private Button rangeTestBtn, testCoordinateSystemBtn, databaseTestBtn, retrofitTestBtn, ontouchTestBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         testCoordinateSystemBtn.setOnClickListener(this);
         retrofitTestBtn = (Button) findViewById(R.id.retrofitTestBtn);
         retrofitTestBtn.setOnClickListener(this);
+        ontouchTestBtn = (Button) findViewById(R.id.ontouchTestBtn);
+        ontouchTestBtn.setOnClickListener(this);
     }
 
     @Override
@@ -41,6 +44,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
         } else if(view.getId() == R.id.retrofitTestBtn) {
             // Start Retrofit test activity
             Intent myIntent = new Intent(getApplicationContext(), RetrofitTestActivity.class);
+            this.startActivity(myIntent);
+        }
+          else if(view.getId() == R.id.ontouchTestBtn) {
+            // Start Retrofit test activity
+            Intent myIntent = new Intent(getApplicationContext(), OnTouchTestActivity.class);
             this.startActivity(myIntent);
         }
     }

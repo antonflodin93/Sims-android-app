@@ -23,7 +23,9 @@
         <activity android:name=".testing.RetrofitTestActivity" />
         <activity android:name=".EmployeeLayoutActivity" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".testing.OnTouchTestActivity" />
         <activity android:name=".CreateAccountActivity"></activity>
+
     </application>
 
 </manifest>
