@@ -105,7 +105,7 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
 
     // Check if the entered information is correct
     private boolean correctCredentials() {
-        boolean correct = false;
+        boolean correct = true;
 
         if (isEmpty(firstNameEditText)) {
             userNameEditText.setHintTextColor(Color.RED);
