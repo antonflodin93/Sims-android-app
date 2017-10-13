@@ -80,7 +80,7 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
 
     private void deleteOne() {
         // Get latest employee id
-        int id = Integer.parseInt(employees.get(employees.size()-1).getId());
+        int id = Integer.parseInt(employees.get(employees.size()-1).getEmployeeId());
         Call<Employee> call = apiInterface.deleteEmployeeById(id);
 
         call.enqueue(new Callback<Employee>() {
@@ -111,7 +111,7 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
 
     private void listOne() {
         // Get latest employee id
-        int id = Integer.parseInt(employees.get(employees.size()-1).getId());
+        int id = Integer.parseInt(employees.get(employees.size()-1).getEmployeeId());
         Call<Employee> call = apiInterface.getEmployeeById(id);
 
         call.enqueue(new Callback<Employee>() {
@@ -124,7 +124,7 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
                 // Add the employee from the response to the list
                 employees.add(response.body());
 
-                // Initialize the adapter and set it with the employeelist
+                // Initialize the adapter and set it with the employeelist+
                 adapter = new RecyclerAdapter(employees);
                 recyclerView.setAdapter(adapter);
 
@@ -164,7 +164,7 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
 
     private void insertOne() {
         // Post a employee to the database
-        Employee employee = new Employee("Anton", "hejsan");
+        Employee employee = new Employee("Anton", "Flodin", "anton", "anfl120@hotmail.com", "hej", "0702733166", "MITTCOMANY");
         Call<Employee> call = apiInterface.insertEmployee(employee);
 
         call.enqueue(new Callback<Employee>() {

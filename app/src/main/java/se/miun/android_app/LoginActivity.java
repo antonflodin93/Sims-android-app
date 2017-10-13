@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -35,7 +33,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             login();
         } else if(view.getId() == R.id.createAccountBtn){
             // Start the rangetest activity
-            Intent myIntent = new Intent(getApplicationContext(), CreateAccountActivity.class);
+            Intent myIntent = new Intent(getApplicationContext(), RegisterAccountActivity.class);
             this.startActivity(myIntent);
         }
 
