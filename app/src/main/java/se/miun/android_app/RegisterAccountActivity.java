@@ -71,7 +71,7 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
 
     }
 
-    // Inserts the user data to database
+    // Inserts the user data to database mang
     private void insertToDatabase() {
         // Create instance of apiinterface using retrofit instance
         Retrofit retrofit;
