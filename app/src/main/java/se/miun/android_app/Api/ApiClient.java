@@ -28,6 +28,10 @@ public class ApiClient {
                     addConverterFactory(GsonConverterFactory.create(gson)).build();
         }
         return retrofit;
+
+        /*
+        final String basicAuth = "Basic " + new String(Base64.encode((username + ":" + password).getBytes(), Base64.NO_WRAP));
+         */
     }
 
 }

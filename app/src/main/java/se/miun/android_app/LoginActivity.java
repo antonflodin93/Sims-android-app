@@ -32,12 +32,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
         accountNameEditText = (EditText) findViewById(R.id.accountNameEditText);
         errormessageTextView = (TextView) findViewById(R.id.errormessageTextView);
+        passwordEditText.setText("password");
+        accountNameEditText.setText("Admin");
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.loginBtn) {
             login();
+
         } else if (view.getId() == R.id.createAccountBtn) {
             // Start the register activity
             Intent myIntent = new Intent(getApplicationContext(), RegisterAccountActivity.class);
@@ -82,7 +85,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private boolean correctCredentials() {
-        return false;
+        return true;
 
     }
 
