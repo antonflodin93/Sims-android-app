@@ -6,12 +6,17 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import se.miun.android_app.model.Employee;
 
 public interface ApiInterface {
+
+    // For login to the system
+    @GET("secured/login")
+    Call<String> login(@Header("Authorization") String authorizationHeader);
 
     // Gets all the employees
     @GET("employees")
