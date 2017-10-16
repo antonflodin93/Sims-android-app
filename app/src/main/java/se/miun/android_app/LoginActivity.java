@@ -6,12 +6,10 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,6 +17,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
+import se.miun.android_app.EmployeeUnit.EmployeeUnitActivity;
+import se.miun.android_app.MasterUnit.MasterUnitActivity;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
 
         context = this;
 
@@ -99,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onResponse(Call<String> call, Response<String> response) {
                 // Check if user is matched in the database
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
-                    Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent myIntent = new Intent(getApplicationContext(), MasterUnitActivity.class);
                     context.startActivity(myIntent);
                 } else if (response.code() == HTTP_RESPONSE_UNAUTHORIZED) {
                     errormessageTextView.setVisibility(View.VISIBLE);
