@@ -48,8 +48,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
         accountNameEditText = (EditText) findViewById(R.id.accountNameEditText);
         errormessageTextView = (TextView) findViewById(R.id.errormessageTextView);
-        passwordEditText.setText("password");
-        accountNameEditText.setText("testing");
+        passwordEditText.setText("masterunit");
+        accountNameEditText.setText("masterunit");
     }
 
     @Override

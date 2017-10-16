@@ -23,8 +23,12 @@ public interface ApiInterface {
     Call<List<Employee>> getEmployees();
 
     // Gets employee by id
-    @GET("employees/{id}")
+    @GET("employees/userid/{id}")
     Call<Employee> getEmployeeById(@Path("id") int id);
+
+    // Gets employee by username
+    @GET("employees/username/{id}")
+    Call<Employee> getEmployeeByUsername(@Path("username") String username);
 
     // Insert employee into the database
     @POST("employees")
