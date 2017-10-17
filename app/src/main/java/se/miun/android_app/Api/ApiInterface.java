@@ -3,6 +3,7 @@ package se.miun.android_app.Api;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -32,7 +33,7 @@ public interface ApiInterface {
 
     // Insert employee into the database
     @POST("employees")
-    Call<Employee> insertEmployee(@Body Employee employee);
+    Call<ResponseBody> insertEmployee(@Body Employee employee);
 
     // Delete employee
     @DELETE("employees/{id}")

@@ -9,9 +9,13 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -24,9 +28,13 @@ import se.miun.android_app.model.Employee;
 public class RegisterAccountActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText userNameEditText, emailEditText, passwordEditText, reEnterPasswordEditText, phoneNumberEditText, companyNameEditText,
             firstNameEditText, lastNameEditText;
+    private TextView errorMessageTextView;
     private Button cancelToLogin, createNewAccount;
     private ApiInterface apiInterface;
     private Context context;
+    private int RESPONSE_INTERNAL_SERVER_ERROR = 500;
+    private int RESPONSE_FORBIDDEN = 403;
+    private int RESPONSE_OK = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +54,7 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
         reEnterPasswordEditText = (EditText) findViewById(R.id.reEnterPasswordEditText);
         phoneNumberEditText = (EditText) findViewById(R.id.phoneNumberEditText);
         companyNameEditText = (EditText) findViewById(R.id.companyNameEditText);
+        errorMessageTextView = (TextView) findViewById(R.id.errorMessageTextView);
         context = this;
     }
 
@@ -68,7 +77,6 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
         }
 
 
-
     }
 
     // Inserts the user data to database mang
@@ -84,18 +92,29 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
                 userNameEditText.getText().toString(), emailEditText.getText().toString(), passwordEditText.getText().toString(),
                 phoneNumberEditText.getText().toString(), companyNameEditText.getText().toString());
 
-        Call<Employee> call = apiInterface.insertEmployee(employee);
+        Call<ResponseBody> call = apiInterface.insertEmployee(employee);
 
-        call.enqueue(new Callback<Employee>() {
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<Employee> call, Response<Employee> response) {
-                // Go to login screen
-                Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                context.startActivity(myIntent);
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                // If employee could be added
+                if (response.code() == RESPONSE_OK) {
+                    // Go to login screen
+                    Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                    context.startActivity(myIntent);
+                } else if (response.code() == RESPONSE_FORBIDDEN || response.code() == RESPONSE_INTERNAL_SERVER_ERROR) {
+                    errorMessageTextView.setVisibility(View.VISIBLE);
+                    errorMessageTextView.setTextColor(Color.RED);
+                    try {
+                        errorMessageTextView.setText(response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
             @Override
-            public void onFailure(Call<Employee> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(context, t.getMessage(),
                         Toast.LENGTH_LONG).show();
             }

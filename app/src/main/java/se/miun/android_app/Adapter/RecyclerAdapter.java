@@ -12,12 +12,21 @@ import java.util.List;
 import se.miun.android_app.R;
 import se.miun.android_app.model.Employee;
 
+/*
+Usage:
+
+
+        adapter = new RecyclerAdapter(employees);
+        recyclerView.setAdapter(adapter);
+
+ */
+
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
 
     // Stores the employees
     private List<Employee> employees;
 
-    public RecyclerAdapter(List<Employee> employees){
+    public RecyclerAdapter(List<Employee> employees) {
 
         this.employees = employees;
     }
@@ -25,7 +34,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_item, parent, false);
         return new MyViewHolder(view);
     }
 
@@ -43,13 +52,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView id, name;
+
         public MyViewHolder(View itemView) {
             super(itemView);
 
             // Init the fields for each row
-            id = (TextView)itemView.findViewById(R.id.id);
-            name = (TextView)itemView.findViewById(R.id.name);
-
+            id = (TextView) itemView.findViewById(R.id.id);
+            name = (TextView) itemView.findViewById(R.id.name);
 
 
         }
