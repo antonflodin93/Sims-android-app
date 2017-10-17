@@ -163,6 +163,7 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
     }
 
     private void insertOne() {
+        /*
         // Post a employee to the database
         Employee employee = new Employee("Anton", "Flodin", "anton", "anfl120@hotmail.com", "hej", "0702733166", "MITTCOMANY");
         Call<Employee> call = apiInterface.insertEmployee(employee);
@@ -179,5 +180,6 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
                         Toast.LENGTH_LONG).show();
             }
         });
+        */
     }
 }

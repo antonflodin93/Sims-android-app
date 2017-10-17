@@ -12,7 +12,6 @@
     <!-- Require access to position (needed for beacon scans -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -33,9 +32,11 @@
         <activity android:name=".EmployeeLayoutActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".testing.OnTouchTestActivity" />
-      <!--  <activity android:name=".CreateAccountActivity" /> -->
+        <!-- <activity android:name=".CreateAccountActivity" /> -->
         <activity android:name=".RegisterAccountActivity" />
-        <activity android:name=".testing.BluetoothLogger"></activity>
+        <activity android:name=".testing.BluetoothLogger" />
+        <activity android:name=".EmployeeUnit.EmployeeUnitActivity" />
+        <activity android:name=".MasterUnit.MasterUnitActivity"></activity>
     </application>
 
 </manifest>
