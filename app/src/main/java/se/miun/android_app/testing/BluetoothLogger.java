@@ -1,12 +1,10 @@
 package se.miun.android_app.testing;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.content.Intent;
+import android.widget.Toast;
 
 //import se.miun.sims.R;
 
@@ -66,9 +65,11 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         //toggle scan for bluetooth low energy adv...
         if( v.getId() == R.id.bleScanButton ){
             if(mScanning && bluetoothEnable()){
+                Toast.makeText(getApplicationContext(), "Stopping Scan", Toast.LENGTH_SHORT).show();
                 stopScan();
             }
             else if (bluetoothEnable()){
+                Toast.makeText(getApplicationContext(), "Starting Scan", Toast.LENGTH_SHORT).show();
                 startScan();
             }
         }
@@ -80,7 +81,6 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
             else if (bluetoothEnable()){
                 requestBluetoothDisable();
             }
-
         }
     }
 

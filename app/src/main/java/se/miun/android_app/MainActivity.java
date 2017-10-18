@@ -49,11 +49,13 @@ public class MainActivity extends Activity implements View.OnClickListener{
             Intent myIntent = new Intent(getApplicationContext(), RetrofitTestActivity.class);
             this.startActivity(myIntent);
         }
-/*          else if(view.getId() == R.id.ontouchTestBtn) {
+
+        /*          else if(view.getId() == R.id.ontouchTestBtn) {
             // Start Retrofit test activity
             Intent myIntent = new Intent(getApplicationContext(), OnTouchTestActivity.class);
             this.startActivity(myIntent);
         }*/
+
         else if(view.getId() == R.id.bluetoothLoggerButton) {
             //Start Bluetooth logging activity
             Intent myIntent = new Intent(getApplicationContext(), BluetoothLogger.class);

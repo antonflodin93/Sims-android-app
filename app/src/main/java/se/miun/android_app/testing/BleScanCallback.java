@@ -5,6 +5,7 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.util.Log;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
