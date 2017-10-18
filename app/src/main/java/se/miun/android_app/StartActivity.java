@@ -30,11 +30,11 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         if(view.getId() == R.id.startEmployeeUnitAcvitivy){
             Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-            intent.putExtra("userType", "Employee");
+            intent.putExtra("userType", "EMPLOYEE");
             startActivity(intent);
         } else if(view.getId() == R.id.startMasterUnitAcvitivy){
             Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-            intent.putExtra("userType", "Master");
+            intent.putExtra("userType", "MASTER");
             startActivity(intent);
         } else if(view.getId() == R.id.startMainAcvitivy){
             Intent intent = new Intent(getBaseContext(), MainActivity.class);

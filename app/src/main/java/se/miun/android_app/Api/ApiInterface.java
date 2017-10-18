@@ -15,9 +15,13 @@ import se.miun.android_app.model.Employee;
 
 public interface ApiInterface {
 
-    // For login to the system
-    @GET("secured/login")
-    Call<String> login(@Header("Authorization") String authorizationHeader);
+    // For login to the system as master
+    @GET("secured/login/master")
+    Call<ResponseBody> loginAsMaster(@Header("Authorization") String authorizationHeader);
+
+    // For login to the system as employee
+    @GET("secured/login/employee")
+    Call<ResponseBody> loginAsEmployee(@Header("Authorization") String authorizationHeader);
 
     // Gets all the employees
     @GET("employees")

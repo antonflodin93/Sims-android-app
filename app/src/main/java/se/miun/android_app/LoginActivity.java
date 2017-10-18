@@ -10,13 +10,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
+import se.miun.android_app.EmployeeUnit.EmployeeUnitActivity;
 import se.miun.android_app.MasterUnit.MasterUnitActivity;
 
 
@@ -31,12 +36,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private final static int HTTP_RESPONSE_NOT_FOUND = 404;
     private final static int HTTP_RESPONSE_ACCEPTED = 202;
 
+    private Callback<ResponseBody> loginCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        userType = getIntent().getStringExtra("UserType");
+        // Get the usertype, master or employee
+        userType = getIntent().getStringExtra("userType");
+        Toast.makeText(this, userType, Toast.LENGTH_SHORT).show();
 
 
         context = this;
@@ -49,24 +57,67 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
         accountNameEditText = (EditText) findViewById(R.id.accountNameEditText);
         errormessageTextView = (TextView) findViewById(R.id.errormessageTextView);
-        passwordEditText.setText("masterunit");
-        accountNameEditText.setText("masterunit");
+
+        if(userType.equals("MASTER")) {
+            passwordEditText.setText("masterunit");
+            accountNameEditText.setText("masterunit");
+        } else{
+            passwordEditText.setText("employee");
+            accountNameEditText.setText("employee");
+        }
+
+        // When the user is logging in
+        loginCallback = new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                // Check if user is matched in the database
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+
+                    // Check which kind of user and start specific activity
+                    if (userType.equals("MASTER")) {
+                        Intent myIntent = new Intent(getApplicationContext(), MasterUnitActivity.class);
+                        context.startActivity(myIntent);
+
+                    } else if (userType.equals("EMPLOYEE")) {
+                        Intent myIntent = new Intent(getApplicationContext(), EmployeeUnitActivity.class);
+                        context.startActivity(myIntent);
+                    }
+
+                } else {
+                    errormessageTextView.setVisibility(View.VISIBLE);
+                    errormessageTextView.setTextColor(Color.RED);
+                    try {
+                        errormessageTextView.setText(response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                errormessageTextView.setText(t.getMessage());
+            }
+        };
+
     }
 
     @Override
     public void onClick(View view) {
+        // If the login was pressed
         if (view.getId() == R.id.loginBtn) {
-            login();
-
+            // Check if the fields are correct and then login user
+            checkCorrectCredentials();
+            // If the create accound button was pressed
         } else if (view.getId() == R.id.createAccountBtn) {
             // Start the register activity
             Intent myIntent = new Intent(getApplicationContext(), RegisterAccountActivity.class);
             this.startActivity(myIntent);
         }
-
     }
 
-    private void login() {
+    // Check if every field is ok
+    private void checkCorrectCredentials() {
         // If one of the fields is empty, highlight with red color and empty both of them
         if (passwordEditText.getText().length() == 0 || accountNameEditText.getText().length() == 0) {
             accountNameEditText.setHintTextColor(Color.RED);
@@ -79,48 +130,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             errormessageTextView.setTextColor(Color.RED);
             errormessageTextView.setText("You must enter both fields.");
         } else {
-            if(userType == "Master"){
+            // Login the user
+            Retrofit retrofit;
+            retrofit = ApiClient.getApiClient();
+            apiInterface = retrofit.create(ApiInterface.class);
+            // Combine username and password with : as delimiter
+            String concatedUserPassword = accountNameEditText.getText().toString() + ":" + passwordEditText.getText().toString();
 
+            // Create the basic authentication header
+            String authorizedHeader = "Basic " + Base64.encodeToString(concatedUserPassword.getBytes(), Base64.NO_WRAP);
+            Call<ResponseBody> call = null;
+            Toast.makeText(context, userType, Toast.LENGTH_LONG).show();
+
+
+            if (userType.equals("MASTER")) {
+                call = apiInterface.loginAsMaster(authorizedHeader);
+            } else if (userType.equals("EMPLOYEE")) {
+                call = apiInterface.loginAsEmployee(authorizedHeader);
             }
-            // Check if user exists in data base
-            checkCorrectCredentials();
+
+            call.enqueue(loginCallback);
         }
-    }
-
-    private void checkCorrectCredentials() {
-        Retrofit retrofit;
-        retrofit = ApiClient.getApiClient();
-        apiInterface = retrofit.create(ApiInterface.class);
-
-        // Combine username and password with : as delimiter
-        String concatedUserPassword = accountNameEditText.getText().toString() + ":" + passwordEditText.getText().toString();
-
-        // Create the basic authentication header
-        String authorizedHeader = "Basic " + Base64.encodeToString(concatedUserPassword.getBytes(), Base64.NO_WRAP);
-        Call<String> call = apiInterface.login(authorizedHeader);
-
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                // Check if user is matched in the database
-                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
-                    Intent myIntent = new Intent(getApplicationContext(), MasterUnitActivity.class);
-                    context.startActivity(myIntent);
-                } else if (response.code() == HTTP_RESPONSE_UNAUTHORIZED) {
-                    errormessageTextView.setVisibility(View.VISIBLE);
-                    errormessageTextView.setTextColor(Color.RED);
-                    errormessageTextView.setText("Username or password is invalid.");
-                } else if (response.code() < 500 && response.code() >= 400){
-                    errormessageTextView.setVisibility(View.VISIBLE);
-                    errormessageTextView.setTextColor(Color.RED);
-                    errormessageTextView.setText("Client/Server error occurred (" + String.valueOf(response.code()) + ")");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                errormessageTextView.setText(t.getMessage());
-            }
-        });
     }
 }
