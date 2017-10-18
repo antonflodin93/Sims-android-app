@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
@@ -14,18 +13,23 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.content.Intent;
+import android.widget.TextView;
+import android.widget.Toast;
 
 //import se.miun.sims.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import se.miun.android_app.R;
 
 public class BluetoothLogger extends AppCompatActivity implements View.OnClickListener {
     //ui variables
     private Button bleScan, bleOnOff;
+    private TextView displayDataTextView;
 
     //Bluetooth Variables
     private BluetoothAdapter mBluetoothAdapter;
@@ -54,6 +58,9 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         bleOnOff = (Button) findViewById(R.id.bleOnOffButton);
         bleOnOff.setOnClickListener(this);
 
+        displayDataTextView = (TextView) findViewById(R.id.displayDataTextView);
+        displayDataTextView.setText("");
+
         //init bluetooth manager
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -66,9 +73,13 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         //toggle scan for bluetooth low energy adv...
         if( v.getId() == R.id.bleScanButton ){
             if(mScanning && bluetoothEnable()){
+                Toast.makeText(getApplicationContext(), "Stopping Scan", Toast.LENGTH_SHORT).show();
                 stopScan();
+                //display results...
+                scanComplete();
             }
             else if (bluetoothEnable()){
+                Toast.makeText(getApplicationContext(), "Starting Scan", Toast.LENGTH_SHORT).show();
                 startScan();
             }
         }
@@ -80,7 +91,6 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
             else if (bluetoothEnable()){
                 requestBluetoothDisable();
             }
-
         }
     }
 
@@ -113,6 +123,20 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
         //set scan check enable
         mScanning = true;
+    }
+
+    //check and display scan results
+    private void scanComplete(){
+        if(mScanResults.isEmpty()){
+            return;
+        }
+        Set keys = mScanResults.keySet();
+
+        for(Iterator i = keys.iterator(); i.hasNext();){
+            String key = (String) i.next();
+            BluetoothDevice device = (BluetoothDevice) mScanResults.get(key);
+            displayDataTextView.append(device.getAddress());
+        }
     }
 
     //stop scanning for ble devices
