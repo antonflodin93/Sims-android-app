@@ -17,7 +17,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
-import se.miun.android_app.EmployeeUnit.EmployeeUnitActivity;
 import se.miun.android_app.MasterUnit.MasterUnitActivity;
 
 
@@ -27,6 +26,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView errormessageTextView;
     private ApiInterface apiInterface;
     private Context context;
+    private String userType;
     private final static int HTTP_RESPONSE_UNAUTHORIZED = 401;
     private final static int HTTP_RESPONSE_NOT_FOUND = 404;
     private final static int HTTP_RESPONSE_ACCEPTED = 202;
@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        userType = getIntent().getStringExtra("UserType");
 
 
         context = this;
@@ -78,6 +79,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             errormessageTextView.setTextColor(Color.RED);
             errormessageTextView.setText("You must enter both fields.");
         } else {
+            if(userType == "Master"){
+
+            }
             // Check if user exists in data base
             checkCorrectCredentials();
         }
