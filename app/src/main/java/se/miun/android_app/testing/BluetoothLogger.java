@@ -1,11 +1,11 @@
 package se.miun.android_app.testing;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +34,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
     //Bluetooth Variables
     private BluetoothAdapter mBluetoothAdapter;
     private int REQUEST_ENABLE_BT = 1;
+
     //scanning variables and objects
     private HashMap mScanResults;
     List<ScanFilter> filters;
@@ -42,6 +43,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
     private ScanCallback mScanCallback;
     private ScanSettings settings;
     private ScanFilter scanFilter;
+
     //Scan filter Settings (Scan only for certain device name & address)
     private String deviceName = "Iggesund SIMS";
     private String deviceAddress = "e20a39f4-73f5-4bc4-a12f-17d1ad07a961";
@@ -130,12 +132,18 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         if(mScanResults.isEmpty()){
             return;
         }
+        //loop trough the map and fetch device address and rssi[dbm] value
         Set keys = mScanResults.keySet();
-
         for(Iterator i = keys.iterator(); i.hasNext();){
             String key = (String) i.next();
-            BluetoothDevice device = (BluetoothDevice) mScanResults.get(key);
-            displayDataTextView.append(device.getAddress());
+
+            ScanResult results = (ScanResult) mScanResults.get(key);
+            String deviceAddress = results.getDevice().getAddress();
+            int rssi = results.getRssi();
+
+            //display id and rssi value(range: -127 - 126 dbm )
+            displayDataTextView.append("\nDevice address: " + deviceAddress);
+            displayDataTextView.append("\tRSSI: " + rssi );
         }
     }
 
