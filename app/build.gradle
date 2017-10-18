@@ -5,7 +5,7 @@ android {
     buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "se.miun.sims"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 25
     }
     buildTypes {

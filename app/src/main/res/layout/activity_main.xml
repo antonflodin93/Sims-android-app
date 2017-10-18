@@ -44,6 +44,16 @@
         android:text="OnTouch Test" />
 
     <Button
+        android:id="@+id/imageTestBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="200dp"
+        android:layout_marginStart="250dp"
+
+        android:text="image Test" />
+
+    <Button
         android:id="@+id/bluetoothLoggerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

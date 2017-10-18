@@ -56,7 +56,7 @@ public class OnTouchTestActivity extends Activity
         int nextImage = -1;			// resource id of the next image to display
 
         // If we cannot find the imageView, return.
-        ImageView imageView = (ImageView) v.findViewById (R.id.image);
+        ImageView imageView = (ImageView) v.findViewById (R.id.mapImage);
         if (imageView == null) return false;
 
         // When the action is Down, see if we should show the "pressed" image for the default image.

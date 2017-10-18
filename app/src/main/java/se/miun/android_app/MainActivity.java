@@ -9,11 +9,12 @@ import android.widget.Button;
 import se.miun.android_app.testing.BluetoothLogger;
 import se.miun.android_app.testing.ImageTestActivity;
 //import se.miun.android_app.testing.OnTouchTestActivity;
+import se.miun.android_app.testing.OnTouchTestActivity;
 import se.miun.android_app.testing.RangetestActivity;
 import se.miun.android_app.testing.RetrofitTestActivity;
 
 public class MainActivity extends Activity implements View.OnClickListener{
-    private Button rangeTestBtn, testCoordinateSystemBtn, databaseTestBtn, retrofitTestBtn, ontouchTestBtn, bluetoothLogger;
+    private Button rangeTestBtn, testCoordinateSystemBtn, imageTestBtn, retrofitTestBtn, ontouchTestBtn, bluetoothLogger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         ontouchTestBtn.setOnClickListener(this);
         bluetoothLogger =(Button) findViewById(R.id.bluetoothLoggerButton);
         bluetoothLogger.setOnClickListener(this);
+        imageTestBtn = (Button) findViewById(R.id.imageTestBtn);
+        imageTestBtn.setOnClickListener(this);
     }
 
     @Override
@@ -49,16 +52,19 @@ public class MainActivity extends Activity implements View.OnClickListener{
             Intent myIntent = new Intent(getApplicationContext(), RetrofitTestActivity.class);
             this.startActivity(myIntent);
         }
-
-        /*          else if(view.getId() == R.id.ontouchTestBtn) {
+/*          else if(view.getId() == R.id.ontouchTestBtn) {
             // Start Retrofit test activity
             Intent myIntent = new Intent(getApplicationContext(), OnTouchTestActivity.class);
             this.startActivity(myIntent);
         }*/
-
         else if(view.getId() == R.id.bluetoothLoggerButton) {
             //Start Bluetooth logging activity
             Intent myIntent = new Intent(getApplicationContext(), BluetoothLogger.class);
+            this.startActivity(myIntent);
+        }
+        else if( view.getId() == R.id.imageTestBtn ) {
+            // Start the ImageTest activity
+            Intent myIntent = new Intent(getApplicationContext(), ImageTestActivity.class);
             this.startActivity(myIntent);
         }
     }
