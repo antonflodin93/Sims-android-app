@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,6 @@ public class BleScanCallback extends ScanCallback {
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
         addScanResult(result);
-        //super.onScanResult(callbackType, result);
     }
 
     @Override
@@ -46,5 +46,4 @@ public class BleScanCallback extends ScanCallback {
         String deviceAddress = device.getName();
         mScanResults.put(deviceAddress, device);
     }
-
 }
