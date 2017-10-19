@@ -62,7 +62,15 @@
         android:layout_marginTop="101dp"
         android:text="@string/bluetooth_logger" />
 
+    <Button
+        android:id="@+id/testServiceBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rangeTestBtn"
+        android:layout_marginStart="47dp"
+        android:layout_marginTop="38dp"
+        android:layout_toEndOf="@+id/rangeTestBtn"
+        android:text="Test Service" />
+
 
 </RelativeLayout>
-
-<!-- android:onClick="onRangingClicked" -->
