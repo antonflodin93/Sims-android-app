@@ -39,6 +39,11 @@
         <activity android:name=".MasterUnit.MasterUnitActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".testing.ServiceTestActivity"></activity>
+
+        <service
+            android:name=".Service.LocalWordService"
+            android:label="Word service" >
+        </service>
     </application>
 
 </manifest>
