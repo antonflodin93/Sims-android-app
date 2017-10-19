@@ -45,6 +45,6 @@ public interface ApiInterface {
     Call<Employee> deleteEmployeeById(@Path("id") int id);
 
     // Gets all the messages
-    @GET("employees")
+    @GET("messages")
     Call<List<Message>> getMessages();
 }

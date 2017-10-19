@@ -59,7 +59,6 @@ public class ServiceTestActivity extends AppCompatActivity implements ServiceCon
         Log.i("myapp", "in click");
         switch (view.getId()) {
             case R.id.updateList:
-                Log.i("myapp", "update list");
                 if (s != null) {
                     Toast.makeText(this, "Number of elements" + s.getWordList().size(),
                             Toast.LENGTH_SHORT).show();
@@ -69,7 +68,6 @@ public class ServiceTestActivity extends AppCompatActivity implements ServiceCon
                 }
                 break;
             case R.id.triggerServiceUpdate:
-                Log.i("myapp", "trigger");
                 Intent service = new Intent(getApplicationContext(), LocalWordService.class);
                 getApplicationContext().startService(service);
                 break;
