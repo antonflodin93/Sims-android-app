@@ -4,9 +4,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.util.Log;
-import android.widget.TextView;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +15,11 @@ import static android.content.ContentValues.TAG;
 
 public class BleScanCallback extends ScanCallback {
 
-    private Map<String, BluetoothDevice> mScanResults;
 
-    BleScanCallback(Map<String, BluetoothDevice> scanResults){
+
+    private Map<String, ScanResult> mScanResults;
+
+    BleScanCallback(Map<String, ScanResult> scanResults){
         mScanResults = scanResults;
     }
 
@@ -44,6 +43,7 @@ public class BleScanCallback extends ScanCallback {
     public void addScanResult(ScanResult result){
         BluetoothDevice device = result.getDevice();
         String deviceAddress = device.getName();
-        mScanResults.put(deviceAddress, device);
+        //int rssi = result.getRssi();
+        mScanResults.put(deviceAddress, result);
     }
 }
