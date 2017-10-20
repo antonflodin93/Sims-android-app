@@ -60,16 +60,14 @@ public class ServiceTestActivity extends AppCompatActivity implements ServiceCon
         switch (view.getId()) {
             case R.id.updateList:
                 if (s != null) {
-                    Toast.makeText(this, "Number of elements" + s.getWordList().size(),
-                            Toast.LENGTH_SHORT).show();
                     wordList.clear();
                     wordList.addAll(s.getWordList());
                     adapter.notifyDataSetChanged();
                 }
                 break;
             case R.id.triggerServiceUpdate:
-                Intent service = new Intent(getApplicationContext(), LocalWordService.class);
-                getApplicationContext().startService(service);
+                //Intent service = new Intent(getApplicationContext(), LocalWordService.class);
+                //getApplicationContext().startService(service);
                 break;
         }
     }
@@ -78,7 +76,14 @@ public class ServiceTestActivity extends AppCompatActivity implements ServiceCon
     public void onServiceConnected(ComponentName name, IBinder binder) {
         LocalWordService.MyBinder b = (LocalWordService.MyBinder) binder;
         s = b.getService();
-        Toast.makeText(ServiceTestActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+        Log.i("myapp", "server connected");
+        if (s != null) {
+            Toast.makeText(this, "Number of elements" + s.getWordListSize(),
+                    Toast.LENGTH_SHORT).show();
+            wordList.clear();
+            wordList.addAll(s.getWordList());
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
