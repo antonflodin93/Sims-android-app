@@ -1,6 +1,7 @@
 package se.miun.android_app.Api;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -46,5 +47,5 @@ public interface ApiInterface {
 
     // Gets all the messages
     @GET("messages")
-    Call<List<Message>> getMessages();
+    Call<ArrayList<Message>> getMessages();
 }

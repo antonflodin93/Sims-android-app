@@ -1,93 +1,60 @@
 package se.miun.android_app.testing;
 
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.app.ListActivity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import se.miun.android_app.R;
-import se.miun.android_app.Service.LocalWordService;
+import se.miun.android_app.Service.BroadcastService;
+import se.miun.android_app.model.Message;
 
-public class ServiceTestActivity extends AppCompatActivity implements ServiceConnection {
-    private LocalWordService s;
-    private ListView displayDataListView;
+public class ServiceTestActivity extends Activity {
 
-    @Override
+    private static final String TAG = "BroadcastTest";
+    private Intent intent;
+    private ArrayList<Message> messages;
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            ServiceTestActivity.this.updateUI(intent);
+        }
+    };
+
+    public ServiceTestActivity() {
+    }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_service_test);
-
-        displayDataListView = (ListView) findViewById(R.id.displayDataListView);
-
-        wordList = new ArrayList<String>();
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, wordList);
-
-        displayDataListView.setAdapter(adapter);
+        this.setContentView(R.layout.activity_service_test);
+        this.intent = new Intent(this, BroadcastService.class);
     }
 
-    @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        Intent intent= new Intent(this, LocalWordService.class);
-        bindService(intent, this, Context.BIND_AUTO_CREATE);
+        this.startService(this.intent);
+        this.registerReceiver(this.broadcastReceiver, new IntentFilter("com.websmithing.broadcasttest.displayevent"));
     }
 
-    @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
-        unbindService(this);
+        this.unregisterReceiver(this.broadcastReceiver);
+        this.stopService(this.intent);
     }
 
-    private ArrayAdapter<String> adapter;
-    private List<String> wordList;
-
-    public void onClick(View view) {
-        Log.i("myapp", "in click");
-        switch (view.getId()) {
-            case R.id.updateList:
-                if (s != null) {
-                    wordList.clear();
-                    wordList.addAll(s.getWordList());
-                    adapter.notifyDataSetChanged();
-                }
-                break;
-            case R.id.triggerServiceUpdate:
-                //Intent service = new Intent(getApplicationContext(), LocalWordService.class);
-                //getApplicationContext().startService(service);
-                break;
-        }
-    }
-
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder binder) {
-        LocalWordService.MyBinder b = (LocalWordService.MyBinder) binder;
-        s = b.getService();
-        Log.i("myapp", "server connected");
-        if (s != null) {
-            Toast.makeText(this, "Number of elements" + s.getWordListSize(),
-                    Toast.LENGTH_SHORT).show();
-            wordList.clear();
-            wordList.addAll(s.getWordList());
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-        s = null;
+    private void updateUI(Intent intent) {
+        String counter = intent.getStringExtra("counter");
+        String time = intent.getStringExtra("time");
+        messages = (ArrayList<Message>) intent.getSerializableExtra("messages");
+        TextView messageTextView = (TextView)this.findViewById(R.id.messageTextView);
+        TextView messageIdTextView = (TextView)this.findViewById(R.id.messageIdTextView);
+        messageTextView.setText(messages.get(messages.size() - 1).getMessageText());
+        messageIdTextView.setText(messages.get(messages.size() - 1).getMessageId());
     }
 }

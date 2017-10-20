@@ -3,8 +3,10 @@ package se.miun.android_app.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 
-public class Message {
+
+public class Message implements Serializable {
 
     @SerializedName("messageId")
     private String messageId;

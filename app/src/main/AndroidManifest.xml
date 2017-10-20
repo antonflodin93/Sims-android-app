@@ -41,7 +41,7 @@
         <activity android:name=".testing.ServiceTestActivity"></activity>
 
         <service
-            android:name=".Service.LocalWordService"
+            android:name=".Service.BroadcastService"
             android:label="Word service" >
         </service>
     </application>

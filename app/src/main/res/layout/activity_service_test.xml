@@ -1,63 +1,32 @@
-<?xml version = "1.0" encoding = "utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".RegisterActivity">
-
-    <LinearLayout
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <TableLayout android:id="@+id/tableGPS"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:paddingBottom="1.0dip"
-        android:paddingLeft="4.0dip"
-        android:paddingRight="4.0dip"
-        android:paddingTop="5.0dip">
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/companyNameEditText"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            android:paddingBottom="1.0dip"
-            android:paddingLeft="4.0dip"
-            android:paddingRight="4.0dip"
-            android:paddingTop="5.0dip">
-
-            <Button
-                android:id="@+id/updateList"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onClick"
-                android:text="Update the list"></Button>
-
-            <Button
-                android:id="@+id/triggerServiceUpdate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onClick"
-                android:text="Trigger service"></Button>
-
-        </LinearLayout>
-
-
-
-        <ListView
-            android:id="@+id/displayDataListView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginTop="10dp"
-
-           />
-
-
-    </LinearLayout>
-
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7px"
+        android:stretchColumns="1">
+        <TableRow
+            android:layout_margin="1dip">
+            <TextView android:layout_gravity="right"
+                android:text="Message:"
+                android:layout_marginRight="10dp"
+                android:layout_width="60dp" />
+            <TextView android:id="@+id/messageTextView"
+                android:gravity="left"
+                android:layout_span="2" />
+        </TableRow>
+        <TableRow
+            android:layout_margin="1px">
+            <TextView android:layout_gravity="right"
+                android:text="Message ID:"
+                android:layout_marginRight="10dp"
+                android:layout_width="60dp" />
+            <TextView android:id="@+id/messageIdTextView"
+                android:gravity="left" />
+        </TableRow>
+    </TableLayout>
+</LinearLayout>
