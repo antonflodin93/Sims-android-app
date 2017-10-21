@@ -1,5 +1,6 @@
 package se.miun.android_app.testing;
 
+import android.app.DownloadManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
@@ -9,8 +10,10 @@ import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +23,11 @@ import android.widget.Toast;
 
 //import se.miun.sims.R;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,7 +40,7 @@ import se.miun.android_app.R;
 
 public class BluetoothLogger extends AppCompatActivity implements View.OnClickListener {
     //ui variables
-    private Button bleScan, bleOnOff;
+    private Button bleScan, bleOnOff, saveToFile;
     private TextView displayDataTextView;
 
     //Bluetooth Variables
@@ -46,7 +54,6 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
     private BluetoothLeScanner mBluetoothLeScanner;
     private ScanCallback mScanCallback;
     private ScanSettings settings;
-    private ScanFilter scanFilter;
 
     //Allowed Devices (MAC address)
     String[] filterlist = {
@@ -68,6 +75,8 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         bleScan.setOnClickListener(this);
         bleOnOff = (Button) findViewById(R.id.bleOnOffButton);
         bleOnOff.setOnClickListener(this);
+        saveToFile = (Button) findViewById(R.id.saveToFileButton);
+        saveToFile.setOnClickListener(this);
 
         displayDataTextView = (TextView) findViewById(R.id.displayDataTextView);
         displayDataTextView.setText("");
@@ -87,7 +96,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
                 Toast.makeText(getApplicationContext(), "Stopping Scan", Toast.LENGTH_SHORT).show();
                 stopScan();
                 //display batch results with scanComplete();
-                scanComplete();
+                //scanComplete();
             }
             else if (bluetoothEnable()){
                 Toast.makeText(getApplicationContext(), "Starting Scan", Toast.LENGTH_SHORT).show();
@@ -101,6 +110,14 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
             }
             else if (bluetoothEnable()){
                 requestBluetoothDisable();
+            }
+        }
+        else if( v.getId() == R.id.saveToFileButton ){
+            if(isExternalStorageWritable()){
+                bleLoggData();
+            }
+            else{
+                Toast.makeText(getApplicationContext(), "File FAIL", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -125,11 +142,35 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         mScanning = true;
     }
 
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    public void bleLoggData(){
+        String content = displayDataTextView.getText().toString();
+        File file;
+        FileOutputStream outputStream;
+        try {
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "test_logger.txt");
+
+            outputStream = new FileOutputStream(file);
+            outputStream.write(content.getBytes());
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void setScanSettings(){
         settings = new ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
                 .build();
-        //SCAN_MODE_LOW_LATENCY <-- use for fastest scan method
+        //SCAN_MODE_LOW_LATENCY <-- use for fastest scan period
     }
 
     private void setScanFilter(String[] filterList){

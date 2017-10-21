@@ -17,4 +17,5 @@
     <string name="bluetooth_logger">BLE logger</string>
     <string name="ble_scan">Scan (On/off)</string>
     <string name="ble_on_off">Ble (on/off)</string>
+    <string name="save_to_file">Save</string>
 </resources>

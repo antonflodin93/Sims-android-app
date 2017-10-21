@@ -11,6 +11,9 @@
     <uses-feature android:name="android.hardware.bluetooth_le" />
     <!-- Require access to position (needed for beacon scans -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- External file storage -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
 
     <application
         android:allowBackup="true"
