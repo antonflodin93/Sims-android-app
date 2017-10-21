@@ -20,6 +20,11 @@ public class BleScanCallback extends ScanCallback {
     private TextView displayTextView;
     private Map<String, ScanResult> mScanResults;
 
+    //allowed devices for scan result
+    private String[] AllowedDevices = {"IgB_Rej", "IgB_SoP"};
+
+
+
     //constructor
     BleScanCallback(Map<String, ScanResult> scanResults, TextView displayText){
         displayTextView = displayText;
@@ -55,8 +60,14 @@ public class BleScanCallback extends ScanCallback {
 
     //Store batch result (1 value for each device)
     public void addScanResult(ScanResult result){
-        //BluetoothDevice device = result.getDevice();
         String deviceAddress = result.getDevice().getName();
+//        String deviceName = result.getDevice().getName();
+//        //only add valid devices to list...
+//        for(int i=0; i<AllowedDevices.length; i++){
+//            if(deviceName == AllowedDevices[i]){
+//                mScanResults.put(deviceAddress, result);
+//            }
+//        }
         mScanResults.put(deviceAddress, result);
     }
 

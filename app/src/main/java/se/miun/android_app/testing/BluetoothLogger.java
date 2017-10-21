@@ -48,9 +48,14 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
     private ScanSettings settings;
     private ScanFilter scanFilter;
 
-    //Scan filter Settings (Scan only for certain device name & address)
-    private String deviceName = "Iggesund SIMS";
-    private String deviceAddress = "e20a39f4-73f5-4bc4-a12f-17d1ad07a961";
+    //Allowed Devices (MAC address)
+    String[] filterlist = {
+            "ED:0E:FF:9C:A9:6D",/* My RedBear nano address*/
+            "C8:86:3A:91:0C:0C",
+            "FD:49:FD:36:04:B4",
+            "E9:91:4A:42:AC:3B",
+    };
+
 
 
     @Override
@@ -80,31 +85,22 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         if( v.getId() == R.id.bleScanButton ){
             if(mScanning && bluetoothEnable()){
                 Toast.makeText(getApplicationContext(), "Stopping Scan", Toast.LENGTH_SHORT).show();
-
                 stopScan();
-
                 //display batch results with scanComplete();
                 scanComplete();
             }
             else if (bluetoothEnable()){
-
                 Toast.makeText(getApplicationContext(), "Starting Scan", Toast.LENGTH_SHORT).show();
-
-                //timeMe(500);
                 startScan();
             }
         }
         else if( v.getId() == R.id.bleOnOffButton ){
             //toggle bluetooth on/off
             if (!bluetoothEnable()) {
-
                 requestBluetoothEnable();
-
             }
             else if (bluetoothEnable()){
-
                 requestBluetoothDisable();
-
             }
         }
     }
@@ -115,20 +111,9 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         if(mScanning){
             return;
         }
-
-        //build scansettings with filters for device...
-        settings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .build();
-
-        //create filter list
-        filters = new ArrayList<>();
-        scanFilter = new ScanFilter.Builder()
-                /*.setDeviceName(deviceName)
-                .setDeviceAddress(deviceAddress)
-                */.build();
-        filters.add(scanFilter); //currently breaks the program if filter on name/address
-
+        //set scan filter and parameters
+        setScanSettings();
+        setScanFilter(filterlist);
         //create scanner object
         mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
         //create callback
@@ -140,7 +125,25 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         mScanning = true;
     }
 
-    //check and display scan results
+    private void setScanSettings(){
+        settings = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
+                .build();
+        //SCAN_MODE_LOW_LATENCY <-- use for fastest scan method
+    }
+
+    private void setScanFilter(String[] filterList){
+        filters = new ArrayList<>();
+        //add filter list of MAC addresses to filter
+        for (int i=0; i< filterList.length ; i++) {
+            ScanFilter filter = new ScanFilter.Builder().setDeviceAddress(filterList[i]).build();
+            filters.add(filter);
+        }
+        //scanFilter = new ScanFilter.Builder().setDeviceAddress().build();
+        //filters.add(scanFilter);
+    }
+
+    //check and display scan results (for test purposes)
     private void scanComplete(){
         if(mScanResults.isEmpty()){
             return;
@@ -151,47 +154,28 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
             String key = (String) i.next();
 
             ScanResult results = (ScanResult) mScanResults.get(key);
+            //mac address
             String deviceAddress = results.getDevice().getAddress();
             int rssi = results.getRssi();
             ScanRecord scanRecord = results.getScanRecord();
 
             int contents = results.describeContents();
             int txPower = scanRecord.getTxPowerLevel();
-            int advFlags = scanRecord.getAdvertiseFlags();
-            byte[] payload = scanRecord.getBytes();
-            //data we want...
-            //byte[] mData = scanRecord.getManufacturerSpecificData(512);
-
             long timestampNanos = results.getTimestampNanos();
 
             displayDataTextView.append("\nname: " + results.getDevice().getName());
-            displayDataTextView.append("\nDeviceAddress: " + deviceAddress);
+            //displayDataTextView.append("\nDeviceAddress: " + deviceAddress);
             displayDataTextView.append("\tRSSI: " + rssi );
             displayDataTextView.append("\tdist: " + calculateDistance(-56, rssi));
-
             //displayDataTextView.append("\tTime: " + timestampNanos);
             displayDataTextView.append("\tTx: " + txPower);
-            //displayDataTextView.append("\tintFlags: " +advFlags);
-            //displayDataTextView.append("\tContents: " + contents);
-
+            //get manufacturer data...(Set as AdvData for beacon)
             displayDataTextView.append("\tmData: ");
             SparseArray<byte[]> manufacturerData = scanRecord.getManufacturerSpecificData();
             for(int u = 0; u < manufacturerData.size() ; u++){
                 int manufacturerId = manufacturerData.keyAt(u);
                 displayDataTextView.append("" + manufacturerId);
             }
-
-            //get manufacturer data
-//            displayDataTextView.append("\tmData: ");
-//            for(int j=0; j < mData.length; j++){
-//                displayDataTextView.append("" + mData[j] );
-//            }
-
-//            displayDataTextView.append("\tPayloadData: ");
-//            for(int j=0; j < payload.length; j++){
-//                displayDataTextView.append("" + payload[j] );
-//            }
-
         }
     }
 
@@ -224,31 +208,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         mBluetoothAdapter.disable();
     }
 
-//    //from https://www.pubnub.com/blog/2015-04-15-build-android-beacon-ibeacon-detector/
-//    private void setScanFilter() {
-//        ScanFilter.Builder mBuilder = new ScanFilter.Builder();
-//        ByteBuffer mManufacturerData = ByteBuffer.allocate(23);
-//        ByteBuffer mManufacturerDataMask = ByteBuffer.allocate(24);
-//        byte[] uuid = getIdAsByte(UUID.fromString("0CF052C297CA407C84F8B62AAC4E9020");
-//        mManufacturerData.put(0, (byte)0xBE);
-//        mManufacturerData.put(1, (byte)0xAC);
-//        for (int i=2; i<=17; i++) {
-//            mManufacturerData.put(i, uuid[i-2]);
-//        }
-//        for (int i=0; i<=17; i++) {
-//            mManufacturerDataMask.put((byte)0x01);
-//        }
-//        mBuilder.setManufacturerData(224, mManufacturerData.array(), mManufacturerDataMask.array());
-//        mScanFilter = mBuilder.build();
-//    }
-//
-//    //from https://www.pubnub.com/blog/2015-04-15-build-android-beacon-ibeacon-detector/
-//    private void setScanSettings() {
-//        ScanSettings.Builder mBuilder = new ScanSettings.Builder();
-//        mBuilder.setReportDelay(0);
-//        mBuilder.setScanMode(ScanSettings.SCAN_MODE_LOW_POWER);
-//        mScanSettings = mBuilder.build();
-//    }
+
 
     //algorithm used for distance calculation by Altbeacon.org
     public double calculateDistance(int txPower, double rssi) {
