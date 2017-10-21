@@ -12,9 +12,10 @@ import se.miun.android_app.testing.ImageTestActivity;
 import se.miun.android_app.testing.OnTouchTestActivity;
 import se.miun.android_app.testing.RangetestActivity;
 import se.miun.android_app.testing.RetrofitTestActivity;
+import se.miun.android_app.testing.ServiceTestActivity;
 
 public class MainActivity extends Activity implements View.OnClickListener{
-    private Button rangeTestBtn, testCoordinateSystemBtn, imageTestBtn, retrofitTestBtn, ontouchTestBtn, bluetoothLogger;
+    private Button rangeTestBtn, testCoordinateSystemBtn, imageTestBtn, retrofitTestBtn, ontouchTestBtn, bluetoothLogger, testServiceBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
         bluetoothLogger.setOnClickListener(this);
         imageTestBtn = (Button) findViewById(R.id.imageTestBtn);
         imageTestBtn.setOnClickListener(this);
+        testServiceBtn = (Button) findViewById(R.id.testServiceBtn);
+        testServiceBtn.setOnClickListener(this);
+
+
     }
 
     @Override
@@ -65,6 +70,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
         else if( view.getId() == R.id.imageTestBtn ) {
             // Start the ImageTest activity
             Intent myIntent = new Intent(getApplicationContext(), ImageTestActivity.class);
+            this.startActivity(myIntent);
+        }
+        else if(view.getId() == R.id.testServiceBtn){
+            Intent myIntent = new Intent(getApplicationContext(), ServiceTestActivity.class);
             this.startActivity(myIntent);
         }
     }

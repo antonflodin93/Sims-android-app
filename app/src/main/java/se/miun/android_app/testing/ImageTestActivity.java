@@ -13,6 +13,8 @@ import android.view.View;
 
 import android.widget.ImageView;
 
+import java.util.Vector;
+
 import se.miun.android_app.R;
 
 public class ImageTestActivity extends Activity implements View.OnTouchListener {
@@ -58,17 +60,39 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener 
                 float px = (x/w)*100;
                 float py = (y/h)*100;
 
-                //Convert pixels to screen independent coordinates 1,33. 1,0
-                //x = pxToDp(ImageTestActivity.this, x);
-                //y = pxToDp(ImageTestActivity.this, y);
+                int rowsize = 4;
+                int collumnsize = 6;
+                //number of total areas
+                int areasize = rowsize*collumnsize;
+
+                Vector<Area> areas = new Vector<>(areasize);
+
+                //get xmax and ymax for the first area, hw is used since
+                float xmax = 100/rowsize;
+                float ymax = 100/collumnsize;
+
+                //size is used for area position in vector
+                int size = 0;
+
+                //add areas according to row and collumn sizes
+                for(int c = 0; c<collumnsize; c++){
+                    for(int r = 0 ; r<rowsize; r++){
+                        areas.add(size, new Area(xmax*(r), xmax*(r+1), ymax*(c), ymax*(c+1), r+1, c+1));
+                        size++;
+                    }
+                }
 
 
+                //depending on where the screen is touched, write which area that was touched
+                for(int i = 0; i<areasize; i++){
+                    if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py ){
+                        Toast.makeText(ImageTestActivity.this, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn()  + ", Coordinates: " + px  + ", " + py, Toast.LENGTH_SHORT).show();
+                    }
+                }
 
-                //toast ("Touch the screen to discover where the regions are.");
-                Toast.makeText(ImageTestActivity.this, "Clicked: " + px + ", " + py , Toast.LENGTH_SHORT).show();
-               // Toast.makeText(ImageTestActivity.this, dpi + ", " , Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ImageTestActivity.this, "Clicked: " + areas.get(3).getxmin() + ", " + areas.get(3).getxmax() , Toast.LENGTH_SHORT).show();
+                // Toast.makeText(ImageTestActivity.this, "Clicked: " + xmax + ", " + ymax , Toast.LENGTH_SHORT).show();
 
-                //drawImage(x, y);
                 break;
 
 

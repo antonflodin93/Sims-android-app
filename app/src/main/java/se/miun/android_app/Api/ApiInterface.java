@@ -1,6 +1,7 @@
 package se.miun.android_app.Api;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -12,6 +13,7 @@ import retrofit2.http.POST;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import se.miun.android_app.model.Employee;
+import se.miun.android_app.model.Message;
 
 public interface ApiInterface {
 
@@ -42,4 +44,8 @@ public interface ApiInterface {
     // Delete employee
     @DELETE("employees/{id}")
     Call<Employee> deleteEmployeeById(@Path("id") int id);
+
+    // Gets all the messages
+    @GET("messages")
+    Call<ArrayList<Message>> getMessages();
 }
