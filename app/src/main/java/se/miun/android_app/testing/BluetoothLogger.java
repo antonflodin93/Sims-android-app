@@ -18,6 +18,7 @@ import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.content.Intent;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
     //ui variables
     private Button bleScan, bleOnOff, saveToFile;
     private TextView displayDataTextView;
+    private EditText editFileName;
 
     //Bluetooth Variables
     private BluetoothAdapter mBluetoothAdapter;
@@ -80,6 +82,8 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
 
         displayDataTextView = (TextView) findViewById(R.id.displayDataTextView);
         displayDataTextView.setText("");
+        //edit filename
+        editFileName = (EditText) findViewById(R.id.editSaveFileText);
 
         //init bluetooth manager
         final BluetoothManager bluetoothManager =
@@ -152,11 +156,12 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
     }
 
     public void bleLoggData(){
+        String fileName = editFileName.getText().toString();
         String content = displayDataTextView.getText().toString();
         File file;
         FileOutputStream outputStream;
         try {
-            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "test_logger.txt");
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName + ".txt");
 
             outputStream = new FileOutputStream(file);
             outputStream.write(content.getBytes());
