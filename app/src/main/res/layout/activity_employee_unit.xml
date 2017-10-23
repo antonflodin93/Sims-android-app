@@ -57,8 +57,6 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.9"
-                    android:gravity="center"
-                    android:text="YOU HAVE NEW MESSAGE"
                     android:background="#e6e6e6" />
         </TableRow>
 

@@ -14,7 +14,6 @@
     <!-- External file storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -40,12 +39,13 @@
         <activity android:name=".EmployeeUnit.EmployeeUnitActivity" />
         <activity android:name=".MasterUnit.MasterUnitActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".testing.ServiceTestActivity"></activity>
+        <activity android:name=".testing.ServiceTestActivity" />
 
         <service
             android:name=".Service.BroadcastService"
-            android:label="Word service" >
-        </service>
+            android:label="Word service"></service>
+
+        <activity android:name=".EmployeeUnit.ShowMessagesActivity"></activity>
     </application>
 
 </manifest>
