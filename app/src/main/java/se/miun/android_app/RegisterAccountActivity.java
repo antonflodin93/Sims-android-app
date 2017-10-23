@@ -72,8 +72,10 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
 
     private void createNewAccount() {
         if (correctCredentials() == true) {
-            Toast.makeText(getBaseContext(), "correct", Toast.LENGTH_SHORT);
+            Toast.makeText(context, "correct", Toast.LENGTH_SHORT);
             insertToDatabase();
+        } else{
+            Toast.makeText(context, "Something is wrong", Toast.LENGTH_SHORT).show();
         }
 
 
@@ -87,7 +89,6 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
         apiInterface = retrofit.create(ApiInterface.class);
 
         // Post a employee to the database
-        //Employee employee = new Employee("Anton", "Flodin", "anton", "anfl120@hotmail.com", "hej", "0702733166", "MITTCOMANY");
         Employee employee = new Employee(firstNameEditText.getText().toString(), lastNameEditText.getText().toString(),
                 userNameEditText.getText().toString(), emailEditText.getText().toString(), passwordEditText.getText().toString(),
                 phoneNumberEditText.getText().toString(), companyNameEditText.getText().toString());
@@ -99,8 +100,10 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 // If employee could be added
                 if (response.code() == RESPONSE_OK) {
+                    Toast.makeText(context, "Response ok", Toast.LENGTH_SHORT).show();
                     // Go to login screen
                     Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                    myIntent.putExtra("userType", "EMPLOYEE");
                     context.startActivity(myIntent);
                 } else if (response.code() == RESPONSE_FORBIDDEN || response.code() == RESPONSE_INTERNAL_SERVER_ERROR) {
                     errorMessageTextView.setVisibility(View.VISIBLE);
@@ -153,6 +156,7 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
             emailEditText.setHint(emailEditText.getHint());
             correct = false;
         } else if (!isEmail(emailEditText)) {
+            emailEditText.setText("");
             emailEditText.setHintTextColor(Color.RED);
             emailEditText.setHint("Enter a correct email address");
             correct = false;
@@ -193,7 +197,7 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
             companyNameEditText.setHint(companyNameEditText.getHint());
             correct = false;
         }
-
+        Toast.makeText(context, "After check", Toast.LENGTH_SHORT).show();
         return correct;
     }
 

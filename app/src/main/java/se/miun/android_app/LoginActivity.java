@@ -61,6 +61,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(userType.equals("MASTER")) {
             passwordEditText.setText("masterunit");
             accountNameEditText.setText("masterunit");
+            createAccountBtn.setEnabled(false);
+            createAccountBtn.setVisibility(View.GONE);
+
         } else{
             passwordEditText.setText("employee");
             accountNameEditText.setText("employee");
