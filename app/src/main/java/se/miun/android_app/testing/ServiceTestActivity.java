@@ -13,7 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import se.miun.android_app.R;
-import se.miun.android_app.Service.BroadcastService;
+import se.miun.android_app.Service.MessageService;
 import se.miun.android_app.model.Message;
 
 public class ServiceTestActivity extends Activity {
@@ -33,7 +33,7 @@ public class ServiceTestActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_service_test);
-        this.intent = new Intent(this, BroadcastService.class);
+        this.intent = new Intent(this, MessageService.class);
     }
 
     public void onResume() {

@@ -42,8 +42,8 @@
         <activity android:name=".testing.ServiceTestActivity" />
 
         <service
-            android:name=".Service.BroadcastService"
-            android:label="Word service"></service>
+            android:name=".Service.MessageService"
+            android:label="Message service"></service>
 
         <activity android:name=".EmployeeUnit.ShowMessagesActivity"></activity>
     </application>

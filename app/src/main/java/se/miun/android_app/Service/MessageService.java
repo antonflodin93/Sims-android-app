@@ -8,17 +8,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
-
-import android.app.Service;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
-import android.util.Log;
 import java.util.ArrayList;
-import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,8 +18,8 @@ import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
 import se.miun.android_app.model.Message;;
 
-public class BroadcastService extends Service {
-    private static final String TAG = "BroadcastService";
+public class MessageService extends Service {
+    private static final String TAG = "MessageService";
     public static final String BROADCAST_ACTION = "com.websmithing.broadcasttest.displayevent";
     private final Handler handler = new Handler();
     private Retrofit retrofit;
@@ -43,7 +34,7 @@ public class BroadcastService extends Service {
         public void onResponse(Call<ArrayList<Message>> call, Response<ArrayList<Message>> response) {
             // Check if user is matched in the database
             if (response.code() == 200) {
-                Log.d("BroadcastService", "got messages");
+                Log.d("MessageService", "got messages");
                 messages = response.body();
                 DisplayLoggingInfo();
             }
@@ -58,7 +49,7 @@ public class BroadcastService extends Service {
     // Execute every 5 seconds
     private Runnable sendUpdatesToUI = new Runnable() {
         public void run() {
-            //BroadcastService.this.DisplayLoggingInfo();
+            //MessageService.this.DisplayLoggingInfo();
             // Get messages
             Retrofit retrofit;
             retrofit = ApiClient.getApiClient();
@@ -66,11 +57,11 @@ public class BroadcastService extends Service {
             Call<ArrayList<Message>> call = null;
             call = apiInterface.getMessages();
             call.enqueue(messageCallback);
-            BroadcastService.this.handler.postDelayed(this, 5000);
+            MessageService.this.handler.postDelayed(this, 5000);
         }
     };
 
-    public BroadcastService() {
+    public MessageService() {
     }
 
     public void onCreate() {
@@ -84,7 +75,7 @@ public class BroadcastService extends Service {
     }
 
     private void DisplayLoggingInfo() {
-        Log.d("BroadcastService", "entered DisplayLoggingInfo");
+        Log.d("MessageService", "entered DisplayLoggingInfo");
         this.intent.putExtra("messages", messages);
         //this.intent.putExtra("time", (new Date()).toLocaleString());
         //this.intent.putExtra("counter", String.valueOf(++this.counter));
