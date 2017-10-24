@@ -27,7 +27,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
     public enum MessageType {
         WARNING, REGULAR;
-    };
+    }
+
+    ;
 
 
     private ImageButton warningMessageBtn, regularMessageBtn;
@@ -38,8 +40,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private RecyclerView messageRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RegularMessageAdapter adapter;
-    private int numOfReceievedRegularMessages;
-    private int numOfReceievedWarningMessages;
+    private int numOfReceievedRegularMessages, numOfReceievedWarningMessages;
+    private boolean clickedButton = false;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -80,7 +82,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
 
 
-
     }
 
 
@@ -98,14 +99,18 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
     public void onPause() {
         super.onPause();
-        this.unregisterReceiver(this.broadcastReceiver);
-        this.stopService(this.regularMessageIntent);
-        this.stopService(this.warningMessageIntent);
+        if(!clickedButton){
+            Toast.makeText(context, "ON PAUSE", Toast.LENGTH_SHORT).show();
+            this.unregisterReceiver(this.broadcastReceiver);
+            this.stopService(this.regularMessageIntent);
+            this.stopService(this.warningMessageIntent);
+        }
+
     }
 
     @Override
     public void onClick(View v) {
-
+        clickedButton = true;
         if (v.getId() == R.id.warningMessageBtn) {
             Toast.makeText(context, "WARNING", Toast.LENGTH_SHORT).show();
             Intent myIntent = new Intent(getApplicationContext(), ShowMessagesActivity.class);
