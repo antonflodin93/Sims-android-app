@@ -70,30 +70,30 @@ public class ShowMessagesActivity extends AppCompatActivity {
         this.setContentView(R.layout.activity_show_messages);
         context = this;
 
-        messageType = (MessageType) getIntent().getSerializableExtra("MESSAGETYPE");
-        if(messageType == MessageType.REGULAR){
-            regularMessages = (ArrayList<Message>) getIntent().getSerializableExtra("MESSAGES");
-        } else if(messageType == MessageType.WARNING){
-            warningMessages = (ArrayList<Message>) getIntent().getSerializableExtra("MESSAGES");
-        }
-
-        updateList();
-    }
-
-
-    private void updateList() {
         // Init variables
         messageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         layoutManager = new LinearLayoutManager(this);
         messageRecyclerView.setLayoutManager(layoutManager);
         messageRecyclerView.setHasFixedSize(true);
-        if(messageType == MessageType.WARNING){
-            warningAdapter = new WarningMessageAdapter(warningMessages);
-            messageRecyclerView.setAdapter(warningAdapter);
-        } else if(messageType == MessageType.REGULAR){
+
+        messageType = (MessageType) getIntent().getSerializableExtra("MESSAGETYPE");
+        if(messageType == MessageType.REGULAR){
+            regularMessages = (ArrayList<Message>) getIntent().getSerializableExtra("MESSAGES");
             regularAdapter = new RegularMessageAdapter(regularMessages);
             messageRecyclerView.setAdapter(regularAdapter);
+        } else if(messageType == MessageType.WARNING){
+            warningMessages = (ArrayList<Message>) getIntent().getSerializableExtra("MESSAGES");
+            warningAdapter = new WarningMessageAdapter(warningMessages);
+            messageRecyclerView.setAdapter(warningAdapter);
         }
+
+
+    }
+
+
+    private void updateList() {
+
+
 
     }
 
