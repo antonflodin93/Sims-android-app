@@ -18,7 +18,7 @@ import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
 import se.miun.android_app.model.Message;;
 
-public class MessageService extends Service {
+public class WarningMessageService extends Service {
     private static final String TAG = "MessageService";
     public static final String BROADCAST_ACTION = "com.websmithing.broadcasttest.displayevent";
     private final Handler handler = new Handler();
@@ -55,18 +55,18 @@ public class MessageService extends Service {
             retrofit = ApiClient.getApiClient();
             ApiInterface apiInterface = retrofit.create(ApiInterface.class);
             Call<ArrayList<Message>> call = null;
-            call = apiInterface.getMessages();
+            call = apiInterface.getWarningMessages();
             call.enqueue(messageCallback);
-            MessageService.this.handler.postDelayed(this, 5000);
+            WarningMessageService.this.handler.postDelayed(this, 5000);
         }
     };
 
-    public MessageService() {
+    public WarningMessageService() {
     }
 
     public void onCreate() {
         super.onCreate();
-        this.intent = new Intent("com.websmithing.broadcasttest.displayevent");
+        this.intent = new Intent("WarningMessageService");
     }
 
     public void onStart(Intent intent, int startId) {

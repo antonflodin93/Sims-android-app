@@ -8,35 +8,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import se.miun.android_app.Adapter.MessageAdapter;
-import se.miun.android_app.Adapter.RecyclerAdapter;
-import se.miun.android_app.R;
+import se.miun.android_app.Adapter.RegularMessageAdapter;
+import se.miun.android_app.Adapter.WarningMessageAdapter;
 import se.miun.android_app.EmployeeUnit.EmployeeUnitActivity.MessageType;
-import se.miun.android_app.Service.MessageService;
+import se.miun.android_app.R;
 import se.miun.android_app.model.Message;
-import se.miun.android_app.testing.ServiceTestActivity;
 
+// Show messages, either warning or regular
 public class ShowMessagesActivity extends AppCompatActivity {
 
-    private static final String TAG = "BroadcastTest";
-    private Intent intent;
     private ArrayList<Message> messages;
     private RecyclerView messageRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private MessageAdapter adapter;
+    private RegularMessageAdapter regularAdapter;
+    private WarningMessageAdapter warningAdapter;
+    private MessageType messageType;
+    private Context context;
 
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            ShowMessagesActivity.this.updateUI(intent);
-        }
-    };
 
     public ShowMessagesActivity() {
     }
@@ -44,31 +36,31 @@ public class ShowMessagesActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_show_messages);
-        this.intent = new Intent(this, MessageService.class);
+        context = this;
 
+        messageType = (MessageType) getIntent().getSerializableExtra("MESSAGETYPE");
+        messages = (ArrayList<Message>) getIntent().getSerializableExtra("MESSAGES");
+
+        // Init variables
         messageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         layoutManager = new LinearLayoutManager(this);
         messageRecyclerView.setLayoutManager(layoutManager);
         messageRecyclerView.setHasFixedSize(true);
 
+        updateList();
+    }
+
+    private void updateList() {
+        if(messageType == MessageType.WARNING){
+            warningAdapter = new WarningMessageAdapter(messages);
+            messageRecyclerView.setAdapter(warningAdapter);
+        } else if(messageType == MessageType.REGULAR){
+            Toast.makeText(context, "Size " + messages.size(), Toast.LENGTH_SHORT).show();
+            regularAdapter = new RegularMessageAdapter(messages);
+            messageRecyclerView.setAdapter(regularAdapter);
+        }
 
     }
 
-    public void onResume() {
-        super.onResume();
-        this.startService(this.intent);
-        this.registerReceiver(this.broadcastReceiver, new IntentFilter("com.websmithing.broadcasttest.displayevent"));
-    }
 
-    public void onPause() {
-        super.onPause();
-        this.unregisterReceiver(this.broadcastReceiver);
-        this.stopService(this.intent);
-    }
-
-    private void updateUI(Intent intent) {
-        messages = (ArrayList<Message>) intent.getSerializableExtra("messages");
-        adapter = new MessageAdapter(messages);
-        messageRecyclerView.setAdapter(adapter);
-    }
 }

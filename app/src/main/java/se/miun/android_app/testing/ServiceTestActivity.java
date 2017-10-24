@@ -7,13 +7,12 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import se.miun.android_app.R;
-import se.miun.android_app.Service.MessageService;
+import se.miun.android_app.Service.RegularMessageService;
 import se.miun.android_app.model.Message;
 
 public class ServiceTestActivity extends Activity {
@@ -33,7 +32,7 @@ public class ServiceTestActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_service_test);
-        this.intent = new Intent(this, MessageService.class);
+        this.intent = new Intent(this, RegularMessageService.class);
     }
 
     public void onResume() {

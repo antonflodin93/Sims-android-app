@@ -10,15 +10,14 @@ import android.widget.TextView;
 import java.util.List;
 
 import se.miun.android_app.R;
-import se.miun.android_app.model.Employee;
 import se.miun.android_app.model.Message;
 
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHolder> {
+public class RegularMessageAdapter extends RecyclerView.Adapter<RegularMessageAdapter.MyViewHolder> {
 
     // Stores the messages
     private List<Message> messages;
 
-    public MessageAdapter(List<Message> messages) {
+    public RegularMessageAdapter(List<Message> messages) {
 
         this.messages = messages;
     }
@@ -26,7 +25,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_row_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.regular_message_row_item, parent, false);
         return new MyViewHolder(view);
     }
 

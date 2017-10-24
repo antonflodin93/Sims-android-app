@@ -45,7 +45,11 @@ public interface ApiInterface {
     @DELETE("employees/{id}")
     Call<Employee> deleteEmployeeById(@Path("id") int id);
 
-    // Gets all the messages
-    @GET("messages")
-    Call<ArrayList<Message>> getMessages();
+    // Gets all the regular messages
+    @GET("messages/regular")
+    Call<ArrayList<Message>> getRegularMessages();
+
+    // Gets all the warning messages
+    @GET("messages/warning")
+    Call<ArrayList<Message>> getWarningMessages();
 }
