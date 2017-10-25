@@ -5,15 +5,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -50,7 +46,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             if (intent.getAction().equals("RegularMessageService")) {
                 regularMessages = (ArrayList<Message>) intent.getSerializableExtra("messages");
                 if (regularMessages.size() > numOfReceievedRegularMessages) {
-                    Toast.makeText(context, "Regular receivied " + regularMessages.size(), Toast.LENGTH_SHORT).show();
+                    regularMessageBtn.setBackgroundColor(Color.RED);
                     numOfReceievedRegularMessages = regularMessages.size();
                 }
                 //ShowMessagesActivity.this.updateUIRegularMessages(intent);
@@ -59,7 +55,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             } else if (intent.getAction().equals("WarningMessageService")) {
                 warningMessages = (ArrayList<Message>) intent.getSerializableExtra("messages");
                 if (warningMessages.size() > numOfReceievedWarningMessages) {
-                    Toast.makeText(context, "Warning receivied " + warningMessages.size(), Toast.LENGTH_SHORT).show();
+                    warningMessageBtn.setBackgroundColor(Color.RED);
                     numOfReceievedWarningMessages = warningMessages.size();
                 }
                 //ShowMessagesActivity.this.updateUIWarningMessages(intent);
@@ -100,28 +96,28 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     public void onPause() {
         super.onPause();
         if(!clickedButton){
-            Toast.makeText(context, "ON PAUSE", Toast.LENGTH_SHORT).show();
             this.unregisterReceiver(this.broadcastReceiver);
             this.stopService(this.regularMessageIntent);
             this.stopService(this.warningMessageIntent);
         }
 
+        // Maybee needed
+        //this.unregisterReceiver(this.broadcastReceiver);
     }
 
     @Override
     public void onClick(View v) {
         clickedButton = true;
         if (v.getId() == R.id.warningMessageBtn) {
-            Toast.makeText(context, "WARNING", Toast.LENGTH_SHORT).show();
             Intent myIntent = new Intent(getApplicationContext(), ShowMessagesActivity.class);
             myIntent.putExtra("MESSAGETYPE", MessageType.WARNING);
-            myIntent.putExtra("MESSAGES", warningMessages);
+            warningMessageBtn.setBackgroundColor(Color.BLACK);
             context.startActivity(myIntent);
 
         } else if (v.getId() == R.id.regularMessageBtn) {
             Intent myIntent = new Intent(getApplicationContext(), ShowMessagesActivity.class);
             myIntent.putExtra("MESSAGETYPE", MessageType.REGULAR);
-            myIntent.putExtra("MESSAGES", regularMessages);
+            regularMessageBtn.setBackgroundColor(Color.BLACK);
             context.startActivity(myIntent);
         }
     }
