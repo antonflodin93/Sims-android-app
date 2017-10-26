@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import se.miun.android_app.R;
 import se.miun.android_app.Service.RegularMessageService;
-import se.miun.android_app.model.Message;
+import se.miun.android_app.Model.Message;
 
 public class ServiceTestActivity extends Activity {
 

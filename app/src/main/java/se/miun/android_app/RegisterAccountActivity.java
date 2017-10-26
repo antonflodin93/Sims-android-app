@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +21,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
-import se.miun.android_app.model.Employee;
+import se.miun.android_app.Model.Employee;
 
 
 public class RegisterAccountActivity extends AppCompatActivity implements View.OnClickListener {

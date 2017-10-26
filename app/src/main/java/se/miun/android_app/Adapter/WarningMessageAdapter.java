@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import se.miun.android_app.R;
-import se.miun.android_app.model.Message;
+import se.miun.android_app.Model.Message;
 
 public class WarningMessageAdapter extends RecyclerView.Adapter<WarningMessageAdapter.MyViewHolder> {
 
@@ -32,7 +32,7 @@ public class WarningMessageAdapter extends RecyclerView.Adapter<WarningMessageAd
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        holder.messageLabelTextView.setText(messages.get(position).getMessageId());
+        holder.messageLabelTextView.setText(messages.get(position).getMessageLabel());
         holder.messageTextTextView.setText(messages.get(position).getMessageText());
     }
 

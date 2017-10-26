@@ -1,4 +1,4 @@
-package se.miun.android_app.model;
+package se.miun.android_app.Model;
 
 
 import com.google.gson.annotations.SerializedName;

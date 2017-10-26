@@ -12,8 +12,8 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
-import se.miun.android_app.model.Employee;
-import se.miun.android_app.model.Message;
+import se.miun.android_app.Model.Employee;
+import se.miun.android_app.Model.Message;
 
 public interface ApiInterface {
 

@@ -1,4 +1,4 @@
-package se.miun.android_app.model;
+package se.miun.android_app.Model;
 
 
 import com.google.gson.annotations.SerializedName;
@@ -17,6 +17,10 @@ public class Message implements Serializable {
     @SerializedName("messageLabel")
     private String messageLabel;
 
+    public Message(String messageLabel, String messageText) {
+        this.messageLabel = messageLabel;
+        this.messageText = messageText;
+    }
 
     public Message(){
 
@@ -30,10 +34,7 @@ public class Message implements Serializable {
         this.messageLabel = messageLabel;
     }
 
-    public Message(String messageLabel, String messageText) {
-        this.messageLabel = messageLabel;
-        this.messageText = messageText;
-    }
+
 
     public String getMessageId() {
         return messageId;

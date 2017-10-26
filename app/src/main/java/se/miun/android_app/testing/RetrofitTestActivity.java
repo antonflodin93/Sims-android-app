@@ -20,7 +20,7 @@ import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
 import se.miun.android_app.R;
 import se.miun.android_app.Adapter.RecyclerAdapter;
-import se.miun.android_app.model.Employee;
+import se.miun.android_app.Model.Employee;
 
 
 public class RetrofitTestActivity extends Activity implements View.OnClickListener {

@@ -3,7 +3,6 @@ package se.miun.android_app.Service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -16,7 +15,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
-import se.miun.android_app.model.Message;;
+import se.miun.android_app.Model.Message;;
 
 public class WarningMessageService extends Service {
     private static final String TAG = "MessageService";

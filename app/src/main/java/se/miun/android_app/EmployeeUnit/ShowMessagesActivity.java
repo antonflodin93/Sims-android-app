@@ -16,9 +16,7 @@ import se.miun.android_app.Adapter.RegularMessageAdapter;
 import se.miun.android_app.Adapter.WarningMessageAdapter;
 import se.miun.android_app.EmployeeUnit.EmployeeUnitActivity.MessageType;
 import se.miun.android_app.R;
-import se.miun.android_app.Service.RegularMessageService;
-import se.miun.android_app.Service.WarningMessageService;
-import se.miun.android_app.model.Message;
+import se.miun.android_app.Model.Message;
 
 // Show messages, either warning or regular
 public class ShowMessagesActivity extends AppCompatActivity {
@@ -80,6 +78,10 @@ public class ShowMessagesActivity extends AppCompatActivity {
         // Check if the user wants to display warning or regular messages
         messageType = (MessageType) getIntent().getSerializableExtra("MESSAGETYPE");
         if (messageType == MessageType.REGULAR) {
+            // Get the messages
+            regularMessages = (ArrayList<Message>) getIntent().getSerializableExtra("REGULARMESSAGES");
+            numOfReceievedRegularMessages = regularMessages.size();
+
             // Define the adapter and set adapter
             regularAdapter = new RegularMessageAdapter(regularMessages);
             layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -88,6 +90,10 @@ public class ShowMessagesActivity extends AppCompatActivity {
             messageRecyclerView.setAdapter(regularAdapter);
 
         } else if (messageType == MessageType.WARNING) {
+            // Get the messages
+            warningMessages = (ArrayList<Message>) getIntent().getSerializableExtra("WARNINGMESSAGES");
+            numOfReceievedWarningMessages = warningMessages.size();
+
             // Define the adapter and set adapter
             warningAdapter = new WarningMessageAdapter(warningMessages);
             layoutManager = new LinearLayoutManager(getApplicationContext());

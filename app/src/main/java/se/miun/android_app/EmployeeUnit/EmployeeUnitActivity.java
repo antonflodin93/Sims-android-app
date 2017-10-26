@@ -17,7 +17,7 @@ import se.miun.android_app.Adapter.RegularMessageAdapter;
 import se.miun.android_app.R;
 import se.miun.android_app.Service.RegularMessageService;
 import se.miun.android_app.Service.WarningMessageService;
-import se.miun.android_app.model.Message;
+import se.miun.android_app.Model.Message;
 
 public class EmployeeUnitActivity extends Activity implements View.OnClickListener {
 
@@ -58,7 +58,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     warningMessageBtn.setBackgroundColor(Color.RED);
                     numOfReceievedWarningMessages = warningMessages.size();
                 }
-                //ShowMessagesActivity.this.updateUIWarningMessages(intent);
             }
         }
     };
@@ -111,12 +110,14 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         if (v.getId() == R.id.warningMessageBtn) {
             Intent myIntent = new Intent(getApplicationContext(), ShowMessagesActivity.class);
             myIntent.putExtra("MESSAGETYPE", MessageType.WARNING);
+           myIntent.putExtra("WARNINGMESSAGES", warningMessages);
             warningMessageBtn.setBackgroundColor(Color.BLACK);
             context.startActivity(myIntent);
 
         } else if (v.getId() == R.id.regularMessageBtn) {
             Intent myIntent = new Intent(getApplicationContext(), ShowMessagesActivity.class);
             myIntent.putExtra("MESSAGETYPE", MessageType.REGULAR);
+            myIntent.putExtra("REGULARMESSAGES", regularMessages);
             regularMessageBtn.setBackgroundColor(Color.BLACK);
             context.startActivity(myIntent);
         }

@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import se.miun.android_app.R;
-import se.miun.android_app.model.Employee;
+import se.miun.android_app.Model.Employee;
 
 /*
 Usage:
