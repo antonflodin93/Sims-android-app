@@ -14,12 +14,24 @@ public class Message implements Serializable {
     @SerializedName("messageText")
     private String messageText;
 
+    @SerializedName("messageLabel")
+    private String messageLabel;
+
+
     public Message(){
 
     }
 
+    public String getMessageLabel() {
+        return messageLabel;
+    }
 
-    public Message(String messageText) {
+    public void setMessageLabel(String messageLabel) {
+        this.messageLabel = messageLabel;
+    }
+
+    public Message(String messageLabel, String messageText) {
+        this.messageLabel = messageLabel;
         this.messageText = messageText;
     }
 
