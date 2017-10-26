@@ -43,14 +43,13 @@
 
         <service
             android:name=".Service.WarningMessageService"
-            android:label="Warning message service"></service>
-
+            android:label="Warning message service" />
         <service
             android:name=".Service.RegularMessageService"
-            android:label="Regular message service"></service>
+            android:label="Regular message service" />
 
-
-        <activity android:name=".EmployeeUnit.ShowMessagesActivity"></activity>
+        <activity android:name=".EmployeeUnit.ShowMessagesActivity" />
+        <activity android:name=".MasterUnit.SendMessageActivity"></activity>
     </application>
 
 </manifest>
