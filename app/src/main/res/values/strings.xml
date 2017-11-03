@@ -19,4 +19,5 @@
     <string name="ble_on_off">Ble (on/off)</string>
     <string name="save_to_file">Save</string>
     <string name="edit_file_name">FileName</string>
+    <string name="sender_prompt">Choose sender</string>
 </resources>
