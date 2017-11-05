@@ -35,6 +35,7 @@ public class SendMessageActivity extends AppCompatActivity {
     private Context context;
     private ApiInterface apiInterface;
     private int HTTP_RESPONSE_ACCEPTED = 200;
+    private String company, employee;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,10 +131,7 @@ public class SendMessageActivity extends AppCompatActivity {
             } else if (senderType.equals("Everyone")) {
 
 
-            } else
-                Toast.makeText(parent.getContext(),
-                        "OnItemSelectedListener : " + parent.getItemAtPosition(position).toString(),
-                        Toast.LENGTH_SHORT).show();
+            }
 
         }
 
@@ -193,10 +191,23 @@ public class SendMessageActivity extends AppCompatActivity {
         }
     }
 
+    private class EmployeeInCompanyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            employee = parent.getItemAtPosition(position).toString();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    }
+
 
     private class EmployeeOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            employee = parent.getItemAtPosition(position).toString();
 
 
         }
@@ -210,6 +221,39 @@ public class SendMessageActivity extends AppCompatActivity {
     private class CompanyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            company = parent.getItemAtPosition(position).toString();
+            if(!company.equals("Select company to send message to...")){
+                getEmployeesInCompany();
+                employeesInCompanySpinner.setVisibility(View.VISIBLE);
+                Toast.makeText(context, "COmpany: " + company, Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+
+        private void getEmployeesInCompany() {
+            Retrofit retrofit;
+            retrofit = ApiClient.getApiClient();
+            apiInterface = retrofit.create(ApiInterface.class);
+            Call<ArrayList<Employee>> call = null;
+            call = apiInterface.getEmployeesInCompany(company);
+            call.enqueue(new Callback<ArrayList<Employee>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
+                    if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+                        // Clear the list of companies and add all companies
+                        employeeInCompanyList.clear();
+                        employeeInCompanyList.add("Select employee...");
+                        for (Employee e : response.body()) {
+                            employeeInCompanyList.add(e.getEmployeeFirstName() + " " + e.getEmployeeLastName() + " (" + e.getEmployeeCompany() + ")");
+                        }
+                    }
+                }
+                @Override
+                public void onFailure(Call<ArrayList<Employee>> call, Throwable t) {
+                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
 
         }
 
@@ -219,15 +263,5 @@ public class SendMessageActivity extends AppCompatActivity {
         }
     }
 
-    private class EmployeeInCompanyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-
-        }
-    }
 }
