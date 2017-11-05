@@ -30,12 +30,15 @@ import se.miun.android_app.R;
 public class SendMessageActivity extends AppCompatActivity {
 
     private Spinner senderTypeSpinner, employeeSpinner, companySpinner, employeesInCompanySpinner;
-    private List<String> senderTypeList, companyList, employeeList, employeeInCompanyList;
+    private List<String> senderTypeList = new ArrayList<>(), companyList = new ArrayList<>(), employeeList = new ArrayList<>(), employeeInCompanyList = new ArrayList<>();
     private List<Spinner> theSpinners = new ArrayList<>();
     private Context context;
     private ApiInterface apiInterface;
     private int HTTP_RESPONSE_ACCEPTED = 200;
     private String company, employee;
+    private String PROMPT_COMPANY_SPINNER_TEXT = "Select company to send message to...";
+    private String PROMPT_EMPLOYEE_SPINNER = "Select employee to send message to...";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +50,9 @@ public class SendMessageActivity extends AppCompatActivity {
         // Initialize the "senderto" spinner
         senderTypeSpinner = (Spinner) findViewById(R.id.senderTypeSpinner);
         senderTypeList = new ArrayList<>();
-        senderTypeList.add("Select one option...");
+        senderTypeList.add("Everyone");
         senderTypeList.add("Company");
         senderTypeList.add("Employee");
-        senderTypeList.add("Everyone");
         ArrayAdapter<String> senderTypeAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, senderTypeList);
         senderTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -62,7 +64,7 @@ public class SendMessageActivity extends AppCompatActivity {
         // Initilize company spinner
         companySpinner = (Spinner) findViewById(R.id.companySpinner);
         companyList = new ArrayList<>();
-        companyList.add("Select company to send message to...");
+        companyList.add(PROMPT_COMPANY_SPINNER_TEXT);
         ArrayAdapter<String> companyAdapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_spinner_item, companyList);
         companyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -71,10 +73,10 @@ public class SendMessageActivity extends AppCompatActivity {
         companySpinner.setOnItemSelectedListener(new CompanyOnItemSelectedListener());
         theSpinners.add(companySpinner);
 
-        // Initialize the "employeeSpinner" spinner
+        // Initialize the employee spinner
         employeeSpinner = (Spinner) findViewById(R.id.employeeSpinner);
         employeeList = new ArrayList<>();
-        employeeList.add("Select employee to send message to...");
+        employeeList.add(PROMPT_EMPLOYEE_SPINNER);
         ArrayAdapter<String> employeeAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, employeeList);
         employeeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -87,7 +89,7 @@ public class SendMessageActivity extends AppCompatActivity {
         // Initialize employeesincompany spinner
         employeesInCompanySpinner = (Spinner) findViewById(R.id.employeesInCompanySpinner);
         employeeInCompanyList = new ArrayList<>();
-        employeeInCompanyList.add("Select employee to send message to...");
+        employeeInCompanyList.add(PROMPT_EMPLOYEE_SPINNER);
         ArrayAdapter<String> employeeInCompanyAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, employeeInCompanyList);
         employeeInCompanyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -95,18 +97,7 @@ public class SendMessageActivity extends AppCompatActivity {
         employeesInCompanySpinner.setSelection(0);
         employeesInCompanySpinner.setOnItemSelectedListener(new EmployeeInCompanyOnItemSelectedListener());
         theSpinners.add(employeesInCompanySpinner);
-
-
     }
-
-    private void hideAllSpinnerExcept(Spinner spinner) {
-        for (Spinner s : theSpinners) {
-            if (!s.equals(spinner)) {
-                s.setVisibility(View.GONE);
-            }
-        }
-    }
-
 
     // Class that is used for listener for the sendertype spinner
     private class SenderTypeOnItemSelectedListener implements android.widget.AdapterView.OnItemSelectedListener {
@@ -125,16 +116,16 @@ public class SendMessageActivity extends AppCompatActivity {
 
                 employeeSpinner.setVisibility(View.VISIBLE);
                 companySpinner.setVisibility(View.GONE);
+                employeesInCompanySpinner.setVisibility(View.GONE);
                 getEmployees();
 
 
             } else if (senderType.equals("Everyone")) {
-
-
+                companySpinner.setVisibility(View.GONE);
+                employeeSpinner.setVisibility(View.GONE);
+                employeesInCompanySpinner.setVisibility(View.GONE);
             }
-
         }
-
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {        }
@@ -152,7 +143,7 @@ public class SendMessageActivity extends AppCompatActivity {
                     if (response.code() == HTTP_RESPONSE_ACCEPTED) {
                         // Clear the list of companies and add all companies
                         companyList.clear();
-                        companyList.add("Select company...");
+                        companyList.add(PROMPT_COMPANY_SPINNER_TEXT);
                         for (Company c : response.body()) {
                             companyList.add(c.getCompanyName());
                         }
@@ -177,7 +168,7 @@ public class SendMessageActivity extends AppCompatActivity {
                     if (response.code() == HTTP_RESPONSE_ACCEPTED) {
                         // Clear the list of companies and add all companies
                         employeeList.clear();
-                        employeeList.add("Select employee...");
+                        employeeList.add(PROMPT_EMPLOYEE_SPINNER);
                         for (Employee e : response.body()) {
                             employeeList.add(e.getEmployeeFirstName() + " " + e.getEmployeeLastName() + " (" + e.getEmployeeCompany() + ")");
                         }
@@ -222,9 +213,12 @@ public class SendMessageActivity extends AppCompatActivity {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             company = parent.getItemAtPosition(position).toString();
-            if(!company.equals("Select company to send message to...")){
+            if(!company.equals(PROMPT_COMPANY_SPINNER_TEXT)){
                 getEmployeesInCompany();
+                employeeInCompanyList.clear();
+                employeeInCompanyList.add(PROMPT_EMPLOYEE_SPINNER);
                 employeesInCompanySpinner.setVisibility(View.VISIBLE);
+                employeesInCompanySpinner.setSelection(0);
                 Toast.makeText(context, "COmpany: " + company, Toast.LENGTH_SHORT).show();
             }
 
