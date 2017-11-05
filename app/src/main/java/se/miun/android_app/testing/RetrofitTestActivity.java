@@ -68,7 +68,7 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
         } else if(view.getId() == R.id.listOneBtn){
             listOne();
         } else if(view.getId() == R.id.listAllBtn){
-            listAll();
+
         } else if(view.getId() == R.id.deleteLatestBtn){
             deleteOne();
         }
@@ -101,10 +101,7 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
 
             @Override
             public void onFailure(Call<Employee> call, Throwable t) {
-                // Some bug, needs to be checked
-                //Toast.makeText(mContext, t.getMessage(),
-                 //       Toast.LENGTH_LONG).show();
-                listAll();
+
             }
         });
     }
@@ -138,29 +135,6 @@ public class RetrofitTestActivity extends Activity implements View.OnClickListen
         });
     }
 
-    private void listAll() {
-        // Make call to get all employees
-        Call<List<Employee>> call = apiInterface.getEmployees();
-
-        call.enqueue(new Callback<List<Employee>>() {
-            @Override
-            public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
-                // Return the list of employees
-                employees = response.body();
-
-
-                // Initialize the adapter
-                adapter = new RecyclerAdapter(employees);
-                recyclerView.setAdapter(adapter);
-            }
-
-            @Override
-            public void onFailure(Call<List<Employee>> call, Throwable t) {
-                Toast.makeText(mContext, t.getMessage(),
-                        Toast.LENGTH_LONG).show();
-            }
-        });
-    }
 
     private void insertOne() {
         /*

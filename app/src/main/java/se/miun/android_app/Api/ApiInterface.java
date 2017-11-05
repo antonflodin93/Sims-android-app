@@ -37,7 +37,7 @@ public interface ApiInterface {
 
     // Gets all the employees
     @GET("employees")
-    Call<List<Employee>> getEmployees();
+    Call<ArrayList<Employee>> getEmployees();
 
     // Gets all employees in a company
     @GET("employees/company/{companyName}")
@@ -86,11 +86,11 @@ public interface ApiInterface {
 
     // Post regular message for a company
     @POST("messages/regular/{companyName}")
-    Call<ResponseBody> insertCompanyMessage(@Body Message message, @Path("companyName") String companyName);
+    Call<ArrayList<Message>> insertCompanyMessage(@Body Message message, @Path("companyName") String companyName);
 
     // Get regular message for a company
     @GET("messages/regular/{companyName}")
-    Call<ResponseBody> getCompanyMessage(@Path("companyName") String companyName);
+    Call<ArrayList<Message>> getCompanyMessage(@Path("companyName") String companyName);
 
 
     //
