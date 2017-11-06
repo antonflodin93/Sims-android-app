@@ -14,13 +14,12 @@
         />
 
 
-    <ImageView
-        android:id="@+id/indicatorImage"
-        android:layout_width="wrap_content"
+    <SeekBar
+        android:id="@+id/sb_demo"
+        style="@android:style/Widget.Holo.SeekBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/indicator"
-        android:visibility="gone"
+        android:layout_alignParentBottom="true"
  />
 
 </FrameLayout>

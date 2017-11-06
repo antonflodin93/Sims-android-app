@@ -2,8 +2,16 @@ package se.miun.android_app.testing;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.widget.SeekBar;
 import android.widget.Toast;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -17,15 +25,22 @@ import java.util.Vector;
 
 import se.miun.android_app.R;
 
-public class ImageTestActivity extends Activity implements View.OnTouchListener {
+import static android.R.attr.bitmap;
 
+public class ImageTestActivity extends Activity implements View.OnTouchListener, SeekBar.OnSeekBarChangeListener {
+    private SeekBar sbDemo;
+    private ImageView iv;
 
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imagetest);
 
-        ImageView iv = (ImageView) findViewById (R.id.mapImage);
+        iv = (ImageView) findViewById (R.id.mapImage);
+        sbDemo = (SeekBar) findViewById(R.id.sb_demo);
+        sbDemo.setOnSeekBarChangeListener(this);
+
+
         if (iv != null) {
             iv.setOnTouchListener (this);
         }
@@ -60,23 +75,23 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener 
                 float px = (x/w)*100;
                 float py = (y/h)*100;
 
-                int rowsize = 4;
-                int collumnsize = 6;
+                int collumnsize = 8;
+                int rowsize = 10;
                 //number of total areas
                 int areasize = rowsize*collumnsize;
 
                 Vector<Area> areas = new Vector<>(areasize);
 
                 //get xmax and ymax for the first area, hw is used since
-                float xmax = 100/rowsize;
-                float ymax = 100/collumnsize;
+                float xmax = 100/collumnsize;
+                float ymax = 100/rowsize;
 
                 //size is used for area position in vector
                 int size = 0;
 
                 //add areas according to row and collumn sizes
-                for(int c = 0; c<collumnsize; c++){
-                    for(int r = 0 ; r<rowsize; r++){
+                for(int c = 0; c<rowsize; c++){
+                    for(int r = 0 ; r<collumnsize; r++){
                         areas.add(size, new Area(xmax*(r), xmax*(r+1), ymax*(c), ymax*(c+1), r+1, c+1));
                         size++;
                     }
@@ -109,4 +124,19 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener 
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, px, context.getResources().getDisplayMetrics());
     }
 
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        iv.setScaleX(((float) (progress/100)));
+        iv.setScaleY(((float) (progress/100)));
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
 }
