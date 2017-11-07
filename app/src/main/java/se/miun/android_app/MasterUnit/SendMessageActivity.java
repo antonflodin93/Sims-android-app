@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -25,9 +27,10 @@ import se.miun.android_app.Api.ApiInterface;
 import se.miun.android_app.EmployeeUnit.EmployeeUnitActivity;
 import se.miun.android_app.Model.Company;
 import se.miun.android_app.Model.Employee;
+import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
 
-public class SendMessageActivity extends AppCompatActivity {
+public class SendMessageActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Spinner senderTypeSpinner, employeeSpinner, companySpinner, employeesInCompanySpinner;
     private List<String> senderTypeList = new ArrayList<>(), companyList = new ArrayList<>(), employeeList = new ArrayList<>(), employeeInCompanyList = new ArrayList<>();
@@ -38,6 +41,18 @@ public class SendMessageActivity extends AppCompatActivity {
     private String company, employee;
     private String PROMPT_COMPANY_SPINNER_TEXT = "Select company to send message to...";
     private String PROMPT_EMPLOYEE_SPINNER = "Select employee to send message to...";
+    private Button sendMessagesBtn;
+    private EditText messageEditText, subjectEditText;
+
+
+
+    private enum SenderType {
+        EVERYONE,
+        EMPLOYEE,
+        COMPANY;
+    }
+
+    private SenderType senderType;
 
 
     @Override
@@ -45,6 +60,12 @@ public class SendMessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_message);
         context = this;
+
+        // Init components
+        sendMessagesBtn = (Button) findViewById(R.id.sendMessagesBtn);
+        sendMessagesBtn.setOnClickListener(this);
+        messageEditText = (EditText) findViewById(R.id.messageEditText);
+        subjectEditText = (EditText) findViewById(R.id.subjectEditText);
 
 
         // Initialize the "senderto" spinner
@@ -99,28 +120,66 @@ public class SendMessageActivity extends AppCompatActivity {
         theSpinners.add(employeesInCompanySpinner);
     }
 
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.sendMessagesBtn){
+            sendMessage();
+        }
+
+    }
+
+    private void sendMessage() {
+        Message message = new Message(subjectEditText.getText().toString(), messageEditText.getText().toString());
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call;
+        call = apiInterface.insertBroadcastMessage(message);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+                    Toast.makeText(context, "Sent message", Toast.LENGTH_SHORT).show();
+
+                } else{
+                    try {
+                        Toast.makeText(context, "Code: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     // Class that is used for listener for the sendertype spinner
     private class SenderTypeOnItemSelectedListener implements android.widget.AdapterView.OnItemSelectedListener {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             // Check which kind of sendertype
-            String senderType = parent.getItemAtPosition(position).toString();
-            if (senderType.equals("Company")) {
+            String senderTypeString = parent.getItemAtPosition(position).toString();
+            if (senderTypeString.equals("Company")) {
+                senderType = SenderType.COMPANY;
                 // List companies
                 companySpinner.setVisibility(View.VISIBLE);
                 employeeSpinner.setVisibility(View.GONE);
                 getCompanies();
 
-            } else if (senderType.equals("Employee")) {
-
+            } else if (senderTypeString.equals("Employee")) {
+                senderType = SenderType.EMPLOYEE;
                 employeeSpinner.setVisibility(View.VISIBLE);
                 companySpinner.setVisibility(View.GONE);
                 employeesInCompanySpinner.setVisibility(View.GONE);
                 getEmployees();
 
 
-            } else if (senderType.equals("Everyone")) {
+            } else if (senderTypeString.equals("Everyone")) {
+                senderType = SenderType.EVERYONE;
                 companySpinner.setVisibility(View.GONE);
                 employeeSpinner.setVisibility(View.GONE);
                 employeesInCompanySpinner.setVisibility(View.GONE);
