@@ -47,7 +47,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
 
 
     private enum SenderType {
-        EVERYONE,
+        BROADCAST,
         EMPLOYEE,
         COMPANY;
     }
@@ -122,14 +122,57 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View view) {
+        // If button is pressed
         if(view.getId() == R.id.sendMessagesBtn){
-            sendMessage();
+            Message message = new Message(subjectEditText.getText().toString(), messageEditText.getText().toString());
+            if(senderType == SenderType.BROADCAST){
+                sendBroadCastMessage(message);
+
+            } else if(senderType == SenderType.COMPANY){
+                if(employee == PROMPT_EMPLOYEE_SPINNER){
+                    sendCompanyMessage(message);
+                } else {
+                    sendCompanyMessage(message);
+                    //sendEmployeeMessage(message);
+                }
+            } else if(senderType == SenderType.EMPLOYEE){
+                //sendEmployeeMessage(message);
+            }
         }
 
     }
 
-    private void sendMessage() {
-        Message message = new Message(subjectEditText.getText().toString(), messageEditText.getText().toString());
+
+
+    private void sendCompanyMessage(Message message) {
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call;
+        call = apiInterface.insertCompanyMessage(message, company);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+                    Toast.makeText(context, "Sent message", Toast.LENGTH_SHORT).show();
+
+                } else{
+                    try {
+                        Toast.makeText(context, "Code: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void sendBroadCastMessage(Message message) {
+
         Retrofit retrofit;
         retrofit = ApiClient.getApiClient();
         apiInterface = retrofit.create(ApiInterface.class);
@@ -179,7 +222,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
 
 
             } else if (senderTypeString.equals("Everyone")) {
-                senderType = SenderType.EVERYONE;
+                senderType = SenderType.BROADCAST;
                 companySpinner.setVisibility(View.GONE);
                 employeeSpinner.setVisibility(View.GONE);
                 employeesInCompanySpinner.setVisibility(View.GONE);

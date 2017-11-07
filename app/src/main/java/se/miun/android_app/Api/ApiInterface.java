@@ -86,7 +86,7 @@ public interface ApiInterface {
 
     // Post regular message for a company
     @POST("messages/regular/{companyName}")
-    Call<ArrayList<Message>> insertCompanyMessage(@Body Message message, @Path("companyName") String companyName);
+    Call<ResponseBody> insertCompanyMessage(@Body Message message, @Path("companyName") String companyName);
 
     // Get regular message for a company
     @GET("messages/regular/{companyName}")
