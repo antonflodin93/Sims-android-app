@@ -2,6 +2,7 @@ package se.miun.android_app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +37,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private final static int HTTP_RESPONSE_UNAUTHORIZED = 401;
     private final static int HTTP_RESPONSE_NOT_FOUND = 404;
     private final static int HTTP_RESPONSE_ACCEPTED = 202;
+    private ProgressBar loginprogressBar;
 
     private Callback<ResponseBody> loginCallback;
 
@@ -44,7 +47,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         // Get the usertype, master or employee
         userType = getIntent().getStringExtra("userType");
-        Toast.makeText(this, userType, Toast.LENGTH_SHORT).show();
 
 
         context = this;
@@ -57,16 +59,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
         accountNameEditText = (EditText) findViewById(R.id.accountNameEditText);
         errormessageTextView = (TextView) findViewById(R.id.errormessageTextView);
+        loginprogressBar = (ProgressBar) findViewById(R.id.loginprogressBar);
+        loginprogressBar.setVisibility(View.GONE);
+
+        loginprogressBar.setVisibility(View.GONE);
+        loginBtn.setEnabled(true);
+        createAccountBtn.setEnabled(true);
 
         if(userType.equals("MASTER")) {
             passwordEditText.setText("masterunit");
             accountNameEditText.setText("masterunit");
             createAccountBtn.setEnabled(false);
             createAccountBtn.setVisibility(View.GONE);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         } else{
             passwordEditText.setText("employee");
             accountNameEditText.setText("employee");
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
         // When the user is logging in
@@ -91,6 +101,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     errormessageTextView.setTextColor(Color.RED);
                     try {
                         errormessageTextView.setText(response.errorBody().string());
+                        loginprogressBar.setVisibility(View.GONE);
+                        loginBtn.setEnabled(true);
+                        createAccountBtn.setEnabled(true);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -105,6 +118,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        loginprogressBar.setVisibility(View.GONE);
+        loginBtn.setEnabled(true);
+        createAccountBtn.setEnabled(true);
+
+    }
+
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
+
+    }
+
     @Override
     public void onClick(View view) {
         // If the login was pressed
@@ -113,6 +144,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             checkCorrectCredentials();
             // If the create accound button was pressed
         } else if (view.getId() == R.id.createAccountBtn) {
+            loginprogressBar.setVisibility(View.VISIBLE);
+            loginBtn.setEnabled(false);
+            createAccountBtn.setEnabled(false);
             // Start the register activity
             Intent myIntent = new Intent(getApplicationContext(), RegisterAccountActivity.class);
             this.startActivity(myIntent);
@@ -133,6 +167,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             errormessageTextView.setTextColor(Color.RED);
             errormessageTextView.setText("You must enter both fields.");
         } else {
+            loginprogressBar.setVisibility(View.VISIBLE);
+            loginBtn.setEnabled(false);
+            createAccountBtn.setEnabled(false);
+
+
             // Login the user
             Retrofit retrofit;
             retrofit = ApiClient.getApiClient();
