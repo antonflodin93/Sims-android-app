@@ -17,9 +17,13 @@
     <SeekBar
         android:id="@+id/sb_demo"
         style="@android:style/Widget.Holo.SeekBar"
-        android:layout_width="match_parent"
+        android:layout_width="266dp"
+        android:paddingLeft="50dip"
+        android:paddingRight="50dip"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
- />
+        android:layout_centerHorizontal="true"
+        android:minWidth="30dip"
+        android:maxHeight="30dip"/>
 
 </FrameLayout>

@@ -125,9 +125,11 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
     }
 
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        iv.setScaleX(((float) (progress/100)));
-        iv.setScaleY(((float) (progress/100)));
+    public void onProgressChanged(SeekBar sbDemo, int progress, boolean fromUser) {
+        if(progress>19) {
+            iv.setScaleX(((float) (progress)/20f));
+            iv.setScaleY(((float) (progress)/20f));
+        }
     }
 
     @Override
