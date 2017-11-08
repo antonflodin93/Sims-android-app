@@ -34,26 +34,25 @@
         <activity android:name=".testing.ServiceTestActivity" />
         <activity android:name=".testing.OnTouchTestActivity" />
         <activity android:name=".testing.BluetoothLogger" />
-
         <activity android:name=".MainActivity" />
-        <activity android:name=".RegisterAccountActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".LoginActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".EmployeeUnit.EmployeeUnitActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".EmployeeUnit.ShowMessagesActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".MasterUnit.SendMessageActivity"
-            android:screenOrientation="landscape">
-        </activity>
-        <activity android:name=".MasterUnit.MasterUnitActivity"
-            android:screenOrientation="landscape"/>
-
-
-
+        <activity
+            android:name=".RegisterAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EmployeeUnit.EmployeeUnitActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EmployeeUnit.ShowMessagesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MasterUnit.SendMessageActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity
+            android:name=".MasterUnit.MasterUnitActivity"
+            android:screenOrientation="landscape" />
 
         <service
             android:name=".Service.WarningMessageService"
@@ -62,8 +61,7 @@
             android:name=".Service.RegularMessageService"
             android:label="Regular message service" />
 
-
-
+        <activity android:name=".MasterUnit.ListEmployeesActivity"></activity>
     </application>
 
 </manifest>

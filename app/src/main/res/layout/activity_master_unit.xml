@@ -25,10 +25,16 @@
 
     <Button
         android:id="@+id/sendMessagesBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Send messages"
         />
+
+    <Button
+        android:id="@+id/employeeListBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Employee List" />
 
 
 </LinearLayout>
