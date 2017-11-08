@@ -20,4 +20,11 @@
     <string name="save_to_file">Save</string>
     <string name="edit_file_name">FileName</string>
     <string name="sender_prompt">Choose sender</string>
+    <string name="send_to">Send to:</string>
+    <string name="send_to_employee">Send to employee</string>
+    <string name="subject">Subject:</string>
+    <string name="enter_a_subject">Enter a subject</string>
+    <string name="enter_message">Enter message</string>
+    <string name="cancel">Cancel</string>
+    <string name="send_message">Send message</string>
 </resources>

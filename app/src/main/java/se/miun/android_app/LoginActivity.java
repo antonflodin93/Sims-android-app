@@ -182,7 +182,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             // Create the basic authentication header
             String authorizedHeader = "Basic " + Base64.encodeToString(concatedUserPassword.getBytes(), Base64.NO_WRAP);
             Call<ResponseBody> call = null;
-            Toast.makeText(context, userType, Toast.LENGTH_LONG).show();
 
 
             if (userType.equals("MASTER")) {

@@ -2,6 +2,9 @@ package se.miun.android_app.Adapter;
 
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -11,6 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import se.miun.android_app.Model.Employee;
+import se.miun.android_app.R;
 
 public class EmployeeSpinnerAdapter extends ArrayAdapter<Employee> {
 
@@ -51,21 +55,27 @@ public class EmployeeSpinnerAdapter extends ArrayAdapter<Employee> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        TextView employeeTextView = new TextView(context);
+        TextView employeeSpinnerTextView = new TextView(context);
+        employeeSpinnerTextView.setTextColor(Color.BLACK);
+        employeeSpinnerTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
+
         Employee employee = employees.get(position);
-        employeeTextView.setText(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ")");
+        employeeSpinnerTextView.setText(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ")");
 
         // And finally return your dynamic (or custom) view for each spinner item
-        return employeeTextView;
+        return employeeSpinnerTextView;
     }
 
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        TextView employeeTextView = new TextView(context);
+        TextView employeeSpinnerTextView = new TextView(context);
+        employeeSpinnerTextView.setTextColor(Color.BLACK);
+        employeeSpinnerTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
         Employee employee = employees.get(position);
-        employeeTextView.setText(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ")");
+        employeeSpinnerTextView.setText(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ")");
 
-        return employeeTextView;
+        // And finally return your dynamic (or custom) view for each spinner item
+        return employeeSpinnerTextView;
     }
 }

@@ -47,7 +47,8 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".MasterUnit.SendMessageActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape">
+        </activity>
         <activity android:name=".MasterUnit.MasterUnitActivity"
             android:screenOrientation="landscape"/>
 

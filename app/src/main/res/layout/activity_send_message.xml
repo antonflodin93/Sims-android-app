@@ -10,13 +10,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="15dp"
+        android:paddingEnd="15dp"
         android:paddingTop="15dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
-            android:text="Send to: " />
+            android:text="@string/send_to" />
 
         <Spinner
             android:id="@+id/senderTypeSpinner"
@@ -36,9 +37,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="15dp"
-        android:paddingTop="15dp">
+        android:orientation="horizontal">
 
         <Spinner
             android:id="@+id/companySpinner"
@@ -53,7 +52,7 @@
             android:id="@+id/listEmployeesCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="List employees"
+            android:text="@string/send_to_employee"
             android:visibility="gone"
             />
 
@@ -76,20 +75,21 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="15dp"
+        android:paddingEnd="15dp"
         android:paddingTop="15dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
-            android:text="Subject: " />
+            android:text="@string/subject" />
 
         <EditText
             android:id="@+id/subjectEditText"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
-            android:hint="Enter a subject" />
+            android:hint="@string/enter_a_subject" />
     </LinearLayout>
 
     <LinearLayout
@@ -97,15 +97,16 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="15dp"
+        android:paddingEnd="15dp"
         android:paddingTop="15dp">
 
         <EditText
             android:id="@+id/messageEditText"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
             android:inputType="textMultiLine"
-            android:hint="Enter message"/>
+            android:hint="@string/enter_message"/>
     </LinearLayout>
 
 
@@ -114,21 +115,23 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="15dp"
+        android:paddingEnd="15dp"
         android:paddingTop="15dp">
 
         <Button
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/cancelSendMessageBtn"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
-            android:text="Cancel" />
+            android:text="@string/cancel" />
 
         <Button
             android:id="@+id/sendMessagesBtn"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
-            android:text="Send message " />
+            android:text="@string/send_message" />
     </LinearLayout>
 
 
