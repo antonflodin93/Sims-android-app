@@ -319,7 +319,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
     private class EmployeeOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            selectedEmployee = employeeAdapter.getSelectedEmployee();
+            selectedEmployee = Integer.parseInt(employeeAdapter.getItem(position).getEmployeeId());
         }
 
         @Override
@@ -344,7 +344,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
     private class EmployeeInCompanyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            selectedEmployee = employeeAdapter.getSelectedEmployee();
+            selectedEmployee = Integer.parseInt(employeeAdapter.getItem(position).getEmployeeId());
 
         }
 
@@ -398,7 +398,6 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                     employees = response.body();
                     employeeAdapter = new EmployeeSpinnerAdapter(SendMessageActivity.this,
                             android.R.layout.simple_spinner_item, employees);
-                    Toast.makeText(context, "Here " + employees.size(), Toast.LENGTH_SHORT).show();
                     employeeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     employeeSpinner.setAdapter(employeeAdapter);
                     employeeSpinner.setSelection(0);

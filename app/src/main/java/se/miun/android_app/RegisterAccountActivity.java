@@ -63,8 +63,9 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
         if (view.getId() == R.id.createNewAccount) {
             createNewAccount();
         } else if (view.getId() == R.id.cancelToLogin) {
-            Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
-            this.startActivity(myIntent);
+            Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+            intent.putExtra("userType", "EMPLOYEE");
+            startActivity(intent);
         }
 
     }
@@ -99,7 +100,6 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 // If employee could be added
                 if (response.code() == RESPONSE_OK) {
-                    Toast.makeText(context, "Response ok", Toast.LENGTH_SHORT).show();
                     // Go to login screen
                     Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
                     myIntent.putExtra("userType", "EMPLOYEE");
@@ -196,7 +196,6 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
             companyNameEditText.setHint(companyNameEditText.getHint());
             correct = false;
         }
-        Toast.makeText(context, "After check", Toast.LENGTH_SHORT).show();
         return correct;
     }
 

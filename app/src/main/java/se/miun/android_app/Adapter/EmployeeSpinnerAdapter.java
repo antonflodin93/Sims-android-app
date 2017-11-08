@@ -9,18 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import se.miun.android_app.Model.Employee;
-import se.miun.android_app.R;
 
 public class EmployeeSpinnerAdapter extends ArrayAdapter<Employee> {
 
     private Context context;
     private ArrayList<Employee> employees;
-    private int selectedEmployee;
 
     public EmployeeSpinnerAdapter(Context context, int textViewResourceId, ArrayList<Employee> employees) {
         super(context, textViewResourceId, employees);
@@ -28,9 +25,6 @@ public class EmployeeSpinnerAdapter extends ArrayAdapter<Employee> {
         this.employees = employees;
     }
 
-    public int getSelectedEmployee(){
-        return selectedEmployee;
-    }
 
     @Override
     public int getCount(){
@@ -39,8 +33,6 @@ public class EmployeeSpinnerAdapter extends ArrayAdapter<Employee> {
 
     @Override
     public Employee getItem(int position){
-        selectedEmployee = Integer.parseInt(employees.get(position).getEmployeeId());
-        Toast.makeText(context, "Got item: " + employees.get(position).getEmployeeId(), Toast.LENGTH_SHORT).show();
         return employees.get(position);
     }
 
