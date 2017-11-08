@@ -9,7 +9,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -31,7 +34,7 @@ import se.miun.android_app.Model.Employee;
 import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
 
-public class SendMessageActivity extends AppCompatActivity implements View.OnClickListener{
+public class SendMessageActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Spinner senderTypeSpinner, employeeSpinner, companySpinner, employeesInCompanySpinner;
     private List<String> senderTypeList = new ArrayList<>(), companyList = new ArrayList<>(), employeeList = new ArrayList<>(), employeeInCompanyList = new ArrayList<>();
@@ -47,7 +50,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
     private EditText messageEditText, subjectEditText;
     private EmployeeSpinnerAdapter employeeAdapter;
     private int selectedEmployee;
-
+    private CheckBox listEmployeesCheckBox;
 
 
     private enum SenderType {
@@ -70,6 +73,19 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
         sendMessagesBtn.setOnClickListener(this);
         messageEditText = (EditText) findViewById(R.id.messageEditText);
         subjectEditText = (EditText) findViewById(R.id.subjectEditText);
+        listEmployeesCheckBox = (CheckBox) findViewById(R.id.listEmployeesCheckBox);
+        listEmployeesCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                // If box is checked, display list of employees in the company, otherwise hide the spinner of the employees
+                if(isChecked){
+
+
+                } else {
+
+                }
+            }
+        });
 
 
         // Initialize the "senderto" spinner
@@ -107,7 +123,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                 employees);
 
         //ArrayAdapter<String> employeeAdapter = new ArrayAdapter<>(this,
-          //      android.R.layout.simple_spinner_item, employeeList);
+        //      android.R.layout.simple_spinner_item, employeeList);
         employeeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         employeeSpinner.setAdapter(employeeAdapter);
         employeeSpinner.setSelection(0);
@@ -131,25 +147,23 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View view) {
         // If button is pressed
-        if(view.getId() == R.id.sendMessagesBtn){
+        if (view.getId() == R.id.sendMessagesBtn) {
             Message message = new Message(subjectEditText.getText().toString(), messageEditText.getText().toString());
-            if(senderType == SenderType.BROADCAST){
+            if (senderType == SenderType.BROADCAST) {
                 sendBroadCastMessage(message);
 
-            } else if(senderType == SenderType.COMPANY){
-                if(employeeString == PROMPT_EMPLOYEE_SPINNER){
+            } else if (senderType == SenderType.COMPANY) {
+                if (employeeString == PROMPT_EMPLOYEE_SPINNER) {
                     sendCompanyMessage(message);
                 } else {
-                    sendCompanyMessage(message);
                     //sendEmployeeMessage(message);
                 }
-            } else if(senderType == SenderType.EMPLOYEE){
+            } else if (senderType == SenderType.EMPLOYEE) {
                 //sendEmployeeMessage(message);
             }
         }
 
     }
-
 
 
     private void sendCompanyMessage(Message message) {
@@ -164,7 +178,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
                     Toast.makeText(context, "Sent message", Toast.LENGTH_SHORT).show();
 
-                } else{
+                } else {
                     try {
                         Toast.makeText(context, "Code: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
@@ -172,6 +186,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                     }
                 }
             }
+
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -192,7 +207,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
                     Toast.makeText(context, "Sent message", Toast.LENGTH_SHORT).show();
 
-                } else{
+                } else {
                     try {
                         Toast.makeText(context, "Code: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
@@ -200,6 +215,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                     }
                 }
             }
+
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -238,7 +254,8 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
         }
 
         @Override
-        public void onNothingSelected(AdapterView<?> parent) {        }
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
 
 
         private void getCompanies() {
@@ -259,6 +276,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                         }
                     }
                 }
+
                 @Override
                 public void onFailure(Call<ArrayList<Company>> call, Throwable t) {
                     Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -266,7 +284,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
             });
         }
 
-        private void getEmployees(){
+        private void getEmployees() {
             Retrofit retrofit;
             retrofit = ApiClient.getApiClient();
             apiInterface = retrofit.create(ApiInterface.class);
@@ -296,6 +314,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                         }
                     }
                 }
+
                 @Override
                 public void onFailure(Call<ArrayList<Employee>> call, Throwable t) {
                     Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -336,7 +355,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             company = parent.getItemAtPosition(position).toString();
-            if(!company.equals(PROMPT_COMPANY_SPINNER_TEXT)){
+            if (!company.equals(PROMPT_COMPANY_SPINNER_TEXT)) {
                 getEmployeesInCompany();
                 employeeInCompanyList.clear();
                 employeeInCompanyList.add(PROMPT_EMPLOYEE_SPINNER);
@@ -359,7 +378,14 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                 public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
                     if (response.code() == HTTP_RESPONSE_ACCEPTED) {
                         employees = response.body();
-                        Toast.makeText(context, "Size " + employees.size(), Toast.LENGTH_SHORT).show();
+                        employeeAdapter = new EmployeeSpinnerAdapter(SendMessageActivity.this,
+                                android.R.layout.simple_spinner_item,
+                                employees);
+
+                        //ArrayAdapter<String> employeeAdapter = new ArrayAdapter<>(this,
+                        //      android.R.layout.simple_spinner_item, employeeList);
+                        employeeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        employeeSpinner.setAdapter(employeeAdapter);
                         // Clear the list of companies and add all companies
                         employeeInCompanyList.clear();
                         employeeInCompanyList.add("Select employee...");
@@ -368,6 +394,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                         }
                     }
                 }
+
                 @Override
                 public void onFailure(Call<ArrayList<Employee>> call, Throwable t) {
                     Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();

@@ -53,7 +53,7 @@ public class EmployeeSpinnerAdapter extends ArrayAdapter<Employee> {
 
         TextView employeeTextView = new TextView(context);
         Employee employee = employees.get(position);
-        employeeTextView.setText(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + "(" + employee.getEmployeeCompany() + ")");
+        employeeTextView.setText(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ")");
 
         // And finally return your dynamic (or custom) view for each spinner item
         return employeeTextView;
@@ -64,7 +64,7 @@ public class EmployeeSpinnerAdapter extends ArrayAdapter<Employee> {
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
         TextView employeeTextView = new TextView(context);
         Employee employee = employees.get(position);
-        employeeTextView.setText(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + "(" + employee.getEmployeeCompany() + ")");
+        employeeTextView.setText(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ")");
 
         return employeeTextView;
     }
