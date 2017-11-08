@@ -22,6 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import se.miun.android_app.Adapter.EmployeeSpinnerAdapter;
 import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
 import se.miun.android_app.EmployeeUnit.EmployeeUnitActivity;
@@ -34,15 +35,18 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
 
     private Spinner senderTypeSpinner, employeeSpinner, companySpinner, employeesInCompanySpinner;
     private List<String> senderTypeList = new ArrayList<>(), companyList = new ArrayList<>(), employeeList = new ArrayList<>(), employeeInCompanyList = new ArrayList<>();
+    private ArrayList<Employee> employees = new ArrayList<>();
     private List<Spinner> theSpinners = new ArrayList<>();
     private Context context;
     private ApiInterface apiInterface;
     private int HTTP_RESPONSE_ACCEPTED = 200;
-    private String company, employee;
+    private String company, employeeString;
     private String PROMPT_COMPANY_SPINNER_TEXT = "Select company to send message to...";
     private String PROMPT_EMPLOYEE_SPINNER = "Select employee to send message to...";
     private Button sendMessagesBtn;
     private EditText messageEditText, subjectEditText;
+    private EmployeeSpinnerAdapter employeeAdapter;
+    private int selectedEmployee;
 
 
 
@@ -98,8 +102,12 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
         employeeSpinner = (Spinner) findViewById(R.id.employeeSpinner);
         employeeList = new ArrayList<>();
         employeeList.add(PROMPT_EMPLOYEE_SPINNER);
-        ArrayAdapter<String> employeeAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, employeeList);
+        employeeAdapter = new EmployeeSpinnerAdapter(SendMessageActivity.this,
+                android.R.layout.simple_spinner_item,
+                employees);
+
+        //ArrayAdapter<String> employeeAdapter = new ArrayAdapter<>(this,
+          //      android.R.layout.simple_spinner_item, employeeList);
         employeeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         employeeSpinner.setAdapter(employeeAdapter);
         employeeSpinner.setSelection(0);
@@ -129,7 +137,7 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                 sendBroadCastMessage(message);
 
             } else if(senderType == SenderType.COMPANY){
-                if(employee == PROMPT_EMPLOYEE_SPINNER){
+                if(employeeString == PROMPT_EMPLOYEE_SPINNER){
                     sendCompanyMessage(message);
                 } else {
                     sendCompanyMessage(message);
@@ -269,6 +277,18 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                 public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
                     if (response.code() == HTTP_RESPONSE_ACCEPTED) {
                         // Clear the list of companies and add all companies
+                        employees = response.body();
+                        employeeAdapter = new EmployeeSpinnerAdapter(SendMessageActivity.this,
+                                android.R.layout.simple_spinner_item,
+                                employees);
+
+                        //ArrayAdapter<String> employeeAdapter = new ArrayAdapter<>(this,
+                        //      android.R.layout.simple_spinner_item, employeeList);
+                        employeeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        employeeSpinner.setAdapter(employeeAdapter);
+
+
+                        Toast.makeText(context, "Size " + employees.size(), Toast.LENGTH_SHORT).show();
                         employeeList.clear();
                         employeeList.add(PROMPT_EMPLOYEE_SPINNER);
                         for (Employee e : response.body()) {
@@ -287,7 +307,9 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
     private class EmployeeInCompanyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            employee = parent.getItemAtPosition(position).toString();
+            employeeString = parent.getItemAtPosition(position).toString();
+            selectedEmployee = employeeAdapter.getSelectedEmployee();
+
         }
 
         @Override
@@ -300,9 +322,8 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
     private class EmployeeOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            employee = parent.getItemAtPosition(position).toString();
-
-
+            employeeString = parent.getItemAtPosition(position).toString();
+            selectedEmployee = employeeAdapter.getSelectedEmployee();
         }
 
         @Override
@@ -337,6 +358,8 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
                 @Override
                 public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
                     if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+                        employees = response.body();
+                        Toast.makeText(context, "Size " + employees.size(), Toast.LENGTH_SHORT).show();
                         // Clear the list of companies and add all companies
                         employeeInCompanyList.clear();
                         employeeInCompanyList.add("Select employee...");
