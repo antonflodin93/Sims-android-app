@@ -30,8 +30,6 @@
         </activity>
         <activity android:name=".testing.ImageTestActivity" />
         <activity android:name=".testing.RangetestActivity" />
-        <activity android:name=".testing.RetrofitTestActivity" />
-        <activity android:name=".testing.ServiceTestActivity" />
         <activity android:name=".testing.OnTouchTestActivity" />
         <activity android:name=".testing.BluetoothLogger" />
         <activity android:name=".MainActivity" />

@@ -3,6 +3,8 @@ package se.miun.android_app.MasterUnit;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +19,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import se.miun.android_app.Adapter.EmployeeRecycleViewAdapter;
 import se.miun.android_app.Adapter.EmployeeSpinnerAdapter;
 import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
@@ -25,9 +28,11 @@ import se.miun.android_app.R;
 
 public class ListEmployeesActivity extends AppCompatActivity {
     private static final int HTTP_RESPONSE_ACCEPTED = 200;
-    private ListView employeeListView;
-    private ArrayList<String> employees = new ArrayList<>();
-    private ArrayAdapter<String> employeeAdapter;
+    private ArrayList<Employee> employees = new ArrayList<>();
+    private RecyclerView employeeRecycleView;
+    private RecyclerView.LayoutManager layoutManager;
+    private EmployeeRecycleViewAdapter employeeAdapter;
+
     private Context context;
 
     @Override
@@ -37,13 +42,15 @@ public class ListEmployeesActivity extends AppCompatActivity {
 
         // Init components
         context = this;
-        employeeListView = (ListView) findViewById(R.id.employeeListView);
-        employeeAdapter = new ArrayAdapter<String>(ListEmployeesActivity.this, android.R.layout.simple_list_item_1, employees);
-        employeeListView.setAdapter(employeeAdapter);
+        employeeRecycleView = (RecyclerView) findViewById(R.id.employeeRecyclerView);
+        layoutManager = new LinearLayoutManager(this);
+        employeeRecycleView.setLayoutManager(layoutManager);
+        employeeRecycleView.setHasFixedSize(true);
         getEmployees();
 
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -58,6 +65,7 @@ public class ListEmployeesActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                employeeAdapter.getFilter().filter(query);
                 return false;
             }
 
@@ -73,6 +81,8 @@ public class ListEmployeesActivity extends AppCompatActivity {
     }
 
 
+
+
     private void getEmployees() {
         Retrofit retrofit;
         retrofit = ApiClient.getApiClient();
@@ -84,11 +94,11 @@ public class ListEmployeesActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
 
-                    for(Employee e : response.body()){
-                        employees.add(e.getEmployeeFirstName() + " " + e.getEmployeeLastName() + " " + e.getEmployeeCompany() + " ");
-                    }
+                    employees = response.body();
+                    employeeAdapter = new EmployeeRecycleViewAdapter(employees);
+                    employeeRecycleView.setAdapter(employeeAdapter);
 
-                    employeeAdapter.notifyDataSetChanged();
+                    //employeeAdapter.notifyDataSetChanged();
 
                 }
             }
