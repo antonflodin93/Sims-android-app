@@ -2,6 +2,7 @@ package se.miun.android_app.testing;
 
 import android.app.Activity;
 import android.content.Context;
+import android.gesture.Gesture;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,6 +12,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.GestureDetector;
+import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import android.os.Bundle;
@@ -20,10 +23,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import android.widget.ImageView;
-
+import android.widget.LinearLayout.LayoutParams;
 import java.util.Vector;
 
-import android.widget.LinearLayout.LayoutParams;
 
 import se.miun.android_app.R;
 
@@ -33,11 +35,12 @@ import static android.R.attr.progress;
 public class ImageTestActivity extends Activity implements View.OnTouchListener, SeekBar.OnSeekBarChangeListener {
     private SeekBar sbDemo;
     private ImageView iv;
-    private LayoutParams layoutParams;
     int windowwidth;
     int windowheight;
     Context context;
     int THRESHOLDVALUE_SEEKBAR = 20;
+    float zoomfactor;
+    float xstart, ystart, xend, yend, diffy, diffx;
 
 
     @Override
@@ -53,6 +56,8 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
         windowwidth = getWindowManager().getDefaultDisplay().getWidth();
         windowheight = getWindowManager().getDefaultDisplay().getHeight();
 
+        GestureDetector myG;
+        myG = new GestureDetector(this,new Gesture());
 
 
 
@@ -71,8 +76,15 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
         super.onTouchEvent(event);
         final int eventAction = event.getAction();
         switch (eventAction) {
-            case MotionEvent.ACTION_DOWN:
 
+            case MotionEvent.ACTION_DOWN:
+                xstart = event.getX();
+                ystart = event.getY();
+                diffx = xstart-view.getX();
+                diffy = ystart-view.getY();
+
+
+                /*
 
                 // Get the coordinates of the point of touch
                 float x = event.getX();
@@ -88,8 +100,8 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
                 float px = (x / w) * 100;
                 float py = (y / h) * 100;
 
-                int collumnsize = 2;
-                int rowsize = 3;
+                int collumnsize = 8;
+                int rowsize = 10;
                 //number of total areas
                 int areasize = rowsize * collumnsize;
 
@@ -121,8 +133,27 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
 
                 //Toast.makeText(ImageTestActivity.this, "Clicked: " + areas.get(3).getxmin() + ", " + areas.get(3).getxmax() , Toast.LENGTH_SHORT).show();
                 // Toast.makeText(ImageTestActivity.this, "Clicked: " + xmax + ", " + ymax , Toast.LENGTH_SHORT).show();
+                */
 
                 break;
+
+
+
+
+            case MotionEvent.ACTION_MOVE:
+                view.setX(event.getX()-diffx);
+                view.setY(event.getY()-diffy);
+
+
+                break;
+
+            case MotionEvent.ACTION_UP:
+
+
+
+
+                break;
+
 
 
 
@@ -142,8 +173,10 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
     public void onProgressChanged(SeekBar sbDemo, int progress, boolean fromUser) {
 
         if(progress > THRESHOLDVALUE_SEEKBAR){
+            //scaleValue = (float) (progress)/20f;
             iv.setScaleX(((float) (progress)/20f));
             iv.setScaleY(((float) (progress)/20f));
+            zoomfactor = progress/20f;
         } else{
             iv.setScaleX(((float) 1));
             iv.setScaleY(((float) 1));
@@ -173,5 +206,29 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
         Toast.makeText(context, "progress: " + progress/20f, Toast.LENGTH_SHORT).show();
         */
 
+    }
+
+
+
+    class Gesture extends GestureDetector.SimpleOnGestureListener{
+        public boolean onSingleTapUp(MotionEvent ev) {
+            return true;
+        }
+
+        public void onLongPress(MotionEvent ev) {
+        }
+
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+                                float distanceY) {
+            Toast.makeText(context, "SCROLLED: " + distanceX + ", " + distanceY, Toast.LENGTH_SHORT).show();
+            return true;
+
+        }
+
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+                               float velocityY) {
+            return true;
+
+        }
     }
 }
