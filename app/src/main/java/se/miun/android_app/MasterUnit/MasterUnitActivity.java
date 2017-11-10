@@ -12,7 +12,7 @@ import se.miun.android_app.EmployeeUnit.EmployeeUnitActivity;
 import se.miun.android_app.R;
 
 public class MasterUnitActivity extends AppCompatActivity implements View.OnClickListener{
-    private Button sendMessagesBtn;
+    private Button sendMessagesBtn, employeeListBtn;
     private Context context;
 
     @Override
@@ -24,12 +24,18 @@ public class MasterUnitActivity extends AppCompatActivity implements View.OnClic
         // Init the components
         sendMessagesBtn = (Button) findViewById(R.id.sendMessagesBtn);
         sendMessagesBtn.setOnClickListener(this);
+        employeeListBtn = (Button) findViewById(R.id.employeeListBtn);
+        employeeListBtn.setOnClickListener(this);
+
     }
 
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.sendMessagesBtn){
             Intent myIntent = new Intent(getApplicationContext(), SendMessageActivity.class);
+            context.startActivity(myIntent);
+        } else if(view.getId() == R.id.employeeListBtn){
+            Intent myIntent = new Intent(getApplicationContext(), ListEmployeesActivity.class);
             context.startActivity(myIntent);
         }
 

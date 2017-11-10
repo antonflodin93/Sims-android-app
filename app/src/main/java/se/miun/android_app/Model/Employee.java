@@ -41,6 +41,24 @@ public class Employee {
         this.employeeCompany = employeeCompany;
     }
 
+    public Employee(String employeeFirstName, String employeeLastName, String employeeUsername,
+                    String employeeEmail, String employeePhonenumber, String employeeCompany) {
+        this.employeeFirstName = employeeFirstName;
+        this.employeeLastName = employeeLastName;
+        this.employeeUsername = employeeUsername;
+        this.employeeEmail = employeeEmail;
+        this.employeePhonenumber = employeePhonenumber;
+        this.employeeCompany = employeeCompany;
+    }
+
+
+    public Employee(String employeeFirstName, String employeeLastName, String employeeCompany) {
+        this.employeeFirstName = employeeFirstName;
+        this.employeeLastName = employeeLastName;
+        this.employeeCompany = employeeCompany;
+    }
+
+
     public String getEmployeeId() {
         return employeeId;
     }

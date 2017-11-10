@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:background="@drawable/border"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/employeeNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"
+        android:gravity="center_vertical"
+        android:layout_marginStart="25dp"
+        android:text="asdfsad"
+        android:textSize="15dp"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/employeeCompanyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"
+        android:gravity="center_vertical"
+        android:layout_marginStart="25dp"
+        android:text="asdfsad"
+        android:textSize="15dp"
+        android:textStyle="italic" />
+
+
+
+
+</LinearLayout>

@@ -17,9 +17,15 @@ public class Message implements Serializable {
     @SerializedName("messageLabel")
     private String messageLabel;
 
+    @SerializedName("messageType")
+    private String messageType;
+
+
+
     public Message(String messageLabel, String messageText) {
         this.messageLabel = messageLabel;
         this.messageText = messageText;
+        this.messageType = "REGULAR";
     }
 
     public Message(){

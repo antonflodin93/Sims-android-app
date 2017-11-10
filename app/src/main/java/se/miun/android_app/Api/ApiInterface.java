@@ -77,19 +77,19 @@ public interface ApiInterface {
     Call<ResponseBody> insertBroadcastMessage(@Body Message message);
 
     // Post regular message for an employee
-    @POST("messages/regular/{employeeId}")
+    @POST("messages/regular/employee/{employeeId}")
     Call<ResponseBody> insertEmployeeMessage(@Body Message message, @Path("employeeId") int employeeId);
 
     // Get regular message for an employee
-    @GET("messages/regular/{employeeId}")
+    @GET("messages/regular/employee/{employeeId}")
     Call<ArrayList<Message>> getEmployeeMessage(@Path("employeeId") int employeeId);
 
     // Post regular message for a company
-    @POST("messages/regular/{companyName}")
-    Call<ArrayList<Message>> insertCompanyMessage(@Body Message message, @Path("companyName") String companyName);
+    @POST("messages/regular/company/{companyName}")
+    Call<ResponseBody> insertCompanyMessage(@Body Message message, @Path("companyName") String companyName);
 
     // Get regular message for a company
-    @GET("messages/regular/{companyName}")
+    @GET("messages/regular/company/{companyName}")
     Call<ArrayList<Message>> getCompanyMessage(@Path("companyName") String companyName);
 
 

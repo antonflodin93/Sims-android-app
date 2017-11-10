@@ -9,13 +9,10 @@ import android.widget.Button;
 import se.miun.android_app.testing.BluetoothLogger;
 import se.miun.android_app.testing.ImageTestActivity;
 //import se.miun.android_app.testing.OnTouchTestActivity;
-import se.miun.android_app.testing.OnTouchTestActivity;
 import se.miun.android_app.testing.RangetestActivity;
-import se.miun.android_app.testing.RetrofitTestActivity;
-import se.miun.android_app.testing.ServiceTestActivity;
 
 public class MainActivity extends Activity implements View.OnClickListener{
-    private Button rangeTestBtn, testCoordinateSystemBtn, imageTestBtn, retrofitTestBtn, ontouchTestBtn, bluetoothLogger, testServiceBtn;
+    private Button rangeTestBtn, testCoordinateSystemBtn, imageTestBtn, ontouchTestBtn, bluetoothLogger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,16 +24,12 @@ public class MainActivity extends Activity implements View.OnClickListener{
         rangeTestBtn.setOnClickListener(this);
         testCoordinateSystemBtn = (Button) findViewById(R.id.testCoordinateSystemBtn);
         testCoordinateSystemBtn.setOnClickListener(this);
-        retrofitTestBtn = (Button) findViewById(R.id.retrofitTestBtn);
-        retrofitTestBtn.setOnClickListener(this);
         ontouchTestBtn = (Button) findViewById(R.id.ontouchTestBtn);
         ontouchTestBtn.setOnClickListener(this);
         bluetoothLogger =(Button) findViewById(R.id.bluetoothLoggerButton);
         bluetoothLogger.setOnClickListener(this);
         imageTestBtn = (Button) findViewById(R.id.imageTestBtn);
         imageTestBtn.setOnClickListener(this);
-        testServiceBtn = (Button) findViewById(R.id.testServiceBtn);
-        testServiceBtn.setOnClickListener(this);
 
 
     }
@@ -52,10 +45,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
             // Start the coordinate system test activity
             Intent myIntent = new Intent(getApplicationContext(), ImageTestActivity.class);
             this.startActivity(myIntent);
-        } else if(view.getId() == R.id.retrofitTestBtn) {
-            // Start Retrofit test activity
-            Intent myIntent = new Intent(getApplicationContext(), RetrofitTestActivity.class);
-            this.startActivity(myIntent);
         }
 /*          else if(view.getId() == R.id.ontouchTestBtn) {
             // Start Retrofit test activity
@@ -70,10 +59,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
         else if( view.getId() == R.id.imageTestBtn ) {
             // Start the ImageTest activity
             Intent myIntent = new Intent(getApplicationContext(), ImageTestActivity.class);
-            this.startActivity(myIntent);
-        }
-        else if(view.getId() == R.id.testServiceBtn){
-            Intent myIntent = new Intent(getApplicationContext(), ServiceTestActivity.class);
             this.startActivity(myIntent);
         }
     }
