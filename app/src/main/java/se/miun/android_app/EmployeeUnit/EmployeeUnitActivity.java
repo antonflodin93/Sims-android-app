@@ -5,12 +5,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
 import se.miun.android_app.Adapter.RegularMessageAdapter;
@@ -25,7 +31,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         WARNING, REGULAR;
     }
 
-    ;
 
 
     private ImageButton warningMessageBtn, regularMessageBtn;
@@ -38,6 +43,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private RegularMessageAdapter adapter;
     private int numOfReceievedRegularMessages, numOfReceievedWarningMessages;
     private boolean clickedButton = false;
+    private Bitmap bmp;
+    private ImageView mapImageView;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -76,7 +83,28 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         this.regularMessageIntent = new Intent(this, RegularMessageService.class);
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
 
+        mapImageView = (ImageView) findViewById(R.id.mapImageView);
 
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    InputStream in = new URL("http://193.10.119.34:8080/WS/webapi/floorplans/testimage.png").openStream();
+                    bmp = BitmapFactory.decodeStream(in);
+                } catch (Exception e) {
+                    // log error
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                if (bmp != null)
+                    mapImageView.setImageBitmap(bmp);
+            }
+
+        }.execute();
     }
 
 
