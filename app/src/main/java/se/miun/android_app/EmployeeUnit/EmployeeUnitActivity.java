@@ -85,6 +85,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         mapImageView = (ImageView) findViewById(R.id.mapImageView);
 
+        /*
 
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -105,6 +106,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             }
 
         }.execute();
+        */
     }
 
 

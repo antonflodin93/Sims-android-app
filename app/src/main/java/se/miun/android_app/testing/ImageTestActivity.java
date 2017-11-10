@@ -22,10 +22,13 @@ import android.view.View;
 import android.widget.ImageView;
 
 import java.util.Vector;
+
 import android.widget.LinearLayout.LayoutParams;
+
 import se.miun.android_app.R;
 
 import static android.R.attr.bitmap;
+import static android.R.attr.progress;
 
 public class ImageTestActivity extends Activity implements View.OnTouchListener, SeekBar.OnSeekBarChangeListener {
     private SeekBar sbDemo;
@@ -33,27 +36,33 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
     private LayoutParams layoutParams;
     int windowwidth;
     int windowheight;
+    Context context;
+    int THRESHOLDVALUE_SEEKBAR = 20;
 
 
-    @Override public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imagetest);
 
-        iv = (ImageView) findViewById (R.id.mapImage);
+        iv = (ImageView) findViewById(R.id.mapImage);
         sbDemo = (SeekBar) findViewById(R.id.sb_demo);
         sbDemo.setOnSeekBarChangeListener(this);
+        sbDemo.setProgress(THRESHOLDVALUE_SEEKBAR);
 
         windowwidth = getWindowManager().getDefaultDisplay().getWidth();
         windowheight = getWindowManager().getDefaultDisplay().getHeight();
 
 
+
+
         if (iv != null) {
-            iv.setOnTouchListener (this);
+            iv.setOnTouchListener(this);
         }
 
+        context = this;
+
     }
-
-
 
 
     // When the screen has been touched
@@ -61,10 +70,8 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
     public boolean onTouch(View view, MotionEvent event) {
         super.onTouchEvent(event);
         final int eventAction = event.getAction();
-        switch(eventAction) {
+        switch (eventAction) {
             case MotionEvent.ACTION_DOWN:
-
-
 
 
                 // Get the coordinates of the point of touch
@@ -72,33 +79,33 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
                 float y = event.getY();
 
                 //creates an object dm that contain information about devicemetrics
-                DisplayMetrics dm  = getResources().getDisplayMetrics();
+                DisplayMetrics dm = getResources().getDisplayMetrics();
                 //gets maximum width and height of device in terms of pixels
                 float w = dm.widthPixels;
                 float h = dm.heightPixels;
 
                 //px is the x coordinate varying from 0-100 on screen touch, py is the same
-                float px = (x/w)*100;
-                float py = (y/h)*100;
+                float px = (x / w) * 100;
+                float py = (y / h) * 100;
 
-                int collumnsize = 8;
-                int rowsize = 10;
+                int collumnsize = 2;
+                int rowsize = 3;
                 //number of total areas
-                int areasize = rowsize*collumnsize;
+                int areasize = rowsize * collumnsize;
 
                 Vector<Area> areas = new Vector<>(areasize);
 
                 //get xmax and ymax for the first area, hw is used since
-                float xmax = 100/collumnsize;
-                float ymax = 100/rowsize;
+                float xmax = 100 / collumnsize;
+                float ymax = 100 / rowsize;
 
                 //size is used for area position in vector
                 int size = 0;
 
                 //add areas according to row and collumn sizes
-                for(int c = 0; c<rowsize; c++){
-                    for(int r = 0 ; r<collumnsize; r++){
-                        areas.add(size, new Area(xmax*(r), xmax*(r+1), ymax*(c), ymax*(c+1), r+1, c+1));
+                for (int c = 0; c < rowsize; c++) {
+                    for (int r = 0; r < collumnsize; r++) {
+                        areas.add(size, new Area(xmax * (r), xmax * (r + 1), ymax * (c), ymax * (c + 1), r + 1, c + 1));
                         size++;
                     }
 
@@ -106,9 +113,9 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
 
 
                 //depending on where the screen is touched, write which area that was touched
-                for(int i = 0; i<areasize; i++){
-                    if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py ){
-                        Toast.makeText(ImageTestActivity.this, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn()  + ", Coordinates: " + px  + ", " + py, Toast.LENGTH_SHORT).show();
+                for (int i = 0; i < areasize; i++) {
+                    if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py) {
+                        Toast.makeText(ImageTestActivity.this, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -116,30 +123,15 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
                 // Toast.makeText(ImageTestActivity.this, "Clicked: " + xmax + ", " + ymax , Toast.LENGTH_SHORT).show();
 
                 break;
-            case MotionEvent.ACTION_MOVE:
-                int x_cord = (int)event.getRawX();
-                int y_cord = (int)event.getRawY();
 
-                DisplayMetrics dmm  = getResources().getDisplayMetrics();
-                int ww = dmm.widthPixels;
-                int hh = dmm.heightPixels;
-                if(x_cord>ww){x_cord=ww;}
-                if(y_cord>hh){y_cord=hh;}
-
-                layoutParams.leftMargin = x_cord -25;
-                layoutParams.topMargin = y_cord - 75;
-
-                iv.setLayoutParams(layoutParams);
-                break;
 
 
         }
         return true;
     }
 
-    public void toast (String msg)
-    {
-        Toast.makeText (getApplicationContext(), msg, Toast.LENGTH_LONG).show ();
+    public void toast(String msg) {
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     } // end toast
 
     static float pxToDp(Context context, float px) {
@@ -148,10 +140,16 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
 
     @Override
     public void onProgressChanged(SeekBar sbDemo, int progress, boolean fromUser) {
-        if(progress>19) {
+
+        if(progress > THRESHOLDVALUE_SEEKBAR){
             iv.setScaleX(((float) (progress)/20f));
             iv.setScaleY(((float) (progress)/20f));
+        } else{
+            iv.setScaleX(((float) 1));
+            iv.setScaleY(((float) 1));
         }
+
+
     }
 
     @Override
@@ -161,6 +159,19 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        int progress = seekBar.getProgress();
+
+        if(progress < THRESHOLDVALUE_SEEKBAR) {
+            iv.setScaleX(((float) 1));
+            iv.setScaleY(((float) 1));
+        }
+        /*
+        int progress = seekBar.getProgress();
+        iv.setScaleX(((float) (progress) / 20f));
+        iv.setScaleY(((float) (progress) / 20f));
+        Toast.makeText(context, "progress: " + progress, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "progress: " + progress/20f, Toast.LENGTH_SHORT).show();
+        */
 
     }
 }
