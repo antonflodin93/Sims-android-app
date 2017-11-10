@@ -22,7 +22,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import java.util.Vector;
-
+import android.widget.LinearLayout.LayoutParams;
 import se.miun.android_app.R;
 
 import static android.R.attr.bitmap;
@@ -30,6 +30,9 @@ import static android.R.attr.bitmap;
 public class ImageTestActivity extends Activity implements View.OnTouchListener, SeekBar.OnSeekBarChangeListener {
     private SeekBar sbDemo;
     private ImageView iv;
+    private LayoutParams layoutParams;
+    int windowwidth;
+    int windowheight;
 
 
     @Override public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,9 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
         iv = (ImageView) findViewById (R.id.mapImage);
         sbDemo = (SeekBar) findViewById(R.id.sb_demo);
         sbDemo.setOnSeekBarChangeListener(this);
+
+        windowwidth = getWindowManager().getDefaultDisplay().getWidth();
+        windowheight = getWindowManager().getDefaultDisplay().getHeight();
 
 
         if (iv != null) {
@@ -95,6 +101,7 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
                         areas.add(size, new Area(xmax*(r), xmax*(r+1), ymax*(c), ymax*(c+1), r+1, c+1));
                         size++;
                     }
+
                 }
 
 
@@ -108,6 +115,21 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
                 //Toast.makeText(ImageTestActivity.this, "Clicked: " + areas.get(3).getxmin() + ", " + areas.get(3).getxmax() , Toast.LENGTH_SHORT).show();
                 // Toast.makeText(ImageTestActivity.this, "Clicked: " + xmax + ", " + ymax , Toast.LENGTH_SHORT).show();
 
+                break;
+            case MotionEvent.ACTION_MOVE:
+                int x_cord = (int)event.getRawX();
+                int y_cord = (int)event.getRawY();
+
+                DisplayMetrics dmm  = getResources().getDisplayMetrics();
+                int ww = dmm.widthPixels;
+                int hh = dmm.heightPixels;
+                if(x_cord>ww){x_cord=ww;}
+                if(y_cord>hh){y_cord=hh;}
+
+                layoutParams.leftMargin = x_cord -25;
+                layoutParams.topMargin = y_cord - 75;
+
+                iv.setLayoutParams(layoutParams);
                 break;
 
 
