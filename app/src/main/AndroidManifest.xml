@@ -62,7 +62,8 @@
             android:label="Regular message service" />
 
         <activity android:name=".MasterUnit.ListEmployeesActivity" />
-        <activity android:name=".MasterUnit.ListBuildingsInfoActivity"></activity>
+        <activity android:name=".MasterUnit.ListBuildingsInfoActivity" />
+        <activity android:name=".MasterUnit.FloorplanActivity"></activity>
     </application>
 
 </manifest>

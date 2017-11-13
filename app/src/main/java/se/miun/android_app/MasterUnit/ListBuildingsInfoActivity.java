@@ -1,8 +1,13 @@
 package se.miun.android_app.MasterUnit;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
@@ -22,7 +27,7 @@ import se.miun.android_app.Model.Building;
 import se.miun.android_app.Model.Employee;
 import se.miun.android_app.R;
 
-public class ListBuildingsInfoActivity extends AppCompatActivity {
+public class ListBuildingsInfoActivity extends AppCompatActivity implements ExpandableListView.OnChildClickListener {
     private ExpandableListView buildingsExListView;
     private BuildingListAdapter buildingListAdapter;
     private ArrayList<Building> buildings;
@@ -37,6 +42,7 @@ public class ListBuildingsInfoActivity extends AppCompatActivity {
 
 
         buildingsExListView = (ExpandableListView) findViewById(R.id.buildingsExListView);
+        buildingsExListView.setOnChildClickListener(this);
 
         // Get all the buildings
         getBuildings();
@@ -53,7 +59,6 @@ public class ListBuildingsInfoActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<Building>> call, Response<ArrayList<Building>> response) {
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
-                    Toast.makeText(context, "Size: " + response.body().size(), Toast.LENGTH_SHORT).show();
                     buildings = response.body();
                     buildingListAdapter = new BuildingListAdapter(context, buildings);
                     buildingsExListView.setAdapter(buildingListAdapter);
@@ -68,5 +73,32 @@ public class ListBuildingsInfoActivity extends AppCompatActivity {
 
 
 
+    }
+
+    @Override
+    public boolean onChildClick(ExpandableListView parent, View v, final int groupPosition, final int childPosition, long id) {
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(context);
+
+        builder.setTitle("Open floorplan")
+                .setMessage("Do you want to open floorplan " + buildingListAdapter.getGroup(groupPosition).getBuildingName() + "/" + buildingListAdapter.getChild(groupPosition, childPosition).getFloorLevel() + "?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent myIntent = new Intent(getApplicationContext(), FloorplanActivity.class);
+                        myIntent.putExtra("filePath", buildingListAdapter.getChild(groupPosition, childPosition).getFloorPlanFilePath());
+                        context.startActivity(myIntent);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .show();
+
+
+
+
+        return true;
     }
 }
