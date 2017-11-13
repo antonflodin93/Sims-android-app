@@ -1,9 +1,13 @@
 package se.miun.android_app.Adapter;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -24,10 +28,15 @@ public class EmployeeRecycleViewAdapter extends RecyclerView.Adapter<EmployeeRec
     private List<Employee> employees = new ArrayList<>();
     private EmployeeFilter employeeFilter;
     private RecyclerView recyclerView;
+    private Context context;
+    private String latestFloor;
+    private String latestBuilding;
 
 
-    public EmployeeRecycleViewAdapter(List<Employee> employees) {
+
+    public EmployeeRecycleViewAdapter(Context context, List<Employee> employees) {
         this.employees = employees;
+        this.context = context;
 
     }
 
@@ -40,14 +49,52 @@ public class EmployeeRecycleViewAdapter extends RecyclerView.Adapter<EmployeeRec
     @Override
     public EmployeeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.employee_list_row_item, parent, false);
+
         view.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 int itemPosition = recyclerView.getChildLayoutPosition(v);
                 Employee employee = employees.get(itemPosition);
-                Toast.makeText(v.getContext(), employee.getEmployeeFirstName(), Toast.LENGTH_LONG).show();
+
+                // Display dialog
+                AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
+                builderSingle.setIcon(android.R.drawable.ic_dialog_info);
+                builderSingle.setTitle("Information about employee");
+
+                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1);
+                arrayAdapter.add("Name: " + employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName());
+                arrayAdapter.add("Company: " + employee.getEmployeeCompany());
+                arrayAdapter.add("Email: " + employee.getEmployeeEmail());
+                arrayAdapter.add("Phone Number: " + employee.getEmployeePhonenumber());
+
+                if(latestFloor == null && latestBuilding == null){
+                    arrayAdapter.add("Last seen: " +  "No information");
+                } else{
+                    arrayAdapter.add("Last seen: " +  latestBuilding + "/" + latestFloor);
+                }
+
+
+                builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builderSingle.show();
+
+
+
+
             }
         });
+
         return new EmployeeViewHolder(view);
     }
 
