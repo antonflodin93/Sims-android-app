@@ -86,6 +86,9 @@ public class ListBuildingsInfoActivity extends AppCompatActivity implements Expa
                     public void onClick(DialogInterface dialog, int which) {
                         Intent myIntent = new Intent(getApplicationContext(), FloorplanActivity.class);
                         myIntent.putExtra("filePath", buildingListAdapter.getChild(groupPosition, childPosition).getFloorPlanFilePath());
+                        myIntent.putExtra("building", buildingListAdapter.getGroup(groupPosition).getBuildingName());
+                        myIntent.putExtra("floor", buildingListAdapter.getChild(groupPosition, childPosition).getFloorLevel());
+
                         context.startActivity(myIntent);
                     }
                 })

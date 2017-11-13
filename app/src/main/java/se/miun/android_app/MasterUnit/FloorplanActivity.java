@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.InputStream;
@@ -16,9 +17,12 @@ import se.miun.android_app.R;
 
 public class FloorplanActivity extends AppCompatActivity {
     private ImageView floorplanImageView;
+    private TextView textViewFloorPlan;
     private String filePath;
     private String IP_ADDRESS = "http://193.10.119.34:8080";
     private Context context;
+    private int numofemployees = 0;
+    private String building, floor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +30,11 @@ public class FloorplanActivity extends AppCompatActivity {
         setContentView(R.layout.activity_floorplan);
         context = this;
         filePath = getIntent().getStringExtra("filePath");
+        building = getIntent().getStringExtra("building");
+        floor = getIntent().getStringExtra("floor");
 
         floorplanImageView = (ImageView) findViewById(R.id.floorplanImageView);
+        textViewFloorPlan = (TextView) findViewById(R.id.textViewFloorPlan);
 
         new AsyncTask<Void, Void, Void>() {
             Bitmap bmp;
@@ -50,6 +57,9 @@ public class FloorplanActivity extends AppCompatActivity {
             }
 
         }.execute();
+
+        textViewFloorPlan.setText(building + "/" + floor + " (" + numofemployees + ")");
+
 
 
     }

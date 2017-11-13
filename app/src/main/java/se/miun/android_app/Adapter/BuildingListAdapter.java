@@ -22,6 +22,7 @@ public class BuildingListAdapter extends BaseExpandableListAdapter {
 
     private Context context;
     private ArrayList<Building> buildings;
+    private int numOfEmployees = 0;
 
     public BuildingListAdapter(Context context, ArrayList<Building> buildings) {
         this.context = context;
@@ -59,7 +60,7 @@ public class BuildingListAdapter extends BaseExpandableListAdapter {
 
         TextView txtListChild = (TextView) convertView.findViewById(R.id.floorplanTextView);
 
-        txtListChild.setText(childText);
+        txtListChild.setText(childText + " (" + numOfEmployees + ")");
         return convertView;
     }
 
