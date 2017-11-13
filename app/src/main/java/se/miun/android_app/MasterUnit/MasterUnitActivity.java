@@ -12,7 +12,7 @@ import se.miun.android_app.EmployeeUnit.EmployeeUnitActivity;
 import se.miun.android_app.R;
 
 public class MasterUnitActivity extends AppCompatActivity implements View.OnClickListener{
-    private Button sendMessagesBtn, employeeListBtn;
+    private Button sendMessagesBtn, employeeListBtn, showBuildingsInfoBtn;
     private Context context;
 
     @Override
@@ -26,6 +26,8 @@ public class MasterUnitActivity extends AppCompatActivity implements View.OnClic
         sendMessagesBtn.setOnClickListener(this);
         employeeListBtn = (Button) findViewById(R.id.employeeListBtn);
         employeeListBtn.setOnClickListener(this);
+        showBuildingsInfoBtn = (Button) findViewById(R.id.showBuildingsInfoBtn);
+        showBuildingsInfoBtn.setOnClickListener(this);
 
     }
 
@@ -36,6 +38,9 @@ public class MasterUnitActivity extends AppCompatActivity implements View.OnClic
             context.startActivity(myIntent);
         } else if(view.getId() == R.id.employeeListBtn){
             Intent myIntent = new Intent(getApplicationContext(), ListEmployeesActivity.class);
+            context.startActivity(myIntent);
+        } else if(view.getId() == R.id.showBuildingsInfoBtn){
+            Intent myIntent = new Intent(getApplicationContext(), ListBuildingsInfoActivity.class);
             context.startActivity(myIntent);
         }
 
