@@ -1,65 +1,72 @@
 package se.miun.android_app.MasterUnit;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 import se.miun.android_app.Adapter.BuildingListAdapter;
+import se.miun.android_app.Adapter.EmployeeRecycleViewAdapter;
+import se.miun.android_app.Api.ApiClient;
+import se.miun.android_app.Api.ApiInterface;
+import se.miun.android_app.Model.Building;
+import se.miun.android_app.Model.Employee;
 import se.miun.android_app.R;
 
 public class ListBuildingsInfoActivity extends AppCompatActivity {
     private ExpandableListView buildingsExListView;
     private BuildingListAdapter buildingListAdapter;
-    private ArrayList<String> buildingList;
-    private HashMap<String, List<String>> floorplanList;
+    private ArrayList<Building> buildings;
+    private Context context;
+    private int HTTP_RESPONSE_ACCEPTED = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_buildings_info);
+        context = this;
 
 
         buildingsExListView = (ExpandableListView) findViewById(R.id.buildingsExListView);
 
+        // Get all the buildings
         getBuildings();
 
     }
 
     private void getBuildings() {
-        buildingList = new ArrayList<String>();
-        floorplanList = new HashMap<String, List<String>>();
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ArrayList<Building>> call;
+        call = apiInterface.getAllBuildings();
+        call.enqueue(new Callback<ArrayList<Building>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Building>> call, Response<ArrayList<Building>> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+                    Toast.makeText(context, "Size: " + response.body().size(), Toast.LENGTH_SHORT).show();
+                    buildings = response.body();
+                    buildingListAdapter = new BuildingListAdapter(context, buildings);
+                    buildingsExListView.setAdapter(buildingListAdapter);
+                }
+            }
 
-        buildingList.add("Building 1");
-        buildingList.add("Building 2");
-        buildingList.add("Building 3");
-
-        List<String> floorplansBuilding1 = new ArrayList<String>();
-        floorplansBuilding1.add("Floor 1");
-        floorplansBuilding1.add("Floor 2");
-        floorplansBuilding1.add("Floor 3");
-
-        List<String> floorplansBuilding2 = new ArrayList<String>();
-        floorplansBuilding2.add("Floor 1");
-        floorplansBuilding2.add("Floor 2");
-
-        List<String> floorplansBuilding3 = new ArrayList<String>();
-        floorplansBuilding3.add("Floor 1");
-        floorplansBuilding3.add("Floor 2");
-        floorplansBuilding3.add("Floor 3");
-        floorplansBuilding3.add("Floor 4");
-
-        floorplanList.put(buildingList.get(0), floorplansBuilding1);
-        floorplanList.put(buildingList.get(1), floorplansBuilding2);
-        floorplanList.put(buildingList.get(2), floorplansBuilding3);
-
-        buildingListAdapter = new BuildingListAdapter(this, buildingList, floorplanList);
+            @Override
+            public void onFailure(Call<ArrayList<Building>> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
-        buildingsExListView.setAdapter(buildingListAdapter);
 
     }
 }
