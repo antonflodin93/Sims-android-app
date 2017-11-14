@@ -2,35 +2,17 @@ package se.miun.android_app.testing;
 
 import android.app.Activity;
 import android.content.Context;
-import android.gesture.Gesture;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.GestureDetector;
-import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 
 import android.widget.ImageView;
-import android.widget.LinearLayout.LayoutParams;
-import java.util.Vector;
 
 
 import se.miun.android_app.R;
-
-import static android.R.attr.bitmap;
-import static android.R.attr.progress;
 
 public class ImageTestActivity extends Activity implements View.OnTouchListener, SeekBar.OnSeekBarChangeListener {
     private SeekBar sbDemo;
@@ -39,8 +21,9 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
     int windowheight;
     Context context;
     int THRESHOLDVALUE_SEEKBAR = 20;
+    int MAXVALUE_DRAG_X = 325;
     float zoomfactor;
-    float xstart, ystart, xend, yend, diffy, diffx, xb, yb;
+    float xstart = 0, ystart = 0, diffy, diffx, totalDraggedX = 0, totalDraggedY = 0;
 
 
     @Override
@@ -55,7 +38,6 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
 
         windowwidth = getWindowManager().getDefaultDisplay().getWidth();
         windowheight = getWindowManager().getDefaultDisplay().getHeight();
-
 
 
         if (iv != null) {
@@ -74,12 +56,13 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
         final int eventAction = event.getAction();
         switch (eventAction) {
 
+
             case MotionEvent.ACTION_DOWN:
                 xstart = event.getX();
                 ystart = event.getY();
-                xb = 0;
-                yb = 0;
 
+
+                /*
                 // Get the coordinates of the point of touch
                 float x = event.getX();
                 float y = event.getY();
@@ -102,7 +85,7 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
 
                 Vector<Area> areas = new Vector<>(areasize);
 
-                //get xmax and ymax for the first area, hw is used since
+                //get xmax and ymax for the first area
                 float xmax = 100 / collumnsize;
                 float ymax = 100 / rowsize;
 
@@ -127,23 +110,36 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
                 //Toast.makeText(ImageTestActivity.this, "Clicked: " + areas.get(3).getxmin() + ", " + areas.get(3).getxmax() , Toast.LENGTH_SHORT).show();
                 // Toast.makeText(ImageTestActivity.this, "Clicked: " + xmax + ", " + ymax , Toast.LENGTH_SHORT).show();
                 break;
-
+*/
             case MotionEvent.ACTION_MOVE:
-                //enable navigation with drag if you have a zoomed view
+                diffx = xstart - view.getX();
+                diffy = ystart - view.getY();
 
-                if(zoomfactor>1 ) {
+                float currentDragX = totalDraggedX + (event.getX()-xstart);
+                float currentDragY = totalDraggedY + (event.getY()-ystart);
+                //toast(" " + (event.getX() - diffx));
+
+                if (zoomfactor > 1 && inRange(currentDragX, currentDragY)) {
                     //calculates the difference between start touch and where the finger moves
-                    diffx = xstart - view.getX();
-                    diffy = ystart - view.getY();
-                    xb = xb + diffx;
-                    yb = yb + diffy;
+
+                    //Toast.makeText(context, "value, threshhold" + currentDragX + ", " + THRESHOLDVALUE_DRAG_X, Toast.LENGTH_SHORT).show();
+                    float tempx = currentDragX;
+                    float tempy = currentDragY;
+                    totalDraggedX = tempx;
+                    totalDraggedY = tempy;
+
+
+                    //Toast.makeText(context, "Total drag " + xb, Toast.LENGTH_SHORT).show();
+
                     //sets view continuously on touching move based on difference from above
                     view.setX(event.getX() - diffx);
                     view.setY(event.getY() - diffy);
                 }
+
                 break;
 
             case MotionEvent.ACTION_UP:
+
 
                 break;
 
@@ -151,8 +147,18 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
         return true;
     }
 
+    private boolean inRange(float xvalue, float yvalue) {
+        if(xvalue < MAXVALUE_DRAG_X && xvalue > -MAXVALUE_DRAG_X && yvalue < MAXVALUE_DRAG_X && yvalue > -MAXVALUE_DRAG_X ){
+            return true;
+        } else{
+            toast("Not in range: " + xvalue + ", " + yvalue);
+        }
+        return false;
+
+    }
+
     public void toast(String msg) {
-        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     } // end toast
 
     static float pxToDp(Context context, float px) {
@@ -162,21 +168,23 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
     @Override
     public void onProgressChanged(SeekBar sbDemo, int progress, boolean fromUser) {
 
-        if(progress > THRESHOLDVALUE_SEEKBAR){
+        if (progress > THRESHOLDVALUE_SEEKBAR) {
             //scaleValue = (float) (progress)/20f;
-            iv.setScaleX(((float) (progress)/20f));
-            iv.setScaleY(((float) (progress)/20f));
-            zoomfactor = progress/20f;
-        } else{
+            iv.setScaleX(((float) (progress) / 20f));
+            iv.setScaleY(((float) (progress) / 20f));
+            zoomfactor = progress / 20f;
+            totalDraggedX = 0;
+            totalDraggedY = 0;
+        } else {
             //set scale back to default
             iv.setScaleX(((float) 1));
             iv.setScaleY(((float) 1));
             //set viewpoint back to default
             iv.setX(0);
             iv.setY(0);
-            zoomfactor = progress/20f;
-            xb = 0;
-            yb = 0;
+            zoomfactor = progress / 20f;
+            totalDraggedX = 0;
+            totalDraggedY = 0;
         }
     }
 
@@ -189,15 +197,15 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
     public void onStopTrackingTouch(SeekBar seekBar) {
         int progress = seekBar.getProgress();
 
-        if(progress < THRESHOLDVALUE_SEEKBAR) {
+        if (progress < THRESHOLDVALUE_SEEKBAR) {
             //set scale back to default
             iv.setScaleX(((float) 1));
             iv.setScaleY(((float) 1));
             //set viewpoint back to default
             iv.setX(0);
             iv.setY(0);
-            xb = 0;
-            yb = 0;
+            totalDraggedX = 0;
+            totalDraggedY = 0;
         }
         /*
         int progress = seekBar.getProgress();
