@@ -1,138 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
 
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:stretchColumns="1">
 
-    <LinearLayout
+    <TableRow
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:paddingTop="15dp">
+        android:layout_height="wrap_content">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_weight="1.0"
-            android:text="@string/send_to" />
+
+            android:layout_column="0"
+            android:text="Send to: " />
 
         <Spinner
             android:id="@+id/senderTypeSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_weight="1.0" />
-    </LinearLayout>
+            android:layout_column="1" />
 
-    <Spinner
-        android:id="@+id/employeeSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:visibility="gone"/>
+    </TableRow>
 
-    <LinearLayout
+
+
+    <TableRow
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
+
+
+        <Spinner
+            android:id="@+id/employeeSpinner"
+            android:layout_column="1"
+            android:visibility="gone"/>
+
+    </TableRow>
+
+
+
+    <TableRow
+
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
 
         <Spinner
             android:id="@+id/companySpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            android:visibility="gone"/>
 
+            android:layout_column="1"
+
+            android:visibility="gone" />
 
         <CheckBox
             android:id="@+id/listEmployeesCheckBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_column="2"
             android:text="@string/send_to_employee"
-            android:visibility="gone"
-            />
+            android:visibility="gone">
 
-    </LinearLayout>
-
-
-    <Spinner
-        android:id="@+id/employeesInCompanySpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:visibility="gone"/>
+        </CheckBox>
 
 
 
 
-    <LinearLayout
+    </TableRow>
+
+
+
+    <TableRow
+
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:paddingTop="15dp">
+        android:layout_height="wrap_content">
+
+        <Spinner
+            android:id="@+id/employeesInCompanySpinner"
+
+            android:layout_column="1"
+
+            android:visibility="gone" />
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_weight="1.0"
-            android:text="@string/subject" />
+
+            android:text="@string/subject"
+            android:layout_column="0" />
 
         <EditText
             android:id="@+id/subjectEditText"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_weight="1.0"
-            android:hint="@string/enter_a_subject" />
-    </LinearLayout>
+            android:hint="@string/enter_a_subject"
+            android:layout_column="1" />
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:paddingTop="15dp">
+    </TableRow>
+
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        tools:textAlignment="center">
 
         <EditText
             android:id="@+id/messageEditText"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="1.0"
+            android:layout_width="match_parent"
+            android:layout_column="1"
+            android:hint="@string/enter_message"
             android:inputType="textMultiLine"
-            android:hint="@string/enter_message"/>
-    </LinearLayout>
+            android:maxLength="500" />
 
 
-    <LinearLayout
+    </TableRow>
+
+
+    <TableRow
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:paddingTop="15dp">
+        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/cancelSendMessageBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_weight="1.0"
-            android:text="@string/cancel" />
+            android:text="@string/cancel"
+            android:background="@color/colorAccent"/>
 
         <Button
             android:id="@+id/sendMessagesBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_weight="1.0"
-            android:text="@string/send_message" />
-    </LinearLayout>
+            android:text="@string/send_message"
+            android:background="@color/colorPrimaryDark"/>
+
+    </TableRow>
 
 
 
-</LinearLayout>
+
+</TableLayout>
+
+
+
+
+
+
+
