@@ -12,22 +12,22 @@ public class Area {
         this.row = row;
         this.collumn = collumn;
     }
-    float getxmin(){
+    public float getxmin(){
         return xmin;
     }
-    float getxmax(){
+    public float getxmax(){
         return xmax;
     }
-    float getymin(){
+    public float getymin(){
         return ymin;
     }
-    float getymax(){
+    public float getymax(){
         return ymax;
     }
-    Integer getrow(){
+    public Integer getrow(){
         return row;
     }
-    Integer getcollumn(){
+    public Integer getcollumn(){
         return collumn;
     }
    //Vector<Integer> position = new Vector<>(2);
