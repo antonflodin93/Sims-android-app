@@ -26,14 +26,27 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
     int windowheight;
     Context context;
     int THRESHOLDVALUE_SEEKBAR = 20;
-    int MAXVALUE_DRAG_X = 1000;
+    int[] MAXVALUE_DRAG_X = {40, 170, 490, 875};
+
+    int[] MAXVALUE_DRAG_Y = {40};
+
+
+
+    private enum ScaleFactorType {
+        ZOOM0,
+        ZOOM1,
+        ZOOM2,
+        ZOOM3;
+    }
+
+    ScaleFactorType scaleFactorType;
+
     float zoomfactor;
-    float xstart = 0, ystart = 0, diffy, diffx, totalDraggedX = 0, totalDraggedY = 0;
+    float xstart = 0, ystart = 0, diffy, diffx;
     private GestureDetector mGestureDetector;
     private View.OnTouchListener gestureListener;
     private float totalScrolledX, totalScrolledY;
-
-
+    private float originalX, originalY;
 
 
     @Override
@@ -41,8 +54,9 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imagetest);
         context = this;
-
         iv = (ImageView) findViewById(R.id.mapImage);
+        originalX = iv.getX();
+        originalY = iv.getY();
         sbDemo = (SeekBar) findViewById(R.id.sb_demo);
         sbDemo.setOnSeekBarChangeListener(this);
 
@@ -166,7 +180,7 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
                 //gets maximum width and height of device in terms of pixels
                 float w = dm.widthPixels;
                 //50 is seekbar height
-                float h = dm.heightPixels-50;
+                float h = dm.heightPixels - 50;
 
                 //px is the x coordinate varying from 0-100 on screen touch, py is the same
                 float px = (x / w) * 100;
@@ -197,7 +211,7 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
                 //depending on where the screen is touched, write which area that was touched
                 for (int i = 0; i < areasize; i++) {
                     if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py) {
-                       // Toast.makeText(ImageTestActivity.this, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py +". zoomfactor: "+ zoomfactor, Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(ImageTestActivity.this, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py +". zoomfactor: "+ zoomfactor, Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -208,21 +222,23 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
             case MotionEvent.ACTION_MOVE:
 
 
-                diffx = xstart - view.getX();
-                diffy = ystart - view.getY();
+                float currentDistanceX = (event.getX() - xstart);
+                float currentDistanceY = (event.getY() - ystart);
 
-                float currentDragX = totalDraggedX + (event.getX()-xstart);
-                float currentDragY = totalDraggedY + (event.getY()-ystart);
+                totalScrolledX += currentDistanceX;
+                totalScrolledY += currentDistanceY;
+                //toast("Total: " + totalScrolledX);
 
-                if (zoomfactor > 1 && inRange(currentDragX, currentDragY)) {
-                    float tempx = currentDragX;
-                    float tempy = currentDragY;
-                    totalDraggedX = tempx;
-                    totalDraggedY = tempy;
+                diffx = xstart - iv.getX();
+                diffy = ystart - iv.getY();
 
-                    view.setX(event.getX() - diffx);
-                    view.setY(event.getY() - diffy);
-                }
+                // if(totalScrolledX < MAXVALUE_DRAG_X && totalScrolledX > -MAXVALUE_DRAG_X){
+                iv.setX(event.getX() - diffx);
+                iv.setY(event.getY() - diffy);
+                //} else{
+                //totalScrolledX -= currentDistanceX;
+                //totalScrolledY -= currentDistanceY;
+                //}
 
 
 
@@ -247,20 +263,18 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
 */
 
 
+                break;
 
-
+            case MotionEvent.ACTION_UP:
+                Toast.makeText(context, "Total dragged: " + totalScrolledY, Toast.LENGTH_SHORT).show();
                 break;
         }
         return true;
     }
 
     private boolean inRange(float xvalue, float yvalue) {
-        if(xvalue < MAXVALUE_DRAG_X && xvalue > -MAXVALUE_DRAG_X && yvalue < MAXVALUE_DRAG_X && yvalue > -MAXVALUE_DRAG_X ){
-            return true;
-        } else{
-            toast("Not in range: " + xvalue + ", " + yvalue);
-        }
-        return false;
+
+        return true;
 
     }
 
@@ -295,49 +309,47 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
             totalScrolledY = 0;
         }
 */
-        double scalefactor = 1;
-        if(progress >=1  && progress < 25){
+        double scalefactor = 0;
+        if (progress >= 1 && progress < 15) {
             scalefactor = 1;
-            toast("" + progress);
+            //toast("" + progress);
+            iv.setScaleX((float) scalefactor);
+            iv.setScaleY((float) scalefactor);
+            scaleFactorType = ScaleFactorType.ZOOM0;
 
 
-        } else if(progress >= 25 && progress < 50){
+        } else if (progress >= 15 && progress < 30) {
             scalefactor = 1.25;
-            toast("" + progress);
-        } else if(progress >= 50 && progress < 75){
+            //toast("" + progress);
+            iv.setScaleX((float) scalefactor);
+            iv.setScaleY((float) scalefactor);
+            scaleFactorType = ScaleFactorType.ZOOM1;
+
+        } else if (progress >= 30 && progress < 50) {
             scalefactor = 2;
-            toast("" + progress);
-        }
+            //toast("" + progress);
+            iv.setScaleX((float) scalefactor);
+            iv.setScaleY((float) scalefactor);
+            scaleFactorType = ScaleFactorType.ZOOM2;
 
-        else if(progress >= 75 && progress < 100){
+        } else if (progress >= 50 && progress < 100) {
             scalefactor = 3;
-            toast("" + progress);
+            //toast("" + progress);
+            iv.setScaleX((float) scalefactor);
+            iv.setScaleY((float) scalefactor);
+            scaleFactorType = ScaleFactorType.ZOOM3;
+
         }
-
-        iv.setScaleX((float) scalefactor);
-        iv.setScaleY((float) scalefactor);
-
-
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         int progress = seekBar.getProgress();
 
-        if (progress < THRESHOLDVALUE_SEEKBAR) {
-            //set scale back to default
-            iv.setScaleX(((float) 1));
-            iv.setScaleY(((float) 1));
-            //set viewpoint back to default
-            iv.setX(0);
-            iv.setY(0);
-            totalDraggedX = 0;
-            totalDraggedY = 0;
-        }
+
     }
 }
