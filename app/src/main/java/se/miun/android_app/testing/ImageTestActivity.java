@@ -25,11 +25,12 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
     int windowwidth;
     int windowheight;
     Context context;
-    int THRESHOLDVALUE_SEEKBAR = 20;
-    int[] MAXVALUE_DRAG_X = {40, 170, 490, 875};
 
-    int[] MAXVALUE_DRAG_Y = {40};
+    private float previousX;
+    private float previousY;
 
+
+    private int MAXVALUE_DRAG;
 
 
     private enum ScaleFactorType {
@@ -62,6 +63,8 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
 
         windowwidth = getWindowManager().getDefaultDisplay().getWidth();
         windowheight = getWindowManager().getDefaultDisplay().getHeight();
+
+        MAXVALUE_DRAG = 40;
         /*
 
         mGestureDetector = new GestureDetector(this,
@@ -232,36 +235,34 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
                 diffx = xstart - iv.getX();
                 diffy = ystart - iv.getY();
 
-                // if(totalScrolledX < MAXVALUE_DRAG_X && totalScrolledX > -MAXVALUE_DRAG_X){
-                iv.setX(event.getX() - diffx);
-                iv.setY(event.getY() - diffy);
-                //} else{
-                //totalScrolledX -= currentDistanceX;
-                //totalScrolledY -= currentDistanceY;
-                //}
-
-
-
-
-
-            /*
-                float currentdistancex = (event.getX()-xstart);
-
-                totalScrolledX += currentdistancex;
-                //toast("Total: " + totalScrolledX);
-
-                diffx = xstart - iv.getX();
-                diffy = ystart - iv.getY();
-
-                if(totalScrolledX < MAXVALUE_DRAG_X && totalScrolledX > -MAXVALUE_DRAG_X){
+                // Check if in range in x and y axis
+                if(totalScrolledX < MAXVALUE_DRAG && totalScrolledX > -MAXVALUE_DRAG && totalScrolledY < MAXVALUE_DRAG && totalScrolledY > -MAXVALUE_DRAG){
                     iv.setX(event.getX() - diffx);
                     iv.setY(event.getY() - diffy);
+                    previousX = event.getX() - diffx;
+                    previousY = event.getY() - diffy;
+
+                    // Check if in range of x axis but not y
+                } else if(totalScrolledX < MAXVALUE_DRAG && totalScrolledX > -MAXVALUE_DRAG){
+                    iv.setX(event.getX() - diffx);
+                    iv.setY(previousY);
+                    previousX = event.getX() - diffx;
+                    totalScrolledY -= currentDistanceY;
+
+                    // Check if in range of y axis but not x
+                } else if(totalScrolledY < MAXVALUE_DRAG && totalScrolledY > -MAXVALUE_DRAG){
+                    iv.setX(previousX);
+                    iv.setY(event.getY() - diffy);
+                    previousY = event.getY() - diffy;
+                    totalScrolledX -= currentDistanceX;
+
                 } else{
-                    totalScrolledX -= currentdistancex;
+                    totalScrolledX -= currentDistanceX;
+                    totalScrolledY -= currentDistanceY;
+                    iv.setX(previousX);
+                    iv.setY(previousY);
+
                 }
-
-*/
-
 
                 break;
 
@@ -272,11 +273,7 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
         return true;
     }
 
-    private boolean inRange(float xvalue, float yvalue) {
 
-        return true;
-
-    }
 
     public void toast(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
@@ -285,30 +282,6 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
 
     @Override
     public void onProgressChanged(SeekBar sbDemo, int progress, boolean fromUser) {
-    /*
-        if (progress > THRESHOLDVALUE_SEEKBAR) {
-            //scaleValue = (float) (progress)/20f;
-            iv.setScaleX(((float) (progress) / 20f));
-            iv.setScaleY(((float) (progress) / 20f));
-            zoomfactor = progress / 20f;
-            totalDraggedX = 0;
-            totalDraggedY = 0;
-            totalScrolledX = 0;
-            totalScrolledY = 0;
-        } else {
-            //set scale back to default
-            iv.setScaleX(((float) 1));
-            iv.setScaleY(((float) 1));
-            //set viewpoint back to default
-            iv.setX(0);
-            iv.setY(0);
-            zoomfactor = progress / 20f;
-            totalDraggedX = 0;
-            totalDraggedY = 0;
-            totalScrolledX = 0;
-            totalScrolledY = 0;
-        }
-*/
         double scalefactor = 0;
         if (progress >= 1 && progress < 15) {
             scalefactor = 1;
@@ -316,6 +289,7 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
             iv.setScaleX((float) scalefactor);
             iv.setScaleY((float) scalefactor);
             scaleFactorType = ScaleFactorType.ZOOM0;
+            MAXVALUE_DRAG = 40;
 
 
         } else if (progress >= 15 && progress < 30) {
@@ -324,6 +298,7 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
             iv.setScaleX((float) scalefactor);
             iv.setScaleY((float) scalefactor);
             scaleFactorType = ScaleFactorType.ZOOM1;
+            MAXVALUE_DRAG = 180;
 
         } else if (progress >= 30 && progress < 50) {
             scalefactor = 2;
@@ -331,6 +306,7 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
             iv.setScaleX((float) scalefactor);
             iv.setScaleY((float) scalefactor);
             scaleFactorType = ScaleFactorType.ZOOM2;
+            MAXVALUE_DRAG = 640;
 
         } else if (progress >= 50 && progress < 100) {
             scalefactor = 3;
@@ -338,6 +314,7 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
             iv.setScaleX((float) scalefactor);
             iv.setScaleY((float) scalefactor);
             scaleFactorType = ScaleFactorType.ZOOM3;
+            MAXVALUE_DRAG = 1300;
 
         }
     }
