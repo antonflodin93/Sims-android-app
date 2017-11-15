@@ -10,9 +10,10 @@ import se.miun.android_app.testing.BluetoothLogger;
 import se.miun.android_app.testing.ImageTestActivity;
 //import se.miun.android_app.testing.OnTouchTestActivity;
 import se.miun.android_app.testing.RangetestActivity;
+import se.miun.android_app.testing.TestResponseTime;
 
 public class MainActivity extends Activity implements View.OnClickListener{
-    private Button rangeTestBtn, testCoordinateSystemBtn, imageTestBtn, ontouchTestBtn, bluetoothLogger;
+    private Button rangeTestBtn, testCoordinateSystemBtn, imageTestBtn, ontouchTestBtn, bluetoothLogger, responseTimeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         bluetoothLogger.setOnClickListener(this);
         imageTestBtn = (Button) findViewById(R.id.imageTestBtn);
         imageTestBtn.setOnClickListener(this);
+        responseTimeBtn = (Button) findViewById(R.id.responseTimeBtn);
+        responseTimeBtn.setOnClickListener(this);
+
 
 
     }
@@ -59,6 +63,12 @@ public class MainActivity extends Activity implements View.OnClickListener{
         else if( view.getId() == R.id.imageTestBtn ) {
             // Start the ImageTest activity
             Intent myIntent = new Intent(getApplicationContext(), ImageTestActivity.class);
+            this.startActivity(myIntent);
+        }
+
+        else if( view.getId() == R.id.responseTimeBtn ) {
+            // Start the ImageTest activity
+            Intent myIntent = new Intent(getApplicationContext(), TestResponseTime.class);
             this.startActivity(myIntent);
         }
     }
