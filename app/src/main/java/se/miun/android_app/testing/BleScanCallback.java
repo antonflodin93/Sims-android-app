@@ -41,10 +41,12 @@ public class BleScanCallback extends ScanCallback {
     public void onScanResult(int callbackType, ScanResult result) {
         /* Test of live update of rssi values */
         int rssi = result.getRssi();
-        String deviceAddress = result.getDevice().getName();
+        String deviceAddress = result.getDevice().getAddress();
+        String deviceName = result.getDevice().getName();
         String bleTime = timeConverter(result);
         //display "live" data
-        displayTextView.append( "\nDevice Name: " + deviceAddress );
+        displayTextView.append( "\nDevice Name: " + deviceName );
+        displayTextView.append( "\tMAC: " + deviceAddress );
         displayTextView.append( "\tRSSI: " + rssi );
         displayTextView.append( "\tTime: " + bleTime );
 

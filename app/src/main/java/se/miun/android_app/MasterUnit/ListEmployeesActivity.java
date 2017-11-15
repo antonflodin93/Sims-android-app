@@ -9,6 +9,7 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -26,7 +27,7 @@ import se.miun.android_app.Api.ApiInterface;
 import se.miun.android_app.Model.Employee;
 import se.miun.android_app.R;
 
-public class ListEmployeesActivity extends AppCompatActivity {
+public class ListEmployeesActivity extends AppCompatActivity{
     private static final int HTTP_RESPONSE_ACCEPTED = 200;
     private ArrayList<Employee> employees = new ArrayList<>();
     private RecyclerView employeeRecycleView;
@@ -58,10 +59,6 @@ public class ListEmployeesActivity extends AppCompatActivity {
         inflater.inflate(R.menu.search_menu, menu);
         MenuItem menuSearchItem = menu.findItem(R.id.menuSearchItem);
         SearchView searchView = (SearchView) menuSearchItem.getActionView();
-
-
-
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -95,7 +92,7 @@ public class ListEmployeesActivity extends AppCompatActivity {
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
 
                     employees = response.body();
-                    employeeAdapter = new EmployeeRecycleViewAdapter(employees);
+                    employeeAdapter = new EmployeeRecycleViewAdapter(context, employees);
                     employeeRecycleView.setAdapter(employeeAdapter);
 
                     //employeeAdapter.notifyDataSetChanged();
@@ -109,4 +106,5 @@ public class ListEmployeesActivity extends AppCompatActivity {
             }
         });
     }
+
 }

@@ -2,73 +2,162 @@ package se.miun.android_app.testing;
 
 import android.app.Activity;
 import android.content.Context;
-import android.gesture.Gesture;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.Matrix;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.GestureDetector;
-import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 
 import android.widget.ImageView;
-import android.widget.LinearLayout.LayoutParams;
-import java.util.Vector;
 
+
+import java.util.Vector;
 
 import se.miun.android_app.R;
 
-import static android.R.attr.bitmap;
-import static android.R.attr.progress;
-
-public class ImageTestActivity extends Activity implements View.OnTouchListener, SeekBar.OnSeekBarChangeListener {
+public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
     private SeekBar sbDemo;
     private ImageView iv;
     int windowwidth;
     int windowheight;
     Context context;
     int THRESHOLDVALUE_SEEKBAR = 20;
+    int[] MAXVALUE_DRAG_X = {40, 170, 490, 875};
+
+    int[] MAXVALUE_DRAG_Y = {40};
+
+
+
+    private enum ScaleFactorType {
+        ZOOM0,
+        ZOOM1,
+        ZOOM2,
+        ZOOM3;
+    }
+
+    ScaleFactorType scaleFactorType;
+
     float zoomfactor;
-    float xstart, ystart, xend, yend, diffy, diffx;
+    float xstart = 0, ystart = 0, diffy, diffx;
+    private GestureDetector mGestureDetector;
+    private View.OnTouchListener gestureListener;
+    private float totalScrolledX, totalScrolledY;
+    private float originalX, originalY;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imagetest);
-
+        context = this;
         iv = (ImageView) findViewById(R.id.mapImage);
+        originalX = iv.getX();
+        originalY = iv.getY();
         sbDemo = (SeekBar) findViewById(R.id.sb_demo);
         sbDemo.setOnSeekBarChangeListener(this);
-        sbDemo.setProgress(THRESHOLDVALUE_SEEKBAR);
 
         windowwidth = getWindowManager().getDefaultDisplay().getWidth();
         windowheight = getWindowManager().getDefaultDisplay().getHeight();
+        /*
 
-        GestureDetector myG;
-        myG = new GestureDetector(this,new Gesture());
+        mGestureDetector = new GestureDetector(this,
+                new GestureDetector.OnGestureListener() {
+                    @Override
+                    public boolean onDown(MotionEvent e) {
+
+                        return true;
+                    }
 
 
 
-        if (iv != null) {
-            iv.setOnTouchListener(this);
-        }
+                    @Override
+                    public void onShowPress(MotionEvent e) {
+                        //toast("ON ShowPress");
 
-        context = this;
+                    }
+
+                    @Override
+                    public boolean onSingleTapUp(MotionEvent e) {
+                        //toast("ON SINGLETAPUP");
+                        return false;
+                    }
+
+                    // e1 The first down motion event that started the scrolling.
+                    // e2 The move motion event that triggered the current onScroll.
+                    // distance x The distance along the X axis that has been scrolled since the last call to onScroll.
+
+                    @Override
+                    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+
+
+                        xstart = e1.getX();
+                        ystart = e1.getY();
+
+                        float currentdistance = (e2.getX()-xstart);
+
+                        totalScrolledX += currentdistance;
+                        //toast("Total: " + totalScrolledX);
+
+                        diffx = xstart - iv.getX();
+                        diffy = ystart - iv.getY();
+
+                        if(totalScrolledX < MAXVALUE_DRAG_X && totalScrolledX > -MAXVALUE_DRAG_X){
+                            iv.setX(e2.getX() - diffx);
+                            iv.setY(e2.getY() - diffy);
+                        } else{
+                            totalScrolledX -= currentdistance;
+                        }
+
+
+
+
+
+                        return true;
+                    }
+
+
+                    @Override
+                    public void onLongPress(MotionEvent e) {
+                        toast("ON LONG PRESS");
+
+                    }
+
+                    @Override
+                    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                        //toast("" + (e1.getX() - e2.getX()));
+
+
+                        return true;
+                    }
+                });
+
+        gestureListener = new View.OnTouchListener(){
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_UP){
+                    toast("Total: " + totalScrolledX);
+                    return true;
+                } else if(mGestureDetector.onTouchEvent(event)){
+                    return true;
+                }
+                return false;
+            }
+        };
+
+        iv.setOnTouchListener(gestureListener);
 
     }
+    */
 
+        iv.setOnTouchListener(this);
+
+
+    }
 
     // When the screen has been touched
     @Override
@@ -77,14 +166,10 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
         final int eventAction = event.getAction();
         switch (eventAction) {
 
+
             case MotionEvent.ACTION_DOWN:
                 xstart = event.getX();
                 ystart = event.getY();
-                diffx = xstart-view.getX();
-                diffy = ystart-view.getY();
-
-
-                /*
 
                 // Get the coordinates of the point of touch
                 float x = event.getX();
@@ -94,7 +179,8 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
                 DisplayMetrics dm = getResources().getDisplayMetrics();
                 //gets maximum width and height of device in terms of pixels
                 float w = dm.widthPixels;
-                float h = dm.heightPixels;
+                //50 is seekbar height
+                float h = dm.heightPixels - 50;
 
                 //px is the x coordinate varying from 0-100 on screen touch, py is the same
                 float px = (x / w) * 100;
@@ -107,7 +193,7 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
 
                 Vector<Area> areas = new Vector<>(areasize);
 
-                //get xmax and ymax for the first area, hw is used since
+                //get xmax and ymax for the first area
                 float xmax = 100 / collumnsize;
                 float ymax = 100 / rowsize;
 
@@ -120,115 +206,150 @@ public class ImageTestActivity extends Activity implements View.OnTouchListener,
                         areas.add(size, new Area(xmax * (r), xmax * (r + 1), ymax * (c), ymax * (c + 1), r + 1, c + 1));
                         size++;
                     }
-
                 }
-
 
                 //depending on where the screen is touched, write which area that was touched
                 for (int i = 0; i < areasize; i++) {
                     if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py) {
-                        Toast.makeText(ImageTestActivity.this, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(ImageTestActivity.this, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py +". zoomfactor: "+ zoomfactor, Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 //Toast.makeText(ImageTestActivity.this, "Clicked: " + areas.get(3).getxmin() + ", " + areas.get(3).getxmax() , Toast.LENGTH_SHORT).show();
                 // Toast.makeText(ImageTestActivity.this, "Clicked: " + xmax + ", " + ymax , Toast.LENGTH_SHORT).show();
-                */
-
                 break;
 
-
-
-
             case MotionEvent.ACTION_MOVE:
-                view.setX(event.getX()-diffx);
-                view.setY(event.getY()-diffy);
+
+
+                float currentDistanceX = (event.getX() - xstart);
+                float currentDistanceY = (event.getY() - ystart);
+
+                totalScrolledX += currentDistanceX;
+                totalScrolledY += currentDistanceY;
+                //toast("Total: " + totalScrolledX);
+
+                diffx = xstart - iv.getX();
+                diffy = ystart - iv.getY();
+
+                // if(totalScrolledX < MAXVALUE_DRAG_X && totalScrolledX > -MAXVALUE_DRAG_X){
+                iv.setX(event.getX() - diffx);
+                iv.setY(event.getY() - diffy);
+                //} else{
+                //totalScrolledX -= currentDistanceX;
+                //totalScrolledY -= currentDistanceY;
+                //}
+
+
+
+
+
+            /*
+                float currentdistancex = (event.getX()-xstart);
+
+                totalScrolledX += currentdistancex;
+                //toast("Total: " + totalScrolledX);
+
+                diffx = xstart - iv.getX();
+                diffy = ystart - iv.getY();
+
+                if(totalScrolledX < MAXVALUE_DRAG_X && totalScrolledX > -MAXVALUE_DRAG_X){
+                    iv.setX(event.getX() - diffx);
+                    iv.setY(event.getY() - diffy);
+                } else{
+                    totalScrolledX -= currentdistancex;
+                }
+
+*/
 
 
                 break;
 
             case MotionEvent.ACTION_UP:
-
-
-
-
+                Toast.makeText(context, "Total dragged: " + totalScrolledY, Toast.LENGTH_SHORT).show();
                 break;
-
-
-
-
         }
         return true;
     }
 
+    private boolean inRange(float xvalue, float yvalue) {
+
+        return true;
+
+    }
+
     public void toast(String msg) {
-        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     } // end toast
 
-    static float pxToDp(Context context, float px) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, px, context.getResources().getDisplayMetrics());
-    }
 
     @Override
     public void onProgressChanged(SeekBar sbDemo, int progress, boolean fromUser) {
-
-        if(progress > THRESHOLDVALUE_SEEKBAR){
+    /*
+        if (progress > THRESHOLDVALUE_SEEKBAR) {
             //scaleValue = (float) (progress)/20f;
-            iv.setScaleX(((float) (progress)/20f));
-            iv.setScaleY(((float) (progress)/20f));
-            zoomfactor = progress/20f;
-        } else{
+            iv.setScaleX(((float) (progress) / 20f));
+            iv.setScaleY(((float) (progress) / 20f));
+            zoomfactor = progress / 20f;
+            totalDraggedX = 0;
+            totalDraggedY = 0;
+            totalScrolledX = 0;
+            totalScrolledY = 0;
+        } else {
+            //set scale back to default
             iv.setScaleX(((float) 1));
             iv.setScaleY(((float) 1));
+            //set viewpoint back to default
+            iv.setX(0);
+            iv.setY(0);
+            zoomfactor = progress / 20f;
+            totalDraggedX = 0;
+            totalDraggedY = 0;
+            totalScrolledX = 0;
+            totalScrolledY = 0;
         }
+*/
+        double scalefactor = 0;
+        if (progress >= 1 && progress < 15) {
+            scalefactor = 1;
+            //toast("" + progress);
+            iv.setScaleX((float) scalefactor);
+            iv.setScaleY((float) scalefactor);
+            scaleFactorType = ScaleFactorType.ZOOM0;
 
 
+        } else if (progress >= 15 && progress < 30) {
+            scalefactor = 1.25;
+            //toast("" + progress);
+            iv.setScaleX((float) scalefactor);
+            iv.setScaleY((float) scalefactor);
+            scaleFactorType = ScaleFactorType.ZOOM1;
+
+        } else if (progress >= 30 && progress < 50) {
+            scalefactor = 2;
+            //toast("" + progress);
+            iv.setScaleX((float) scalefactor);
+            iv.setScaleY((float) scalefactor);
+            scaleFactorType = ScaleFactorType.ZOOM2;
+
+        } else if (progress >= 50 && progress < 100) {
+            scalefactor = 3;
+            //toast("" + progress);
+            iv.setScaleX((float) scalefactor);
+            iv.setScaleY((float) scalefactor);
+            scaleFactorType = ScaleFactorType.ZOOM3;
+
+        }
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         int progress = seekBar.getProgress();
 
-        if(progress < THRESHOLDVALUE_SEEKBAR) {
-            iv.setScaleX(((float) 1));
-            iv.setScaleY(((float) 1));
-        }
-        /*
-        int progress = seekBar.getProgress();
-        iv.setScaleX(((float) (progress) / 20f));
-        iv.setScaleY(((float) (progress) / 20f));
-        Toast.makeText(context, "progress: " + progress, Toast.LENGTH_SHORT).show();
-        Toast.makeText(context, "progress: " + progress/20f, Toast.LENGTH_SHORT).show();
-        */
 
-    }
-
-
-
-    class Gesture extends GestureDetector.SimpleOnGestureListener{
-        public boolean onSingleTapUp(MotionEvent ev) {
-            return true;
-        }
-
-        public void onLongPress(MotionEvent ev) {
-        }
-
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-                                float distanceY) {
-            Toast.makeText(context, "SCROLLED: " + distanceX + ", " + distanceY, Toast.LENGTH_SHORT).show();
-            return true;
-
-        }
-
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-                               float velocityY) {
-            return true;
-
-        }
     }
 }

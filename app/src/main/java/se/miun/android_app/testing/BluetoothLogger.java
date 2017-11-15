@@ -59,7 +59,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
 
     //Allowed Devices (MAC address)
     String[] filterlist = {
-            "ED:0E:FF:9C:A9:6D",/* My RedBear nano address*/
+            "ED:0E:FF:9C:A9:6D",
             "C8:86:3A:91:0C:0C",
             "FD:49:FD:36:04:B4",
             "E9:91:4A:42:AC:3B",
@@ -119,6 +119,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         else if( v.getId() == R.id.saveToFileButton ){
             if(isExternalStorageWritable()){
                 bleLoggData();
+                Toast.makeText(getApplicationContext(), "Stored File: ", Toast.LENGTH_SHORT).show();
             }
             else{
                 Toast.makeText(getApplicationContext(), "File FAIL", Toast.LENGTH_SHORT).show();
@@ -130,6 +131,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
     private void startScan(){
         //check if scanner is already scanning
         if(mScanning){
+            Toast.makeText(getApplicationContext(), "Already Scanning", Toast.LENGTH_SHORT).show();
             return;
         }
         //set scan filter and parameters
@@ -139,9 +141,17 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
         //create callback
         mScanResults = new HashMap<>();
+
+        //temp scanfilter(to get MAC addresses from the beacons...
+        List<ScanFilter> filtersTmp = new ArrayList<>();
+                //no scan filter
+        ScanFilter scanFilterTmp = new ScanFilter.Builder().build();
+        filtersTmp.add(scanFilterTmp);
+        //end of temp scanfilters
+
         mScanCallback = new BleScanCallback(mScanResults, displayDataTextView);
         //start the scan
-        mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
+        mBluetoothLeScanner.startScan(filtersTmp /* REPALCE WITH 'filters' when testing is complete*/, settings, mScanCallback);
         //set scan check enable
         mScanning = true;
     }
@@ -185,8 +195,6 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
             ScanFilter filter = new ScanFilter.Builder().setDeviceAddress(filterList[i]).build();
             filters.add(filter);
         }
-        //scanFilter = new ScanFilter.Builder().setDeviceAddress().build();
-        //filters.add(scanFilter);
     }
 
     //check and display scan results (for test purposes)

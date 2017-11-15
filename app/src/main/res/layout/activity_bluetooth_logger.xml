@@ -4,9 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context="se.miun.android_app.testing.BluetoothLogger"
-    android:weightSum="1">
+    android:weightSum="1"
+    tools:context="se.miun.android_app.testing.BluetoothLogger">
 
     <Button
         android:id="@+id/bleOnOffButton"
@@ -41,11 +43,18 @@
         app:layout_constraintRight_toLeftOf="@+id/bleOnOffButton"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/displayDataTextView"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="380dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="162dp"
-        tools:layout_editor_absoluteY="130dp" />
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/displayDataTextView"
+            android:layout_width="match_parent"
+            android:layout_height="380dp"
+            android:text="TextView\n"
+            tools:layout_editor_absoluteX="162dp"
+            tools:layout_editor_absoluteY="130dp" />
+
+    </ScrollView>
 </LinearLayout>
