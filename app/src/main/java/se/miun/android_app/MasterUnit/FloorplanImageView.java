@@ -31,6 +31,8 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
     private Bitmap bmp;
     private Boolean clicked = false;
     private Area clickedArea;
+    private Boolean drawing = false;
+    private float startPointX, startPointY, currentPointX, currentPointY, endPointX, endPointY;
 
 
     public FloorplanImageView(final Context context, final String filePath) {
@@ -72,8 +74,7 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Paint p = new Paint();
-        int width = getMeasuredWidth();
-        int height = getMeasuredHeight();
+        /*
         if(clicked){
             float xstart = clickedArea.getXstart();
             float xend = clickedArea.getXend();
@@ -83,7 +84,10 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
 
 
         }
-        //canvas.drawCircle(width / 2, height / 2, Math.min(width, height) / 2, p);
+*/
+
+        canvas.drawRect(startPointX, startPointY, currentPointX, currentPointY, p);
+        Toast.makeText(context, startPointX + ", " + startPointY, Toast.LENGTH_SHORT).show();
 
 
 
@@ -95,12 +99,16 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
     public boolean onTouch(View view, MotionEvent event) {
         super.onTouchEvent(event);
         final int eventAction = event.getAction();
-        clicked = true;
-
-
         switch (eventAction) {
 
+
             case MotionEvent.ACTION_DOWN:
+                Toast.makeText(context, "DOWN", Toast.LENGTH_SHORT).show();
+                startPointX = event.getX();
+                startPointY = event.getY();
+
+
+                /*
 
                 // Get the coordinates of the point of touch
                 float x = event.getX();
@@ -157,13 +165,33 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
                     if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py) {
                         clickedArea = areas.get(i);
                         //Toast.makeText(context, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(context, "Clicked Area: " + areas.get(i).getXstart() + "-" + areas.get(i).getXend() +  ", " + areas.get(i).getYstart() + "-" + areas.get(i).getYend() , Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "Clicked Area: " + areas.get(i).getXstart() + "-" + areas.get(i).getXend() +  ", " + areas.get(i).getYstart() + "-" + areas.get(i).getYend() , Toast.LENGTH_SHORT).show();
                     }
                 }
+
+                 */
+
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                currentPointX = event.getX();
+                currentPointY = event.getY();
+                invalidate();
+
+                break;
+
+            case MotionEvent.ACTION_UP:
                 break;
         }
-
-        view.invalidate();
-        return false;
+        return true;
     }
 }
+
+
+
+/*
+
+
+
+
+ */
