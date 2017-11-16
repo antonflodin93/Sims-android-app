@@ -87,8 +87,6 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
 */
 
         canvas.drawRect(startPointX, startPointY, currentPointX, currentPointY, p);
-        Toast.makeText(context, startPointX + ", " + startPointY, Toast.LENGTH_SHORT).show();
-
 
 
     }
@@ -103,7 +101,6 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
 
 
             case MotionEvent.ACTION_DOWN:
-                Toast.makeText(context, "DOWN", Toast.LENGTH_SHORT).show();
                 startPointX = event.getX();
                 startPointY = event.getY();
 
