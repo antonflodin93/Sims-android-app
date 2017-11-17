@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import se.miun.android_app.testing.Area;
@@ -33,6 +34,7 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
     private Area clickedArea;
     private Boolean drawing = false;
     private float startPointX, startPointY, currentPointX, currentPointY, endPointX, endPointY;
+    private ArrayList<Area> areas = new ArrayList<>();
 
 
     public FloorplanImageView(final Context context, final String filePath) {
@@ -68,6 +70,36 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
             }
 
         }.execute();
+
+
+
+
+        int collumnsize = 25;
+        int rowsize = 25;
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        float height = display.getHeight();
+        float width = display.getWidth();
+
+        float sizeY = height/rowsize;
+        float sizeX = width/rowsize;
+
+        //get xmax and ymax for the first area
+        float xmax = 100 / collumnsize;
+        float ymax = 100 / rowsize;
+
+
+
+        //add areas according to row and collumn sizes
+        for (int r = 0; r < rowsize; r++) {
+            for (int c = 0; c < collumnsize; c++) {
+                Area area = new Area(xmax * (c), xmax * (c + 1), ymax * (r), ymax * (r + 1), c + 1, r + 1);
+                area.setRealLimits(c*sizeX, c*sizeX+sizeX, r*sizeY, r*sizeY+sizeY);
+                areas.add(area);
+                //Toast.makeText(context, "Area: " + xmax *(r) + ", " + xmax * (r+1), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
@@ -86,7 +118,12 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
         }
 */
 
-        canvas.drawRect(startPointX, startPointY, currentPointX, currentPointY, p);
+        //canvas.drawRect(startPointX, startPointY, currentPointX, currentPointY, p);
+
+        if(clicked){
+            canvas.drawRect(clickedArea.getXstart(), clickedArea.getYstart(), clickedArea.getXend(), clickedArea.getYend(), p);
+        }
+
 
 
     }
@@ -101,11 +138,10 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
 
 
             case MotionEvent.ACTION_DOWN:
+                clicked = true;
                 startPointX = event.getX();
                 startPointY = event.getY();
 
-
-                /*
 
                 // Get the coordinates of the point of touch
                 float x = event.getX();
@@ -123,57 +159,25 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
                 float px = (x / w) * 100;
                 float py = (y / h) * 100;
 
-                //1794 1080
-
-                int collumnsize = 50;
-                int rowsize = 50;
-                //number of total areas
-                int areasize = rowsize * collumnsize;
-
-                Vector<Area> areas = new Vector<>(areasize);
-
-                //get xmax and ymax for the first area
-                float xmax = 100 / collumnsize;
-                float ymax = 100 / rowsize;
-
-                WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-                Display display = wm.getDefaultDisplay();
-                float height = display.getHeight();
-                float width = display.getWidth();
-                float sizeY = height/rowsize;
-                float sizeX = width/rowsize;
-
-
-
-
-                //add areas according to row and collumn sizes
-                for (int r = 0; r < rowsize; r++) {
-                    for (int c = 0; c < collumnsize; c++) {
-                        Area area = new Area(xmax * (c), xmax * (c + 1), ymax * (r), ymax * (r + 1), c + 1, r + 1);
-                        area.setRealLimits(c*sizeX, c*sizeX+sizeX, r*sizeY, r*sizeY+sizeY);
-                        areas.add(area);
-                        //Toast.makeText(context, "Area: " + xmax *(r) + ", " + xmax * (r+1), Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-
+//18 20 24 26
                 //depending on where the screen is touched, write which area that was touched
-                for (int i = 0; i < areasize; i++) {
+                for (int i = 0; i < areas.size(); i++) {
                     if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py) {
                         clickedArea = areas.get(i);
                         //Toast.makeText(context, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
-                        //Toast.makeText(context, "Clicked Area: " + areas.get(i).getXstart() + "-" + areas.get(i).getXend() +  ", " + areas.get(i).getYstart() + "-" + areas.get(i).getYend() , Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Clicked Area: " + areas.get(i).getxmin() + "-" + areas.get(i).getxmax() +  ", " + areas.get(i).getymin() + "-" + areas.get(i).getymax() , Toast.LENGTH_SHORT).show();
                     }
                 }
 
-                 */
+
+                invalidate();
 
                 break;
 
             case MotionEvent.ACTION_MOVE:
                 currentPointX = event.getX();
                 currentPointY = event.getY();
-                invalidate();
+
 
                 break;
 

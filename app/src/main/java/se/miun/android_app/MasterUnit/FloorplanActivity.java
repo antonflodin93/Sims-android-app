@@ -59,11 +59,6 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
         objects = floor.getObjects();
 
 
-
-
-
-
-
     }
 
 
@@ -97,10 +92,6 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
                 }
             });
             builderSingle.show();
-
-
-
         }
-
     }
 }
