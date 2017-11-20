@@ -11,26 +11,32 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import se.miun.android_app.Adapter.RegularMessageAdapter;
 import se.miun.android_app.R;
 import se.miun.android_app.Service.RegularMessageService;
 import se.miun.android_app.Service.WarningMessageService;
 import se.miun.android_app.Model.Message;
+import se.miun.android_app.testing.Area;
+import se.miun.android_app.testing.ImageTestActivity;
 
 public class EmployeeUnitActivity extends Activity implements View.OnClickListener {
 
     public enum MessageType {
         WARNING, REGULAR;
     }
-
 
 
     private ImageButton warningMessageBtn, regularMessageBtn;
@@ -45,6 +51,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private boolean clickedButton = false;
     private Bitmap bmp;
     private ImageView mapImageView;
+    private Beacon beacon1, beacon2, beacon3;
+    private ArrayList<Area> areas;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -85,28 +93,59 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         mapImageView = (ImageView) findViewById(R.id.mapImageView);
 
-        /*
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    InputStream in = new URL("http://193.10.119.34:8080/WS/webapi/floorplans/testimage.png").openStream();
-                    bmp = BitmapFactory.decodeStream(in);
-                } catch (Exception e) {
-                    // log error
-                }
-                return null;
-            }
+        // Dimension of the room in pixels
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        //gets maximum width and height of device in terms of pixels
+        int width = dm.widthPixels;
+        //50 is seekbar height
+        int height = dm.heightPixels - 50;
 
-            @Override
-            protected void onPostExecute(Void result) {
-                if (bmp != null)
-                    mapImageView.setImageBitmap(bmp);
-            }
+        // Create areas
+        setImageAreas();
 
-        }.execute();
-        */
+        // The beacons locations
+        beacon1 = new Beacon(0, 0);
+        beacon2 = new Beacon(width, 0);
+        beacon3 = new Beacon(width, height);
+
+
+        // Get values from all 3 beacons
+        int rssiB1 = -85;
+        int rssiB2 = -95;
+        int rssiB3 = -90;
+
+
+        // Get radius from the beacons (in pixels)
+        double radius1 = getDistance(rssiB1);
+        double radius2 = getDistance(rssiB2);
+        double radius3 = getDistance(rssiB3);
+
+        // Create circles and output x and y that is within the circle
+        getAreasInCircle((int) Math.floor(radius1), beacon1);
+        getAreasInCircle((int) Math.floor(radius2), beacon2);
+        getAreasInCircle((int) Math.floor(radius3), beacon3);
+
+    }
+
+    private void getAreasInCircle(int radius, Beacon beacon) {
+        // Iterate through every areas
+        for (int i = 0; i < areas.size(); i++) {
+            //if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py) {
+              //  Toast.makeText(ImageTestActivity.this, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py +". zoomfactor: "+ zoomfactor, Toast.LENGTH_SHORT).show();
+            //}
+        }
+    }
+
+
+
+    // EXPERIMENTAL DEVELOPED FORMULA
+    // Returns distance for a given rssi
+    double getDistance(int rssi) {
+        double e = 0.6859;
+        double b = Math.pow(2389, e);
+        double n = Math.pow((4447 + 50 * rssi), e);
+        return b / n;
     }
 
 
@@ -124,7 +163,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
     public void onPause() {
         super.onPause();
-        if(!clickedButton){
+        if (!clickedButton) {
             this.unregisterReceiver(this.broadcastReceiver);
             this.stopService(this.regularMessageIntent);
             this.stopService(this.warningMessageIntent);
@@ -134,13 +173,44 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         //this.unregisterReceiver(this.broadcastReceiver);
     }
 
+    private void setImageAreas(){
+        int collumnsize = 25;
+        int rowsize = 25;
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        float height = display.getHeight();
+        float width = display.getWidth();
+
+        float sizeY = height/rowsize;
+        float sizeX = width/rowsize;
+
+        //get xmax and ymax for the first area
+        float xmax = 100 / collumnsize;
+        float ymax = 100 / rowsize;
+
+
+
+        //add areas according to row and collumn sizes
+        for (int r = 0; r < rowsize; r++) {
+            for (int c = 0; c < collumnsize; c++) {
+                Area area = new Area(xmax * (c), xmax * (c + 1), ymax * (r), ymax * (r + 1), c + 1, r + 1);
+                area.setRealLimits(c*sizeX, c*sizeX+sizeX, r*sizeY, r*sizeY+sizeY);
+                areas.add(area);
+                //Toast.makeText(context, "Area: " + xmax *(r) + ", " + xmax * (r+1), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
+    }
+
     @Override
     public void onClick(View v) {
         clickedButton = true;
         if (v.getId() == R.id.warningMessageBtn) {
             Intent myIntent = new Intent(getApplicationContext(), ShowMessagesActivity.class);
             myIntent.putExtra("MESSAGETYPE", MessageType.WARNING);
-           myIntent.putExtra("WARNINGMESSAGES", warningMessages);
+            myIntent.putExtra("WARNINGMESSAGES", warningMessages);
             warningMessageBtn.setBackgroundColor(Color.BLACK);
             context.startActivity(myIntent);
 
@@ -150,6 +220,58 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             myIntent.putExtra("REGULARMESSAGES", regularMessages);
             regularMessageBtn.setBackgroundColor(Color.BLACK);
             context.startActivity(myIntent);
+        }
+    }
+
+    private class Beacon {
+        // Location in pixels
+        private int a, b;
+
+        private ArrayList<Area> coverAreas = new ArrayList<>();
+
+
+        // Set location
+        public Beacon(int a, int b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        public int getA() {
+            return a;
+        }
+
+        public void setA(int a) {
+            this.a = a;
+        }
+
+        public int getB() {
+            return b;
+        }
+
+        public void setB(int b) {
+            this.b = b;
+        }
+
+        public void addArea(Area area){
+            coverAreas.add(area);
+        }
+    }
+
+
+    private class Circle {
+        private double radius;
+
+
+        public Circle(double radius) {
+            this.radius = radius;
+        }
+
+        public double getRadius() {
+            return radius;
+        }
+
+        public void setRadius(double radius) {
+            this.radius = radius;
         }
     }
 }
