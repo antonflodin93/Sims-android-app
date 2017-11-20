@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import se.miun.android_app.Model.FactoryObject;
 import se.miun.android_app.testing.Area;
 
 
@@ -35,6 +36,8 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
     private Boolean drawing = false;
     private float startPointX, startPointY, currentPointX, currentPointY, endPointX, endPointY;
     private ArrayList<Area> areas = new ArrayList<>();
+    private FactoryObject clickedListItem;
+
 
 
     public FloorplanImageView(final Context context, final String filePath) {
@@ -42,6 +45,30 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
         this.filePath = filePath;
         this.context = context;
 
+        getImage();
+
+        setImageAreas();
+
+
+    }
+
+    public FloorplanImageView(final Context context, final String filePath, FactoryObject clickedListItem) {
+        super(context);
+        this.filePath = filePath;
+        this.context = context;
+        this.clickedListItem = clickedListItem;
+
+        getImage();
+
+        setImageAreas();
+
+
+        Toast.makeText(context, "SET TO TRUE", Toast.LENGTH_SHORT).show();
+
+    }
+
+
+    private void getImage(){
         new AsyncTask<Void, Void, Void>() {
 
 
@@ -62,9 +89,12 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
                 if (bmp != null) {
 
                     setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.9f));
-                    setScaleType(ImageView.ScaleType.FIT_XY);
+                    setScaleType(ScaleType.FIT_XY);
                     setImageBitmap(bmp);
                     setOnTouchListener(FloorplanImageView.this);
+                    Toast.makeText(context, "IMage set", Toast.LENGTH_SHORT).show();
+                    clicked = true;
+                    invalidate();
                 }
 
             }
@@ -73,7 +103,9 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
 
 
 
+    }
 
+    private void setImageAreas(){
         int collumnsize = 25;
         int rowsize = 25;
 
@@ -100,7 +132,11 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
                 //Toast.makeText(context, "Area: " + xmax *(r) + ", " + xmax * (r+1), Toast.LENGTH_SHORT).show();
             }
         }
+
+
     }
+
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -118,10 +154,14 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
         }
 */
 
-        //canvas.drawRect(startPointX, startPointY, currentPointX, currentPointY, p);
-
         if(clicked){
-            canvas.drawRect(clickedArea.getXstart(), clickedArea.getYstart(), clickedArea.getXend(), clickedArea.getYend(), p);
+            if(clickedListItem != null){
+                //Toast.makeText(context, "DRAW CLICKED", Toast.LENGTH_SHORT).show();
+                canvas.drawRect(clickedListItem.getxStart(), clickedListItem.getyStart(), clickedListItem.getxEnd(), clickedListItem.getyEnd(), p);
+                //Toast.makeText(context, clickedArea.getXstart() + " " + clickedArea.getYstart() + " " + clickedArea.getXend() + " " + clickedArea.getYend(), Toast.LENGTH_SHORT).show();
+            }
+
+
         }
 
 
