@@ -45,19 +45,16 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
         building = getIntent().getStringExtra("building");
         floor = (Floor) getIntent().getSerializableExtra("floor");
 
-        textViewFloorPlan = (TextView) findViewById(R.id.textViewFloorPlan);
-        floorplanLinearLayout = (LinearLayout) findViewById(R.id.floorplanLinearLayout);
-        textViewFloorPlan.setText(building + "/" + floor.getFloorLevel() + " (" + numofemployees + ")");
-        floorplanImageView = new FloorplanImageView(context, filePath);
-        floorplanLinearLayout.addView(floorplanImageView);
-        listObjectsBtn = (Button) findViewById(R.id.listObjectsBtn);
-        listObjectsBtn.setOnClickListener(this);
-        //objectListView = (ListView) findViewById(R.id.objectListView);
-
         // Get objects for the floorplan
         objects = floor.getObjects();
 
-
+        textViewFloorPlan = (TextView) findViewById(R.id.textViewFloorPlan);
+        floorplanLinearLayout = (LinearLayout) findViewById(R.id.floorplanLinearLayout);
+        textViewFloorPlan.setText(building + "/" + floor.getFloorLevel() + " (" + numofemployees + ")");
+        floorplanImageView = new FloorplanImageView(context, filePath, objects);
+        floorplanLinearLayout.addView(floorplanImageView);
+        listObjectsBtn = (Button) findViewById(R.id.listObjectsBtn);
+        listObjectsBtn.setOnClickListener(this);
 
 
     }
@@ -66,7 +63,6 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.listObjectsBtn){
-            floorplanLinearLayout.removeView(floorplanImageView);
             // Display dialog
             AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
             builderSingle.setCancelable(false);
@@ -89,7 +85,8 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    floorplanImageViewDrawed = new FloorplanImageView(context, filePath, objectAdapter.getItem(which));
+                    floorplanLinearLayout.removeView(floorplanImageView);
+                    floorplanImageView = new FloorplanImageView(context, filePath, objects, objectAdapter.getItem(which));
                     floorplanLinearLayout.addView(floorplanImageView);
 
                     //Toast.makeText(context, "CLICKED " + objectAdapter.getItem(which).getObjectName(), Toast.LENGTH_SHORT).show();
