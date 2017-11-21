@@ -40,14 +40,11 @@ import java.util.TimerTask;
 import se.miun.android_app.R;
 
 public class BluetoothLogger extends AppCompatActivity implements View.OnClickListener {
-    //ui variables
-    private Button bleScan, bleOnOff, saveToFile;
     private TextView displayDataTextView;
     private EditText editFileName;
 
     //Bluetooth Variables
     private BluetoothAdapter mBluetoothAdapter;
-    private int REQUEST_ENABLE_BT = 1;
 
     //scanning variables and objects
     private HashMap mScanResults;
@@ -60,9 +57,11 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
     //Allowed Devices (MAC address)
     String[] filterlist = {
             "ED:0E:FF:9C:A9:6D",
-            "C8:86:3A:91:0C:0C",
-            "FD:49:FD:36:04:B4",
-            "E9:91:4A:42:AC:3B",
+            "EE:2B:8F:54:76:14",
+            "D4:C4:D4:66:72:C5",
+            "C8:D8:A1:7F:29:7A",
+            "D7:1F:BE:CB:E0:16",
+            "EB:09:BD:0E:78:37",
     };
 
 
@@ -73,11 +72,11 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_bluetooth_logger);
 
         //init buttons
-        bleScan = (Button) findViewById(R.id.bleScanButton);
+        Button bleScan = (Button) findViewById(R.id.bleScanButton);
         bleScan.setOnClickListener(this);
-        bleOnOff = (Button) findViewById(R.id.bleOnOffButton);
+        Button bleOnOff = (Button) findViewById(R.id.bleOnOffButton);
         bleOnOff.setOnClickListener(this);
-        saveToFile = (Button) findViewById(R.id.saveToFileButton);
+        Button saveToFile = (Button) findViewById(R.id.saveToFileButton);
         saveToFile.setOnClickListener(this);
 
         displayDataTextView = (TextView) findViewById(R.id.displayDataTextView);
@@ -142,16 +141,16 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         //create callback
         mScanResults = new HashMap<>();
 
-        //temp scanfilter(to get MAC addresses from the beacons...
-        List<ScanFilter> filtersTmp = new ArrayList<>();
-                //no scan filter
-        ScanFilter scanFilterTmp = new ScanFilter.Builder().build();
-        filtersTmp.add(scanFilterTmp);
-        //end of temp scanfilters
+//        //temp scanfilter(to get MAC addresses from the beacons...
+//        List<ScanFilter> filtersTmp = new ArrayList<>();
+//                //no scan filter
+//        ScanFilter scanFilterTmp = new ScanFilter.Builder().build();
+//        filtersTmp.add(scanFilterTmp);
+//        //end of temp scanfilters
 
         mScanCallback = new BleScanCallback(mScanResults, displayDataTextView);
         //start the scan
-        mBluetoothLeScanner.startScan(filtersTmp /* REPALCE WITH 'filters' when testing is complete*/, settings, mScanCallback);
+        mBluetoothLeScanner.startScan(filters /* REPLACE WITH 'filters' when testing is complete*/, settings, mScanCallback);
         //set scan check enable
         mScanning = true;
     }
@@ -254,6 +253,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
     private void requestBluetoothEnable(){
         // displays a dialog requesting user permission to enable Bluetooth.
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        int REQUEST_ENABLE_BT = 1;
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     }
 

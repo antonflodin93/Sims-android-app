@@ -214,7 +214,7 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
                 //depending on where the screen is touched, write which area that was touched
                 for (int i = 0; i < areasize; i++) {
                     if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py) {
-                        // Toast.makeText(ImageTestActivity.this, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py +". zoomfactor: "+ zoomfactor, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ImageTestActivity.this, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py +". zoomfactor: "+ zoomfactor, Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -267,7 +267,7 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
                 break;
 
             case MotionEvent.ACTION_UP:
-                Toast.makeText(context, "Total dragged: " + totalScrolledY, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(context, "Total dragged: " + totalScrolledY, Toast.LENGTH_SHORT).show();
                 break;
         }
         return true;
