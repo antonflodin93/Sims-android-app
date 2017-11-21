@@ -46,6 +46,7 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
     private ArrayList<Area> areas = new ArrayList<>();
     private ArrayList<FactoryObject> objects;
     private FactoryObject clickedObject;
+
     private enum MessageType {
         WARNING, REGULAR
     }
@@ -144,7 +145,7 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
         super.onDraw(canvas);
         Paint p = new Paint();
 
-       if (clicked) {
+        if (clicked) {
             canvas.drawRect(clickedArea.getXstart(), clickedArea.getYstart(), clickedArea.getXend(), clickedArea.getYend(), p);
             //Toast.makeText(context, clickedArea.getXstart() + " " + clickedArea.getYstart() + " " + clickedArea.getXend() + " " + clickedArea.getYend(), Toast.LENGTH_SHORT).show();
 
@@ -187,7 +188,7 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
                         clickedArea = areas.get(i);
 
                         checkObjectForArea();
-                       // Toast.makeText(context, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(context, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
                         //Toast.makeText(context, "Clicked Area: " + areas.get(i).getxmin() + "-" + areas.get(i).getxmax() + ", " + areas.get(i).getymin() + "-" + areas.get(i).getymax(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -209,9 +210,9 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
     }
 
 
-    void checkObjectForArea(){
+    void checkObjectForArea() {
         // Check if there is any object in the given area
-        for(FactoryObject object : objects){
+        for (FactoryObject object : objects) {
     /*
             if(object.getObjectId() == 1){
                 Toast.makeText(context, clickedArea.getrow() + " >= " + object.getAreaXStart(), Toast.LENGTH_SHORT).show();
@@ -222,8 +223,8 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
             }
 */
 
-            if(clickedArea.getrow() >= object.getAreaXStart() && clickedArea.getrow() <= object.getAreaXEnd() && clickedArea.getcollumn() >= object.getAreaYStart()  && clickedArea.getcollumn() <= object.getAreaYEnd() ){
-               Toast.makeText(context, "Its object " + object.getObjectName(), Toast.LENGTH_SHORT).show();
+            if (clickedArea.getrow() >= object.getAreaXStart() && clickedArea.getrow() <= object.getAreaXEnd() && clickedArea.getcollumn() >= object.getAreaYStart() && clickedArea.getcollumn() <= object.getAreaYEnd()) {
+                Toast.makeText(context, "Its object " + object.getObjectName(), Toast.LENGTH_SHORT).show();
                 clickedObject = object;
                 openDialogForItem();
 
@@ -231,9 +232,9 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
         }
     }
 
-    void openDialogForItem(){
+    void openDialogForItem() {
         // First, select what kind of message
-        final CharSequence[] messageTypes = { "Warning message", "Regular Message" };
+        final CharSequence[] messageTypes = {"Warning message", "Regular Message"};
         // Display dialog
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
         builderSingle.setIcon(android.R.drawable.ic_dialog_alert);
@@ -246,13 +247,13 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
                                 Toast.LENGTH_SHORT).show();
 
                         // 0 is warning and 1 is regular
-                        if(messageType == MessageType.WARNING.ordinal()){
+                        if (messageType == MessageType.WARNING.ordinal()) {
                             Toast.makeText(context, "warning", Toast.LENGTH_SHORT).show();
                             createMessage(messageType);
                             dialog.dismiss();
 
 
-                        } else{
+                        } else {
                             createMessage(messageType);
                             dialog.dismiss();
                         }
@@ -269,10 +270,101 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
         builderSingle.show();
     }
 
-    void createMessage(int messageType){
-        if(messageType == MessageType.WARNING.ordinal()){
+    void createMessage(int messageType) {
+        if (messageType == MessageType.WARNING.ordinal()) {
             AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
 
+            builderSingle.setIcon(android.R.drawable.ic_dialog_alert);
+            builderSingle.setTitle("Select warning message for " + clickedObject.getObjectName());
+
+            final CharSequence[] messageChoices = {"Default message: Exit the building", "Default message: Avoid this area", "Write own message"};
+            builderSingle.setSingleChoiceItems(messageChoices, -1,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, final int selectedIndex) {
+                            if (selectedIndex == 0 || selectedIndex == 1) {
+                                dialog.dismiss();
+                                AlertDialog.Builder dialogselection = new AlertDialog.Builder(context);
+
+                                dialogselection.setIcon(android.R.drawable.ic_dialog_alert);
+                                dialogselection.setTitle("Are you sure you want to send the message?");
+                                dialogselection.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        // Send default message
+                                        sendMessage((String) messageChoices[selectedIndex]);
+                                    }
+                                });
+
+                                dialogselection.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        createMessage(MessageType.WARNING.ordinal());
+                                    }
+                                });
+
+                                dialogselection.show();
+
+                            } else {
+                                // Write own message
+                                dialog.dismiss();
+                                AlertDialog.Builder dialogselection = new AlertDialog.Builder(context);
+
+
+                                final EditText messageEditText = new EditText(context);
+                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT);
+                                messageEditText.setLayoutParams(lp);
+                                dialogselection.setView(messageEditText);
+
+
+                                dialogselection.setIcon(android.R.drawable.ic_dialog_alert);
+                                dialogselection.setTitle("Enter a warning message");
+
+
+                                dialogselection.setPositiveButton("Send",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (!messageEditText.getText().toString().trim().equals("")) {
+                                                    AlertDialog.Builder dialogselection = new AlertDialog.Builder(context);
+
+                                                    dialogselection.setIcon(android.R.drawable.ic_dialog_alert);
+                                                    dialogselection.setTitle("Are you sure you want to send the message?");
+                                                    dialogselection.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            // Send default message
+                                                            sendMessage(messageEditText.getText().toString());
+                                                        }
+                                                    });
+
+                                                    dialogselection.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            createMessage(MessageType.WARNING.ordinal());
+                                                        }
+                                                    });
+
+                                                    dialogselection.show();
+                                                } else {
+                                                    createMessage(MessageType.WARNING.ordinal());
+                                                }
+
+
+                                            }
+                                        });
+
+                                dialogselection.show();
+
+                            }
+
+
+                        }
+                    });
+
+
+
+/*
 
             final EditText messageEditText = new EditText(context);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -299,6 +391,7 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
                         }
                     });
 
+*/
             builderSingle.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -310,6 +403,10 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
         }
 
 
+    }
+
+    void sendMessage(String messageChoice) {
+        Toast.makeText(context, "Sent " + messageChoice, Toast.LENGTH_SHORT).show();
     }
 
 }
