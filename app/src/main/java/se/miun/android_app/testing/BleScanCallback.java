@@ -9,6 +9,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static android.content.ContentValues.TAG;
@@ -21,12 +22,6 @@ public class BleScanCallback extends ScanCallback {
 
     private TextView displayTextView;
     private Map<String, ScanResult> mScanResults;
-
-
-    //allowed devices for scan result
-    //private String[] AllowedDevices = {"IgB_Rej",
-    //                                  "IgB_SoP"};
-
 
 
     //constructor
@@ -45,11 +40,11 @@ public class BleScanCallback extends ScanCallback {
         String deviceName = result.getDevice().getName();
         String bleTime = timeConverter(result);
         //display "live" data
-        displayTextView.append( "\nDevice Name: " + deviceName );
-        displayTextView.append( "\tMAC: " + deviceAddress );
-        displayTextView.append( "\tRSSI: " + rssi );
-        displayTextView.append( "\tTime: " + bleTime );
-
+        displayTextView.append( "\nName: " + deviceName );
+        displayTextView.append( "\t " + deviceAddress );
+        displayTextView.append( "\t RSSI: " + rssi );
+        displayTextView.append( "\t Time: " + bleTime );
+        displayTextView.append( "\t dist: " + getDistance(rssi) );
 
         //test mData
 //        SparseArray<byte[]> manufacturerData = result.getScanRecord().getManufacturerSpecificData();
@@ -64,7 +59,7 @@ public class BleScanCallback extends ScanCallback {
         addScanResult(result);
     }
 
-    //store batch results
+    //batch results
     @Override
     public void onBatchScanResults(List<ScanResult> results){
         for(ScanResult result: results){
@@ -74,8 +69,8 @@ public class BleScanCallback extends ScanCallback {
 
     //scanning fails
     @Override
-    public void onScanFailed(int errorcode){
-        Log.e(TAG, "BLE Scan Failed with Error code: " + errorcode);
+    public void onScanFailed(int errorCode){
+        Log.e(TAG, "BLE Scan Failed with Error code: " + errorCode);
     }
 
     //Store batch result (1 value for each device)
@@ -95,7 +90,7 @@ public class BleScanCallback extends ScanCallback {
     }
 
     //convert timestamp to normal time
-    public String timeConverter(ScanResult result){
+    private String timeConverter(ScanResult result){
         //received signal
         long rxTimestampMillis = System.currentTimeMillis() -
                 SystemClock.elapsedRealtime() +
@@ -103,9 +98,50 @@ public class BleScanCallback extends ScanCallback {
 
         Date rxDate = new Date(rxTimestampMillis);
 
-        String sDate = new SimpleDateFormat("HH:mm:ss.SSS").format(rxDate);
+        return new SimpleDateFormat("HH:mm:ss.SSS", Locale.ENGLISH).format(rxDate);
+    }
 
-        return sDate;
+    //estimate distance based on rssi level (experimentally derived formula)
+    //only valid up to ~9m (-90 rssi value)
+    private double getDistance(int rssi) {
+        double e = 0.6859;
+        double b = Math.pow(2389, e);
+        double n = Math.pow((4447 + 50 * rssi), e);
+        return b / n;
+    }
+
+
+    //storage container for beacon data
+    private class BeaconData{
+        private String id;
+        private int rssi;
+        private String time;
+
+        public BeaconData(String id, int rssi, String time){
+            this.id = id;
+            this.rssi = rssi;
+            this.time = time;
+        }
+
+        public String getId(){
+            return id;
+        }
+
+        public void setRssi(int rssi){
+            this.rssi = rssi;
+        }
+        public int getRssi(){
+            return rssi;
+        }
+
+        public void setTime(String time){
+            this.time = time;
+        }
+        public String getTime(){
+            return time;
+        }
+
     }
 
 }
+

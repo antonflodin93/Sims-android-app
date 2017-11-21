@@ -1,43 +1,32 @@
 package se.miun.android_app.testing;
 
-import android.app.DownloadManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanRecord;
-import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
-import android.content.Intent;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import se.miun.sims.R;
-
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import se.miun.android_app.R;
+
+//import se.miun.sims.R;
 
 public class BluetoothLogger extends AppCompatActivity implements View.OnClickListener {
     private TextView displayDataTextView;
@@ -46,8 +35,6 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
     //Bluetooth Variables
     private BluetoothAdapter mBluetoothAdapter;
 
-    //scanning variables and objects
-    private HashMap mScanResults;
     List<ScanFilter> filters;
     private boolean mScanning;
     private BluetoothLeScanner mBluetoothLeScanner;
@@ -118,10 +105,10 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         else if( v.getId() == R.id.saveToFileButton ){
             if(isExternalStorageWritable()){
                 bleLoggData();
-                Toast.makeText(getApplicationContext(), "Stored File: ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Stored file in /Downloads", Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(getApplicationContext(), "File FAIL", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Save to File FAILED", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -139,7 +126,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         //create scanner object
         mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
         //create callback
-        mScanResults = new HashMap<>();
+        HashMap mScanResults = new HashMap<>();
 
 //        //temp scanfilter(to get MAC addresses from the beacons...
 //        List<ScanFilter> filtersTmp = new ArrayList<>();
@@ -164,6 +151,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         return false;
     }
 
+    //store ble scan data in file under /downloads
     public void bleLoggData(){
         String fileName = editFileName.getText().toString();
         String content = displayDataTextView.getText().toString();
@@ -180,6 +168,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    //ble scan settings (fast/slow scan mode etc.)
     private void setScanSettings(){
         settings = new ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
@@ -187,6 +176,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         //SCAN_MODE_LOW_LATENCY <-- use for fastest scan period
     }
 
+    //setup of filter settings for the scan (filters on mac address)
     private void setScanFilter(String[] filterList){
         filters = new ArrayList<>();
         //add filter list of MAC addresses to filter
@@ -197,40 +187,40 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
     }
 
     //check and display scan results (for test purposes)
-    private void scanComplete(){
-        if(mScanResults.isEmpty()){
-            return;
-        }
-        //loop trough the map and fetch device address and rssi[dbm] value
-        Set keys = mScanResults.keySet();
-        for(Iterator i = keys.iterator(); i.hasNext();){
-            String key = (String) i.next();
-
-            ScanResult results = (ScanResult) mScanResults.get(key);
-            //mac address
-            String deviceAddress = results.getDevice().getAddress();
-            int rssi = results.getRssi();
-            ScanRecord scanRecord = results.getScanRecord();
-
-            int contents = results.describeContents();
-            int txPower = scanRecord.getTxPowerLevel();
-            long timestampNanos = results.getTimestampNanos();
-
-            displayDataTextView.append("\nname: " + results.getDevice().getName());
-            //displayDataTextView.append("\nDeviceAddress: " + deviceAddress);
-            displayDataTextView.append("\tRSSI: " + rssi );
-            displayDataTextView.append("\tdist: " + calculateDistance(-56, rssi));
-            //displayDataTextView.append("\tTime: " + timestampNanos);
-            displayDataTextView.append("\tTx: " + txPower);
-            //get manufacturer data...(Set as AdvData for beacon)
-            displayDataTextView.append("\tmData: ");
-            SparseArray<byte[]> manufacturerData = scanRecord.getManufacturerSpecificData();
-            for(int u = 0; u < manufacturerData.size() ; u++){
-                int manufacturerId = manufacturerData.keyAt(u);
-                displayDataTextView.append("" + manufacturerId);
-            }
-        }
-    }
+//    private void scanComplete(){
+//        if(mScanResults.isEmpty()){
+//            return;
+//        }
+//        //loop trough the map and fetch device address and rssi[dbm] value
+//        Set keys = mScanResults.keySet();
+//        for(Iterator i = keys.iterator(); i.hasNext();){
+//            String key = (String) i.next();
+//
+//            ScanResult results = (ScanResult) mScanResults.get(key);
+//            //mac address
+//            String deviceAddress = results.getDevice().getAddress();
+//            int rssi = results.getRssi();
+//            ScanRecord scanRecord = results.getScanRecord();
+//
+//            int contents = results.describeContents();
+//            int txPower = scanRecord.getTxPowerLevel();
+//            long timestampNanos = results.getTimestampNanos();
+//
+//            displayDataTextView.append("\nname: " + results.getDevice().getName());
+//            //displayDataTextView.append("\nDeviceAddress: " + deviceAddress);
+//            displayDataTextView.append("\tRSSI: " + rssi );
+//            displayDataTextView.append("\tdist: " + calculateDistance(-56, rssi));
+//            //displayDataTextView.append("\tTime: " + timestampNanos);
+//            displayDataTextView.append("\tTx: " + txPower);
+//            //get manufacturer data...(Set as AdvData for beacon)
+//            displayDataTextView.append("\tmData: ");
+//            SparseArray<byte[]> manufacturerData = scanRecord.getManufacturerSpecificData();
+//            for(int u = 0; u < manufacturerData.size() ; u++){
+//                int manufacturerId = manufacturerData.keyAt(u);
+//                displayDataTextView.append("" + manufacturerId);
+//            }
+//        }
+//    }
 
     //stop scanning for ble devices
     private void stopScan(){
@@ -263,42 +253,41 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
     }
 
 
-
     //algorithm used for distance calculation by Altbeacon.org
-    public double calculateDistance(int txPower, double rssi) {
-        if (rssi == 0) {
-            return -1.0; // if we cannot determine accuracy, return -1.
-        }
-        double ratio = rssi*1.0/txPower;
-        if (ratio < 1.0) {
-            return Math.pow(ratio,10);
-        }
-        else {
-            double accuracy =  (0.89976)*Math.pow(ratio,7.7095) + 0.111;
-            return accuracy;
-        }
-    }
+//    public double calculateDistance(int txPower, double rssi) {
+//        if (rssi == 0) {
+//            return -1.0; // if we cannot determine accuracy, return -1.
+//        }
+//        double ratio = rssi*1.0/txPower;
+//        if (ratio < 1.0) {
+//            return Math.pow(ratio,10);
+//        }
+//        else {
+//            double accuracy =  (0.89976)*Math.pow(ratio,7.7095) + 0.111;
+//            return accuracy;
+//        }
+//    }
 
     //timer function, if called, performs the run() function at the specified time (milliSecondDuration)
-    public void timeMe(int milliSecondDuration) {
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            private final int MAX_TIME = 10;
-            int counter = 0;
-
-            @Override
-            public void run() {
-                if (counter < MAX_TIME) {
-                    startScan();
-                    counter++;
-                } else {
-                    cancel();
-                    //displayDataTextView.append("counter is now: " + counter);
-                    stopScan();
-                }
-            }
-        };
-        timer.schedule(task,0,milliSecondDuration);
-    }
+//    public void timeMe(int milliSecondDuration) {
+//        Timer timer = new Timer();
+//        TimerTask task = new TimerTask() {
+//            private final int MAX_TIME = 10;
+//            int counter = 0;
+//
+//            @Override
+//            public void run() {
+//                if (counter < MAX_TIME) {
+//                    startScan();
+//                    counter++;
+//                } else {
+//                    cancel();
+//                    //displayDataTextView.append("counter is now: " + counter);
+//                    stopScan();
+//                }
+//            }
+//        };
+//        timer.schedule(task,0,milliSecondDuration);
+//    }
 
 }

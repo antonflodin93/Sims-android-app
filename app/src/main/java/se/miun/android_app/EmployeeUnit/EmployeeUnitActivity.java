@@ -131,10 +131,16 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private void getAreasInCircle(int radius, Beacon beacon) {
         // Iterate through every areas
         for (int i = 0; i < areas.size(); i++) {
+            //todo need to get how many ares in x and y direction to make correct calculations..
             //if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py) {
               //  Toast.makeText(ImageTestActivity.this, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py +". zoomfactor: "+ zoomfactor, Toast.LENGTH_SHORT).show();
             //}
         }
+    }
+
+    private int convertGetDistanceToArea(double rssiMeters){
+        return areas.size() / (int) Math.floor(rssiMeters);
+        //todo need to get how many ares in x and y direction to make correct calculations..
     }
 
 
