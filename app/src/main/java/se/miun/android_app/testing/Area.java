@@ -70,4 +70,5 @@ public class Area {
     public float getYend() {
         return yend;
     }
+
 }

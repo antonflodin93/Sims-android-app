@@ -17,31 +17,34 @@ public class FactoryObject implements Serializable {
     @SerializedName("objectFloorId")
     private int objectFloorId;
 
-    @SerializedName("xstart")
-    private int xStart;
+    @SerializedName("areaXStart")
+    private int areaXStart;
 
-    @SerializedName("xend")
-    private int xEnd;
+    @SerializedName("areaXEnd")
+    private int areaXEnd;
 
-    @SerializedName("ystart")
-    private int  yStart;
+    @SerializedName("areaYStart")
+    private int  areaYStart;
 
-    @SerializedName("yend")
-    private int yEnd;
+    @SerializedName("areaYEnd")
+    private int areaYEnd;
+
+
+
 
 
     public FactoryObject() {
     }
 
 
-    public FactoryObject(int objectId, String objectName, int objectFloorId, int xStart, int xEnd, int yStart, int yEnd) {
+    public FactoryObject(int objectId, String objectName, int objectFloorId, int areaXStart, int areaXEnd, int areaYStart, int areaYEnd) {
         this.objectId = objectId;
         this.objectName = objectName;
         this.objectFloorId = objectFloorId;
-        this.xStart = xStart;
-        this.xEnd = xEnd;
-        this.yStart = yStart;
-        this.yEnd = yEnd;
+        this.areaXStart = areaXStart;
+        this.areaXEnd = areaXEnd;
+        this.areaYStart = areaYStart;
+        this.areaYEnd = areaYEnd;
     }
 
     public int getObjectId() {
@@ -68,35 +71,35 @@ public class FactoryObject implements Serializable {
         this.objectFloorId = objectFloorId;
     }
 
-    public int getxStart() {
-        return xStart;
+    public int getAreaXStart() {
+        return areaXStart;
     }
 
-    public void setxStart(int xStart) {
-        this.xStart = xStart;
+    public void setAreaXStart(int areaXStart) {
+        this.areaXStart = areaXStart;
     }
 
-    public int getxEnd() {
-        return xEnd;
+    public int getAreaXEnd() {
+        return areaXEnd;
     }
 
-    public void setxEnd(int xEnd) {
-        this.xEnd = xEnd;
+    public void setAreaXEnd(int areaXEnd) {
+        this.areaXEnd = areaXEnd;
     }
 
-    public int getyStart() {
-        return yStart;
+    public int getAreaYStart() {
+        return areaYStart;
     }
 
-    public void setyStart(int yStart) {
-        this.yStart = yStart;
+    public void setAreaYStart(int areaYStart) {
+        this.areaYStart = areaYStart;
     }
 
-    public int getyEnd() {
-        return yEnd;
+    public int getAreaYEnd() {
+        return areaYEnd;
     }
 
-    public void setyEnd(int yEnd) {
-        this.yEnd = yEnd;
+    public void setAreaYEnd(int areaYEnd) {
+        this.areaYEnd = areaYEnd;
     }
 }
