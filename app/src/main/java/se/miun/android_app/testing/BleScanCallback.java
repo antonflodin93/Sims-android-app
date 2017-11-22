@@ -103,11 +103,17 @@ public class BleScanCallback extends ScanCallback {
 
     //estimate distance based on rssi level (experimentally derived formula)
     //only valid up to ~9m (-90 rssi value)
-    private double getDistance(int rssi) {
-        double e = 0.6859;
-        double b = Math.pow(2389, e);
-        double n = Math.pow((4447 + 50 * rssi), e);
-        return b / n;
+    double getDistance(int rssi) {
+        //check for max? distance...
+        if(rssi < -100){
+            return 9.0;
+        }
+        else  {
+            double e = 0.6859;
+            double b = Math.pow(2389, e);
+            double n = Math.pow((4447 + 50 * rssi), e);
+            return b / n;
+        }
     }
 
 

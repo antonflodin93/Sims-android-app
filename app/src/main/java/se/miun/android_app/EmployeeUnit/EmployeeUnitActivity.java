@@ -73,6 +73,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     //test with circleAreas
     private Circle testCircle;
 
+
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
 
@@ -169,7 +171,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             }
         }
     }
-
     //need to store every circle area somewhere in an array and pull everyone in there to compare
     //for an accurate assessment of the location...
     //one to do this would be to add +1 for every beacon found, thus
@@ -184,13 +185,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             for(int y = 0; /*#nr of areas in y direction*/ y < yAreas; y++){
                 //compare all circles
                 if( circle.getArea(x,y) == 1 ){
-                    //set myLocation to occupied in this area
-                    myLocation[x][y] ++;
+                    //set myLocation to +1 in specified area
+                    myLocation[x][y] += 1;
                 }
             }
         }
     }
-
     private void clearLocationArea(){
         for(int x=0;x<8;x++){
             for(int y=0;y<10;y++){
@@ -198,7 +198,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             }
         }
     }
-
 
     private int meterToAreaBlockDistance(double rssiMeters, float xAreaPerMeter){
         //need to know areas/meter from floorplans, pass in as distanceToPixelCount...
