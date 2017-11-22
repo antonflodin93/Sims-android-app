@@ -205,11 +205,11 @@ public class ImageTestActivity extends Activity implements SeekBar.OnSeekBarChan
 
                 //add areas according to row and collumn sizes
                 for (int c = 0; c < rowsize; c++) {
-                    for (int r = 0; r < collumnsize; r++) {
-                        areas.add(size, new Area(xmax * (r), xmax * (r + 1), ymax * (c), ymax * (c + 1), r + 1, c + 1));
-                        size++;
-                    }
+                for (int r = 0; r < collumnsize; r++) {
+                    areas.add(size, new Area(xmax * (r), xmax * (r + 1), ymax * (c), ymax * (c + 1), r + 1, c + 1));
+                    size++;
                 }
+            }
 
                 //depending on where the screen is touched, write which area that was touched
                 for (int i = 0; i < areasize; i++) {

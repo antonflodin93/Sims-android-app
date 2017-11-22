@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 import se.miun.android_app.Adapter.RegularMessageAdapter;
 import se.miun.android_app.R;
@@ -53,6 +54,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private ImageView mapImageView;
     private Beacon beacon1, beacon2, beacon3;
     private ArrayList<Area> areas;
+    float ymax, xmax;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -180,20 +182,30 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     }
 
     private void setImageAreas(){
-        int collumnsize = 25;
-        int rowsize = 25;
 
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        float height = display.getHeight();
-        float width = display.getWidth();
+        //WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
-        float sizeY = height/rowsize;
-        float sizeX = width/rowsize;
+        //creates an object devicemetrics that contain information about devicemetrics
+        DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
 
-        //get xmax and ymax for the first area
-        float xmax = 100 / collumnsize;
-        float ymax = 100 / rowsize;
+        //gets maximum width and height of device in terms of pixels
+        //float deviceheight = displaymetrics.widthPixels;
+        //float devicewidth = displaymetrics.heightPixels;
+
+        //set amount of areas in both row and collumn
+        int collumnsize = 8;
+        int rowsize = 10;
+
+        //float sizeY = deviceheight/rowsize;
+        //float sizeX = devicewidth/collumnsize;
+
+        //meters which later should be based on floorplan image
+        float floorplanmeterx = 25;
+        float floorplanmetery = 40;
+
+        //get xmax and ymax for the first area (example meters of floorplan, 25*40m^2)
+        xmax = floorplanmeterx / collumnsize;
+        ymax = floorplanmetery / rowsize;
 
 
 
@@ -201,7 +213,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         for (int r = 0; r < rowsize; r++) {
             for (int c = 0; c < collumnsize; c++) {
                 Area area = new Area(xmax * (c), xmax * (c + 1), ymax * (r), ymax * (r + 1), c + 1, r + 1);
-                area.setRealLimits(c*sizeX, c*sizeX+sizeX, r*sizeY, r*sizeY+sizeY);
+                //area.setRealLimits(c*sizeX, c*sizeX+sizeX, r*sizeY, r*sizeY+sizeY);
                 areas.add(area);
                 //Toast.makeText(context, "Area: " + xmax *(r) + ", " + xmax * (r+1), Toast.LENGTH_SHORT).show();
             }
