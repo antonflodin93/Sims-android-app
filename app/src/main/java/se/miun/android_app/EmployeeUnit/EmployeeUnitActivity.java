@@ -56,6 +56,23 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private ArrayList<Area> areas;
     float ymax, xmax;
 
+    //test of my location
+    //store my location in x,y (area coordinate), occupied area = 1
+    private int[][] myLocation = new int[][]{
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+    };
+    //test with circleAreas
+    private Circle testCircle;
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
 
@@ -123,38 +140,90 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         double radius2 = getDistance(rssiB2);
         double radius3 = getDistance(rssiB3);
 
+        //get radius in area blocks
+        int radiiArea1 = meterToAreaBlockDistance(radius1, xmax);
+
+
+        //test with occupied circle Area
+        testCircle = new Circle(0);
+        testCircle.setRadius(getDistance(-85));
         // Create circles and output x and y that is within the circle
-        getAreasInCircle((int) Math.floor(radius1), beacon1);
-        getAreasInCircle((int) Math.floor(radius2), beacon2);
-        getAreasInCircle((int) Math.floor(radius3), beacon3);
+        getAreasInCircle( radiiArea1, beacon1, testCircle); /*test...*/
+//
+//        getAreasInCircle((int) Math.floor(radius2), beacon2);
+//        getAreasInCircle((int) Math.floor(radius3), beacon3);
 
     }
 
-    private void getAreasInCircle(int radius, Beacon beacon) {
+    private void getAreasInCircle(int radius, Beacon beacon, Circle circle) {
+        int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
+
         // Iterate through every areas
-        for (int i = 0; i < areas.size(); i++) {
-            //todo need to get how many ares in x and y direction to make correct calculations..
-            //if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py) {
-              //  Toast.makeText(ImageTestActivity.this, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py +". zoomfactor: "+ zoomfactor, Toast.LENGTH_SHORT).show();
-            //}
+        for (int x = 0;  /*#nr or areas in x direction*/ x < xAreas; x++) {
+            for(int y = 0; /*#nr of areas in y direction*/ y < yAreas; y++){
+                //compare (circle equation)...
+                if( (x-beacon.a)*(x-beacon.a)+(y-beacon.getB())*(y-beacon.getB()) <= radius*radius ){
+                    //store occupied area inside the circle
+                    circle.setArea(x,y);
+                }
+            }
         }
     }
 
-    private int convertGetDistanceToArea(double rssiMeters){
-        return areas.size() / (int) Math.floor(rssiMeters);
-        //todo need to get how many ares in x and y direction to make correct calculations..
+    //need to store every circle area somewhere in an array and pull everyone in there to compare
+    //for an accurate assessment of the location...
+    //one to do this would be to add +1 for every beacon found, thus
+    //you could just print out the highest value in the matrix.
+    //for example if the area reads: +3 then you know 3 beacons are detected in that
+    //area and thus it is highly likely you are in that area.
+    private void setLocationArea(Circle circle){
+        int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
+
+        // Iterate through every areas
+        for (int x = 0;  /*#nr or areas in x direction*/ x < xAreas; x++) {
+            for(int y = 0; /*#nr of areas in y direction*/ y < yAreas; y++){
+                //compare all circles
+                if( circle.getArea(x,y) == 1 ){
+                    //set myLocation to occupied in this area
+                    myLocation[x][y] ++;
+                }
+            }
+        }
+    }
+
+    private void clearLocationArea(){
+        for(int x=0;x<8;x++){
+            for(int y=0;y<10;y++){
+                myLocation[x][y] = 0;
+            }
+        }
     }
 
 
+    private int meterToAreaBlockDistance(double rssiMeters, float xAreaPerMeter){
+        //need to know areas/meter from floorplans, pass in as distanceToPixelCount...
+        //as in 1 meter represents x amount of pixels(area blocks) in x or y direction.
+        //  (# area count in x direction )/ (# meters  )
+        return Math.round( (float)rssiMeters / xAreaPerMeter );
+        //xAreaPerMeter = xmax
+    }
 
-    // EXPERIMENTAL DEVELOPED FORMULA
+    // EXPERIMENTALLY DEVELOPED FORMULA
     // Returns distance for a given rssi
     double getDistance(int rssi) {
-        double e = 0.6859;
-        double b = Math.pow(2389, e);
-        double n = Math.pow((4447 + 50 * rssi), e);
-        return b / n;
+        //check for max? distance...
+        if(rssi < -100){
+            return 9.0;
+        }
+        else  {
+            double e = 0.6859;
+            double b = Math.pow(2389, e);
+            double n = Math.pow((4447 + 50 * rssi), e);
+            return b / n;
+        }
     }
+
+
 
 
     public void onResume() {
@@ -279,6 +348,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private class Circle {
         private double radius;
 
+        //Area of floorplan, (8x10 default) containing circle area of detected beacon.
+        private int[][] circleArea = new int[8][10];
 
         public Circle(double radius) {
             this.radius = radius;
@@ -290,6 +361,14 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         public void setRadius(double radius) {
             this.radius = radius;
+        }
+
+        public void setArea(int x, int y){
+            //set specified area as occupied by the beacon circle
+            this.circleArea[x][y] = 1;
+        }
+        public int getArea(int x, int y){
+            return circleArea[x][y];
         }
     }
 }
