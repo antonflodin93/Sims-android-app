@@ -28,6 +28,12 @@ public class Message implements Serializable {
         this.messageType = "REGULAR";
     }
 
+    public Message(String messageLabel, String messageText, String messageType) {
+        this.messageLabel = messageLabel;
+        this.messageText = messageText;
+        this.messageType = messageType;
+    }
+
     public Message(){
 
     }

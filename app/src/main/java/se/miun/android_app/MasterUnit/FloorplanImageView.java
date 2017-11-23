@@ -1,5 +1,6 @@
 package se.miun.android_app.MasterUnit;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,17 +25,30 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 import se.miun.android_app.Adapter.ObjectAdapter;
+import se.miun.android_app.Api.ApiClient;
+import se.miun.android_app.Api.ApiInterface;
+import se.miun.android_app.LoginActivity;
+import se.miun.android_app.Model.Employee;
 import se.miun.android_app.Model.FactoryObject;
+import se.miun.android_app.Model.Message;
 import se.miun.android_app.testing.Area;
 
 
+@SuppressLint({"ViewConstructor", "AppCompatCustomView"})
 public class FloorplanImageView extends ImageView implements View.OnTouchListener {
+    private static final int RESPONSE_OK = 200;
     private String filePath;
     private String IP_ADDRESS = "http://193.10.119.34:8080";
     private Context context;
@@ -71,10 +85,11 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
         this.clickedObject = clickedObject;
         getImage();
         setImageAreas();
-        openDialogForItem();
+        dialogChooseMessageType();
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     private void getImage() {
         new AsyncTask<Void, Void, Void>() {
 
@@ -145,8 +160,9 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
         super.onDraw(canvas);
         Paint p = new Paint();
 
+        // Just to show the area
         if (clicked) {
-            canvas.drawRect(clickedArea.getXstart(), clickedArea.getYstart(), clickedArea.getXend(), clickedArea.getYend(), p);
+            //canvas.drawRect(clickedArea.getXstart(), clickedArea.getYstart(), clickedArea.getXend(), clickedArea.getYend(), p);
             //Toast.makeText(context, clickedArea.getXstart() + " " + clickedArea.getYstart() + " " + clickedArea.getXend() + " " + clickedArea.getYend(), Toast.LENGTH_SHORT).show();
 
         }
@@ -181,36 +197,27 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
                 float px = (x / w) * 100;
                 float py = (y / h) * 100;
 
-//18 20 24 26
-                //depending on where the screen is touched, write which area that was touched
+                //depending on where the screen is touched
                 for (int i = 0; i < areas.size(); i++) {
                     if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py) {
                         clickedArea = areas.get(i);
-
+                        // Check if there is any object in the area clicked
                         checkObjectForArea();
                         // Toast.makeText(context, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
                         //Toast.makeText(context, "Clicked Area: " + areas.get(i).getxmin() + "-" + areas.get(i).getxmax() + ", " + areas.get(i).getymin() + "-" + areas.get(i).getymax(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
-
                 invalidate();
-
-                break;
-
-            case MotionEvent.ACTION_MOVE:
-
-
-                break;
-
-            case MotionEvent.ACTION_UP:
                 break;
         }
         return true;
     }
 
 
+    // Check if there is any object in the area that was clicked
     void checkObjectForArea() {
+
         // Check if there is any object in the given area
         for (FactoryObject object : objects) {
     /*
@@ -226,196 +233,220 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
             if (clickedArea.getrow() >= object.getAreaXStart() && clickedArea.getrow() <= object.getAreaXEnd() && clickedArea.getcollumn() >= object.getAreaYStart() && clickedArea.getcollumn() <= object.getAreaYEnd()) {
                 Toast.makeText(context, "Its object " + object.getObjectName(), Toast.LENGTH_SHORT).show();
                 clickedObject = object;
-                openDialogForItem();
+                dialogChooseMessageType();
 
             }
         }
     }
 
-    void openDialogForItem() {
-        // First, select what kind of message
+    void dialogChooseMessageType() {
+        // Different kind of message
         final CharSequence[] messageTypes = {"Warning message", "Regular Message"};
-        // Display dialog
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
-        builderSingle.setIcon(android.R.drawable.ic_dialog_alert);
-        builderSingle.setTitle("Select type of message for " + clickedObject.getObjectName());
 
-        builderSingle.setSingleChoiceItems(messageTypes, -1,
+        // Display dialog
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        dialog.setIcon(android.R.drawable.ic_dialog_alert);
+        dialog.setTitle("Select type of message for " + clickedObject.getObjectName());
+
+        dialog.setSingleChoiceItems(messageTypes, -1,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int messageType) {
                         Toast.makeText(context, messageTypes[messageType],
                                 Toast.LENGTH_SHORT).show();
 
-                        // 0 is warning and 1 is regular
+                        // Check if the message should be warning or regular and call respective function
                         if (messageType == MessageType.WARNING.ordinal()) {
                             Toast.makeText(context, "warning", Toast.LENGTH_SHORT).show();
-                            createMessage(messageType);
+                            dialogSelectWarningMessage();
                             dialog.dismiss();
 
 
                         } else {
-                            createMessage(messageType);
+                            dialogCreateMessage("", MessageType.REGULAR);
                             dialog.dismiss();
                         }
                     }
                 });
 
-        builderSingle.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
 
-        builderSingle.show();
+        dialog.show();
     }
 
-    void createMessage(int messageType) {
-        if (messageType == MessageType.WARNING.ordinal()) {
-            AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
+    // Dialog to select warning message, create own or default messages
+    void dialogSelectWarningMessage() {
 
-            builderSingle.setIcon(android.R.drawable.ic_dialog_alert);
-            builderSingle.setTitle("Select warning message for " + clickedObject.getObjectName());
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
-            final CharSequence[] messageChoices = {"Default message: Exit the building", "Default message: Avoid this area", "Write own message"};
-            builderSingle.setSingleChoiceItems(messageChoices, -1,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, final int selectedIndex) {
-                            if (selectedIndex == 0 || selectedIndex == 1) {
-                                dialog.dismiss();
-                                AlertDialog.Builder dialogselection = new AlertDialog.Builder(context);
+        dialog.setIcon(android.R.drawable.ic_dialog_alert);
+        dialog.setTitle("Select warning message for " + clickedObject.getObjectName());
 
-                                dialogselection.setIcon(android.R.drawable.ic_dialog_alert);
-                                dialogselection.setTitle("Are you sure you want to send the message?");
-                                dialogselection.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        // Send default message
-                                        sendMessage((String) messageChoices[selectedIndex]);
-                                    }
-                                });
+        final CharSequence[] messageChoices = {"Exit the building! (Default message)", "Avoid this area! (Default message)", "Write own message"};
+        dialog.setSingleChoiceItems(messageChoices, -1,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, final int selectedIndex) {
 
-                                dialogselection.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        createMessage(MessageType.WARNING.ordinal());
-                                    }
-                                });
+                        // If default message 0 or 1 is choosen
+                        if (selectedIndex == 0 || selectedIndex == 1) {
 
-                                dialogselection.show();
+                            // Remove the (default message) part of string
+                            String selectedMessage = (String) messageChoices[selectedIndex];
+                            String toBeReplaced = selectedMessage.substring(selectedMessage.indexOf("("), selectedMessage.indexOf(")")+1);
+                            selectedMessage = selectedMessage.replace(toBeReplaced, "");
 
-                            } else {
-                                // Write own message
-                                dialog.dismiss();
-                                AlertDialog.Builder dialogselection = new AlertDialog.Builder(context);
+                            // Create message
+                            dialogCreateMessage(selectedMessage, MessageType.WARNING);
+                            dialog.dismiss();
 
-
-                                final EditText messageEditText = new EditText(context);
-                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT);
-                                messageEditText.setLayoutParams(lp);
-                                dialogselection.setView(messageEditText);
-
-
-                                dialogselection.setIcon(android.R.drawable.ic_dialog_alert);
-                                dialogselection.setTitle("Enter a warning message");
-
-
-                                dialogselection.setPositiveButton("Send",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                if (!messageEditText.getText().toString().trim().equals("")) {
-                                                    AlertDialog.Builder dialogselection = new AlertDialog.Builder(context);
-
-                                                    dialogselection.setIcon(android.R.drawable.ic_dialog_alert);
-                                                    dialogselection.setTitle("Are you sure you want to send the message?");
-                                                    dialogselection.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                                            // Send default message
-                                                            sendMessage(messageEditText.getText().toString());
-                                                        }
-                                                    });
-
-                                                    dialogselection.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                                            createMessage(MessageType.WARNING.ordinal());
-                                                        }
-                                                    });
-
-                                                    dialogselection.show();
-                                                } else {
-                                                    createMessage(MessageType.WARNING.ordinal());
-                                                }
-
-
-                                            }
-                                        });
-
-                                dialogselection.show();
-
-                            }
-
-
+                        } else {
+                            // Write own message
+                            dialogCreateMessage("", MessageType.WARNING);
+                            dialog.dismiss();
                         }
-                    });
 
 
-
-/*
-
-            final EditText messageEditText = new EditText(context);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            messageEditText.setLayoutParams(lp);
-            builderSingle.setView(messageEditText);
+                    }
+                });
 
 
-            builderSingle.setIcon(android.R.drawable.ic_dialog_alert);
-            builderSingle.setTitle("Enter a warning message");
+        dialog.setNegativeButton("Back", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                dialogChooseMessageType();
+
+            }
+        });
+
+        dialog.show();
+    }
 
 
-            builderSingle.setPositiveButton("Send",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            if(!messageEditText.getText().toString().trim().equals("")){
-                                Toast.makeText(context, "EMPTY", Toast.LENGTH_SHORT).show();
-                            } else{
-                                createMessage(MessageType.WARNING.ordinal());
-                            }
+    // Creates the message
+    void dialogCreateMessage(final String message, final MessageType messageType) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
 
-                        }
-                    });
+        final EditText messageEditText = new EditText(context);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        messageEditText.setLayoutParams(lp);
+        dialog.setView(messageEditText);
 
-*/
-            builderSingle.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
 
-            builderSingle.show();
+        dialog.setIcon(android.R.drawable.ic_dialog_alert);
+        if(messageType == MessageType.REGULAR){
+            dialog.setTitle("Enter a message");
+        } else{
+            dialog.setTitle("Enter a warning message");
         }
 
 
+        messageEditText.setText(message);
+
+        dialog.setPositiveButton("Send",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // check if the message is empty
+                        if (!messageEditText.getText().toString().trim().equals("")) {
+                            dialog.dismiss();
+                            AlertDialog.Builder dialogCheck = new AlertDialog.Builder(context);
+
+                            dialogCheck.setIcon(android.R.drawable.ic_dialog_alert);
+                            dialogCheck.setTitle("Are you sure you want to send the message \"" + messageEditText.getText().toString() + "\"?");
+                            dialogCheck.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // Send default message
+                                    sendMessage(messageEditText.getText().toString(), messageType);
+                                }
+                            });
+
+                            dialogCheck.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogCreateMessage(message, messageType);
+                                }
+                            });
+
+                            dialogCheck.show();
+                        } else{
+                            dialogCreateMessage(message, messageType);
+                        }
+
+
+                    }
+                });
+
+        dialog.setNegativeButton("Back", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                if(messageType == MessageType.WARNING){
+                    dialogSelectWarningMessage();
+                } else{
+                    dialogChooseMessageType();
+                }
+
+            }
+        });
+
+        dialog.show();
+
+
+
+
     }
 
-    void sendMessage(String messageChoice) {
-        Toast.makeText(context, "Sent " + messageChoice, Toast.LENGTH_SHORT).show();
+
+    // Send the actual message
+    void sendMessage(String message, MessageType messageType) {
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+
+        Toast.makeText(context, "Sent " + message + ", " + messageType.name(), Toast.LENGTH_SHORT).show();
+        Message m = new Message("(no subject)", message, messageType.name());
+        Call<ResponseBody> call = null;
+        if(messageType == MessageType.REGULAR) {
+            call = apiInterface.insertRegularMessageFactoryObject(m, clickedObject.getObjectId());
+        } else{
+            call = apiInterface.insertWarningMessageFactoryObject(m, clickedObject.getObjectId());
+        }
+
+
+
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == RESPONSE_OK) {
+                    Toast.makeText(context, "inserted", Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    try {
+                        Toast.makeText(context, response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 }
 
-
-
-/*
-
-
-
-
- */
