@@ -23,7 +23,7 @@ import se.miun.android_app.Model.Floor;
 import se.miun.android_app.R;
 
 public class FloorplanActivity extends Activity implements View.OnClickListener{
-    static private ImageView floorplanImageView, floorplanImageViewDrawed;
+    private ImageView floorplanImageView, floorplanImageViewDrawed;
     private TextView textViewFloorPlan;
     private LinearLayout floorplanLinearLayout;
     private String filePath;
@@ -63,7 +63,8 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.listObjectsBtn){
-            // Display dialog
+
+            // Display dialog listing objects
             AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
             builderSingle.setCancelable(false);
             builderSingle.setIcon(android.R.drawable.ic_dialog_info);
@@ -80,17 +81,15 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
             });
 
 
-
+            // When an object is clicked
             builderSingle.setAdapter(objectAdapter, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
+                    // Remove the old imageview and create a new instance of it passing the choosen object
                     floorplanLinearLayout.removeView(floorplanImageView);
                     floorplanImageView = new FloorplanImageView(context, filePath, objects, objectAdapter.getItem(which));
                     floorplanLinearLayout.addView(floorplanImageView);
-
-                    //Toast.makeText(context, "CLICKED " + objectAdapter.getItem(which).getObjectName(), Toast.LENGTH_SHORT).show();
-
 
                 }
             });

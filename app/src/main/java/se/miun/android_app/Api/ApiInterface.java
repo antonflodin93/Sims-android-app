@@ -94,6 +94,14 @@ public interface ApiInterface {
     Call<ArrayList<Message>> getCompanyMessage(@Path("companyName") String companyName);
 
 
+    // Post regular message for a factory object
+    @POST("messages/regular/factoryobject/{factoryobjectId}")
+    Call<ResponseBody> insertRegularMessageFactoryObject(@Body Message message, @Path("factoryobjectId") int factoryobjectId);
+
+
+
+
+
     /*
     *  COMPANY
     */
