@@ -6,38 +6,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Vector;
 
 import se.miun.android_app.Adapter.RegularMessageAdapter;
+import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
 import se.miun.android_app.Service.RegularMessageService;
 import se.miun.android_app.Service.WarningMessageService;
-import se.miun.android_app.Model.Message;
 import se.miun.android_app.testing.Area;
-import se.miun.android_app.testing.ImageTestActivity;
 
 public class EmployeeUnitActivity extends Activity implements View.OnClickListener {
 
     public enum MessageType {
         WARNING, REGULAR;
     }
+
 
 
     private ImageButton warningMessageBtn, regularMessageBtn;
@@ -52,26 +42,25 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private boolean clickedButton = false;
     private Bitmap bmp;
     private ImageView mapImageView;
-    private Beacon beacon1, beacon2, beacon3;
-    private ArrayList<Area> areas;
-    float ymax, xmax;
 
+
+    private ArrayList<Area> areas;
+    private Beacon beacon1, beacon2, beacon3;
+    private Circle testCircle;
     //test of my location
     //store my location in x,y (area coordinate), occupied area = 1
     private int[][] myLocation = new int[][]{
-        {0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
     };
-    //test with circleAreas
-    private Circle testCircle;
 
 
 
@@ -114,28 +103,38 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         mapImageView = (ImageView) findViewById(R.id.mapImageView);
 
+        /*
 
-        // Dimension of the room in pixels
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        //gets maximum width and height of device in terms of pixels
-        int width = dm.widthPixels;
-        //50 is seekbar height
-        int height = dm.heightPixels - 50;
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    InputStream in = new URL("http://193.10.119.34:8080/WS/webapi/floorplans/testimage.png").openStream();
+                    bmp = BitmapFactory.decodeStream(in);
+                } catch (Exception e) {
+                    // log error
+                }
+                return null;
+            }
 
-        // Create areas
-        setImageAreas();
+            @Override
+            protected void onPostExecute(Void result) {
+                if (bmp != null)
+                    mapImageView.setImageBitmap(bmp);
+            }
+
+        }.execute();
+        */
 
         // The beacons locations
         beacon1 = new Beacon(0, 0);
-        beacon2 = new Beacon(width, 0);
-        beacon3 = new Beacon(width, height);
-
+        //beacon2 = new Beacon(width, 0);
+        //beacon3 = new Beacon(width, height);
 
         // Get values from all 3 beacons
         int rssiB1 = -85;
         int rssiB2 = -95;
         int rssiB3 = -90;
-
 
         // Get radius from the beacons (in pixels)
         double radius1 = getDistance(rssiB1);
@@ -143,8 +142,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         double radius3 = getDistance(rssiB3);
 
         //get radius in area blocks
-        int radiiArea1 = meterToAreaBlockDistance(radius1, xmax);
-
+        int radiiArea1 = meterToAreaBlockDistance(radius1, 35/8);
 
         //test with occupied circle Area
         testCircle = new Circle(0);
@@ -155,7 +153,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 //        getAreasInCircle((int) Math.floor(radius2), beacon2);
 //        getAreasInCircle((int) Math.floor(radius3), beacon3);
 
+
     }
+
+
 
     private void getAreasInCircle(int radius, Beacon beacon, Circle circle) {
         int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
@@ -225,6 +226,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
 
 
+
     public void onResume() {
         super.onResume();
 
@@ -239,7 +241,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
     public void onPause() {
         super.onPause();
-        if (!clickedButton) {
+        if(!clickedButton){
             this.unregisterReceiver(this.broadcastReceiver);
             this.stopService(this.regularMessageIntent);
             this.stopService(this.warningMessageIntent);
@@ -247,47 +249,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         // Maybee needed
         //this.unregisterReceiver(this.broadcastReceiver);
-    }
-
-    private void setImageAreas(){
-
-        //WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-
-        //creates an object devicemetrics that contain information about devicemetrics
-        DisplayMetrics displaymetrics = getResources().getDisplayMetrics();
-
-        //gets maximum width and height of device in terms of pixels
-        //float deviceheight = displaymetrics.widthPixels;
-        //float devicewidth = displaymetrics.heightPixels;
-
-        //set amount of areas in both row and collumn
-        int collumnsize = 8;
-        int rowsize = 10;
-
-        //float sizeY = deviceheight/rowsize;
-        //float sizeX = devicewidth/collumnsize;
-
-        //meters which later should be based on floorplan image
-        float floorplanmeterx = 25;
-        float floorplanmetery = 40;
-
-        //get xmax and ymax for the first area (example meters of floorplan, 25*40m^2)
-        xmax = floorplanmeterx / collumnsize;
-        ymax = floorplanmetery / rowsize;
-
-
-
-        //add areas according to row and collumn sizes
-        for (int r = 0; r < rowsize; r++) {
-            for (int c = 0; c < collumnsize; c++) {
-                Area area = new Area(xmax * (c), xmax * (c + 1), ymax * (r), ymax * (r + 1), c + 1, r + 1);
-                //area.setRealLimits(c*sizeX, c*sizeX+sizeX, r*sizeY, r*sizeY+sizeY);
-                areas.add(area);
-                //Toast.makeText(context, "Area: " + xmax *(r) + ", " + xmax * (r+1), Toast.LENGTH_SHORT).show();
-            }
-        }
-
-
     }
 
     @Override
@@ -308,6 +269,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             context.startActivity(myIntent);
         }
     }
+
 
     private class Beacon {
         // Location in pixels
@@ -370,4 +332,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             return circleArea[x][y];
         }
     }
+
+
 }
