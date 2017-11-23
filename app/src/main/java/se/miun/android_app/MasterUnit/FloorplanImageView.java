@@ -413,12 +413,12 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
 
 
         Toast.makeText(context, "Sent " + message + ", " + messageType.name(), Toast.LENGTH_SHORT).show();
-        Message m;
+        Message m = new Message("(no subject)", message, messageType.name());
         Call<ResponseBody> call = null;
-        if(messageType == MessageType.REGULAR){
-            // Create message object
-            m = new Message("(no subject)", message, messageType.name());
+        if(messageType == MessageType.REGULAR) {
             call = apiInterface.insertRegularMessageFactoryObject(m, clickedObject.getObjectId());
+        } else{
+            call = apiInterface.insertWarningMessageFactoryObject(m, clickedObject.getObjectId());
         }
 
 

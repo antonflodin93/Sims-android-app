@@ -99,6 +99,9 @@ public interface ApiInterface {
     Call<ResponseBody> insertRegularMessageFactoryObject(@Body Message message, @Path("factoryobjectId") int factoryobjectId);
 
 
+    // Post warning message for a factory object
+    @POST("messages/warning/factoryobject/{factoryobjectId}")
+    Call<ResponseBody> insertWarningMessageFactoryObject(@Body Message message, @Path("factoryobjectId") int factoryobjectId);
 
 
 
