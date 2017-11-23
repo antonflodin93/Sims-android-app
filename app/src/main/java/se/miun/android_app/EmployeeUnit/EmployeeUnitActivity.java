@@ -9,11 +9,13 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import se.miun.android_app.Adapter.RegularMessageAdapter;
 import se.miun.android_app.Model.Message;
@@ -42,6 +44,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private boolean clickedButton = false;
     private Bitmap bmp;
     private ImageView mapImageView;
+    float xmax, ymax;
 
 
     private ArrayList<Area> areas;
@@ -102,6 +105,28 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
 
         mapImageView = (ImageView) findViewById(R.id.mapImageView);
+
+        int collumnsize = 8;
+        int rowsize = 10;
+        //number of total areas
+        int areasize = rowsize * collumnsize;
+
+        Vector<Area> areas = new Vector<>(areasize);
+
+        //get xmax and ymax for the first area
+        xmax = 25 / collumnsize;
+        ymax = 40 / rowsize;
+
+        //size is used for area position in vector
+        int size = 0;
+
+        //add areas according to row and collumn sizes
+        for (int c = 0; c < rowsize; c++) {
+            for (int r = 0; r < collumnsize; r++) {
+                areas.add(size, new Area(xmax * (r), xmax * (r + 1), ymax * (c), ymax * (c + 1), r + 1, c + 1));
+                size++;
+            }
+        }
 
         /*
 
