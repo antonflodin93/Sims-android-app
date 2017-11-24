@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -44,6 +48,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private boolean clickedButton = false;
     private Bitmap bmp;
     private ImageView mapImageView;
+    private MediaPlayer warningSignal, regularSignal;
     float xmax, ymax;
 
 
@@ -76,6 +81,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 if (regularMessages.size() > numOfReceievedRegularMessages) {
                     regularMessageBtn.setBackgroundColor(Color.RED);
                     numOfReceievedRegularMessages = regularMessages.size();
+                    regularSignal.start();
+
+
                 }
                 //ShowMessagesActivity.this.updateUIRegularMessages(intent);
 
@@ -85,6 +93,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 if (warningMessages.size() > numOfReceievedWarningMessages) {
                     warningMessageBtn.setBackgroundColor(Color.RED);
                     numOfReceievedWarningMessages = warningMessages.size();
+
+                    warningSignal.start();
                 }
             }
         }
@@ -105,6 +115,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
 
         mapImageView = (ImageView) findViewById(R.id.mapImageView);
+
+        warningSignal = MediaPlayer.create(context, R.raw.warningsignal);
+        regularSignal = MediaPlayer.create(context, R.raw.regularsignal);
+
+
 
         int collumnsize = 8;
         int rowsize = 10;
