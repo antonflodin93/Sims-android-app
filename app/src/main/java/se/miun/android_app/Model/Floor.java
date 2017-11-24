@@ -2,8 +2,11 @@ package se.miun.android_app.Model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 
-public class Floor {
+
+public class Floor implements Serializable {
 
     @SerializedName("floorId")
     private int floorId;
@@ -13,6 +16,9 @@ public class Floor {
 
     @SerializedName("floorPlanFilePath")
     private String floorPlanFilePath;
+
+    @SerializedName("objects")
+    private ArrayList<FactoryObject> objects;
 
     public Floor(int floorId, String floorLevel, String floorPlanFilePath) {
         this.floorId = floorId;
@@ -42,5 +48,13 @@ public class Floor {
 
     public void setFloorPlanFilePath(String floorPlanFilePath) {
         this.floorPlanFilePath = floorPlanFilePath;
+    }
+
+    public ArrayList<FactoryObject> getObjects() {
+        return objects;
+    }
+
+    public void setObjects(ArrayList<FactoryObject> objects) {
+        this.objects = objects;
     }
 }

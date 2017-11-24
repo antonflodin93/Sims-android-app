@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,12 @@ public class ListBuildingsInfoActivity extends AppCompatActivity implements Expa
                     buildings = response.body();
                     buildingListAdapter = new BuildingListAdapter(context, buildings);
                     buildingsExListView.setAdapter(buildingListAdapter);
+                } else{
+                    try {
+                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -87,7 +94,7 @@ public class ListBuildingsInfoActivity extends AppCompatActivity implements Expa
                         Intent myIntent = new Intent(getApplicationContext(), FloorplanActivity.class);
                         myIntent.putExtra("filePath", buildingListAdapter.getChild(groupPosition, childPosition).getFloorPlanFilePath());
                         myIntent.putExtra("building", buildingListAdapter.getGroup(groupPosition).getBuildingName());
-                        myIntent.putExtra("floor", buildingListAdapter.getChild(groupPosition, childPosition).getFloorLevel());
+                        myIntent.putExtra("floor", buildingListAdapter.getChild(groupPosition, childPosition));
 
                         context.startActivity(myIntent);
                     }

@@ -12,25 +12,63 @@ public class Area {
         this.row = row;
         this.collumn = collumn;
     }
-    float getxmin(){
+
+    public Area(float xmin, float xmax, float ymin, float ymax, int row, int collumn, String s){
+        this.xmin = xmin;
+        this.xmax = xmax;
+        this.ymin = ymin;
+        this.ymax = ymax;
+        this.row = row;
+        this.collumn = collumn;
+    }
+
+    public float getxmin(){
         return xmin;
     }
-    float getxmax(){
+    public float getxmax(){
         return xmax;
     }
-    float getymin(){
+    public float getymin(){
         return ymin;
     }
-    float getymax(){
+    public float getymax(){
         return ymax;
     }
-    Integer getrow(){
+    public Integer getrow(){
         return row;
     }
-    Integer getcollumn(){
+    public Integer getcollumn(){
         return collumn;
     }
    //Vector<Integer> position = new Vector<>(2);
+
     private float xmin, xmax, ymin, ymax;
     private int row, collumn;
+    private float xstart, xend, ystart, yend;
+
+    public void setRealLimits(float xstart, float xend, float ystart, float yend) {
+
+        this.xstart = xstart;
+        this.xend = xend;
+        this.ystart = ystart;
+        this.yend = yend;
+    }
+
+
+    public float getXstart() {
+        return xstart;
+    }
+
+    public float getXend() {
+        return xend;
+    }
+
+    public float getYstart() {
+        return ystart;
+    }
+
+    public float getYend() {
+        return yend;
+    }
+
 }

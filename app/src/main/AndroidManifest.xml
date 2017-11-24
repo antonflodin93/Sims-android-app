@@ -17,24 +17,25 @@
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="false"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:icon="@drawable/welcomescreen"
+        android:label="Iggefinder"
         android:largeHeap="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/welcomescreen"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StartActivity">
+        <activity android:name=".StartActivity"> </activity>
+        <activity android:name=".testing.ImageTestActivity" />
+        <activity android:name=".testing.RangetestActivity" />
+        <activity android:name=".testing.OnTouchTestActivity" />
+        <activity android:name=".testing.BluetoothLogger" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".testing.ImageTestActivity" />
-        <activity android:name=".testing.RangetestActivity" />
-        <activity android:name=".testing.OnTouchTestActivity" />
-        <activity android:name=".testing.BluetoothLogger" />
-        <activity android:name=".MainActivity" />
         <activity
             android:name=".RegisterAccountActivity"
             android:screenOrientation="portrait" />
@@ -63,7 +64,9 @@
 
         <activity android:name=".MasterUnit.ListEmployeesActivity" />
         <activity android:name=".MasterUnit.ListBuildingsInfoActivity" />
-        <activity android:name=".MasterUnit.FloorplanActivity"></activity>
+        <activity android:name=".MasterUnit.FloorplanActivity" />
+        <activity android:name=".testing.TestResponseTime" />
+
     </application>
 
 </manifest>

@@ -1,28 +1,40 @@
 package se.miun.android_app.MasterUnit;
 
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.InputStream;
-import java.net.URL;
+import java.util.ArrayList;
 
+import se.miun.android_app.Adapter.ObjectAdapter;
+import se.miun.android_app.Model.FactoryObject;
+import se.miun.android_app.Model.Floor;
 import se.miun.android_app.R;
 
-public class FloorplanActivity extends AppCompatActivity {
-    private ImageView floorplanImageView;
+public class FloorplanActivity extends Activity implements View.OnClickListener{
+    private ImageView floorplanImageView, floorplanImageViewDrawed;
     private TextView textViewFloorPlan;
+    private LinearLayout floorplanLinearLayout;
     private String filePath;
-    private String IP_ADDRESS = "http://193.10.119.34:8080";
     private Context context;
     private int numofemployees = 0;
-    private String building, floor;
+    private String building;
+    private Floor floor;
+    private ArrayList<FactoryObject> objects;
+    private ObjectAdapter objectAdapter;
+    private Button listObjectsBtn;
+    private ListView objectListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,38 +43,57 @@ public class FloorplanActivity extends AppCompatActivity {
         context = this;
         filePath = getIntent().getStringExtra("filePath");
         building = getIntent().getStringExtra("building");
-        floor = getIntent().getStringExtra("floor");
+        floor = (Floor) getIntent().getSerializableExtra("floor");
 
-        floorplanImageView = (ImageView) findViewById(R.id.floorplanImageView);
+        // Get objects for the floorplan
+        objects = floor.getObjects();
+
         textViewFloorPlan = (TextView) findViewById(R.id.textViewFloorPlan);
-
-        new AsyncTask<Void, Void, Void>() {
-            Bitmap bmp;
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-
-                    InputStream in = new URL(IP_ADDRESS + filePath).openStream();
-                    bmp = BitmapFactory.decodeStream(in);
-                } catch (Exception e) {
-                    Toast.makeText(context, "Error loading image from server", Toast.LENGTH_LONG).show();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void result) {
-                if (bmp != null)
-                    floorplanImageView.setImageBitmap(bmp);
-            }
-
-        }.execute();
-
-        textViewFloorPlan.setText(building + "/" + floor + " (" + numofemployees + ")");
-
+        floorplanLinearLayout = (LinearLayout) findViewById(R.id.floorplanLinearLayout);
+        textViewFloorPlan.setText(building + "/" + floor.getFloorLevel() + " (" + numofemployees + ")");
+        floorplanImageView = new FloorplanImageView(context, filePath, objects);
+        floorplanLinearLayout.addView(floorplanImageView);
+        listObjectsBtn = (Button) findViewById(R.id.listObjectsBtn);
+        listObjectsBtn.setOnClickListener(this);
 
 
     }
 
 
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.listObjectsBtn){
+
+            // Display dialog listing objects
+            AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
+            builderSingle.setCancelable(false);
+            builderSingle.setIcon(android.R.drawable.ic_dialog_info);
+            builderSingle.setTitle("Objects in " + building + "/" + floor.getFloorLevel());
+
+            objectAdapter= new ObjectAdapter (FloorplanActivity.this, 0, objects);
+            //objectListView.setAdapter(objectAdapter);
+
+            builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+
+            // When an object is clicked
+            builderSingle.setAdapter(objectAdapter, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    // Remove the old imageview and create a new instance of it passing the choosen object
+                    floorplanLinearLayout.removeView(floorplanImageView);
+                    floorplanImageView = new FloorplanImageView(context, filePath, objects, objectAdapter.getItem(which));
+                    floorplanLinearLayout.addView(floorplanImageView);
+
+                }
+            });
+            builderSingle.show();
+        }
+    }
 }

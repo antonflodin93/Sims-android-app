@@ -6,24 +6,27 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.AsyncTask;
+import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import se.miun.android_app.Adapter.RegularMessageAdapter;
+import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
 import se.miun.android_app.Service.RegularMessageService;
 import se.miun.android_app.Service.WarningMessageService;
-import se.miun.android_app.Model.Message;
+import se.miun.android_app.testing.Area;
 
 public class EmployeeUnitActivity extends Activity implements View.OnClickListener {
 
@@ -45,6 +48,29 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private boolean clickedButton = false;
     private Bitmap bmp;
     private ImageView mapImageView;
+    private MediaPlayer warningSignal, regularSignal;
+    float xmax, ymax;
+
+
+    private ArrayList<Area> areas;
+    private Beacon beacon1, beacon2, beacon3;
+    private Circle testCircle;
+    //test of my location
+    //store my location in x,y (area coordinate), occupied area = 1
+    private int[][] myLocation = new int[][]{
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+    };
+
+
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -55,6 +81,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 if (regularMessages.size() > numOfReceievedRegularMessages) {
                     regularMessageBtn.setBackgroundColor(Color.RED);
                     numOfReceievedRegularMessages = regularMessages.size();
+                    regularSignal.start();
+
+
                 }
                 //ShowMessagesActivity.this.updateUIRegularMessages(intent);
 
@@ -64,6 +93,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 if (warningMessages.size() > numOfReceievedWarningMessages) {
                     warningMessageBtn.setBackgroundColor(Color.RED);
                     numOfReceievedWarningMessages = warningMessages.size();
+
+                    warningSignal.start();
                 }
             }
         }
@@ -84,6 +115,33 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
 
 
+
+        warningSignal = MediaPlayer.create(context, R.raw.warningsignal);
+        regularSignal = MediaPlayer.create(context, R.raw.regularsignal);
+
+
+
+        int collumnsize = 8;
+        int rowsize = 10;
+        //number of total areas
+        int areasize = rowsize * collumnsize;
+
+        Vector<Area> areas = new Vector<>(areasize);
+
+        //get xmax and ymax for the first area
+        xmax = 25 / collumnsize;
+        ymax = 40 / rowsize;
+
+        //size is used for area position in vector
+        int size = 0;
+
+        //add areas according to row and collumn sizes
+        for (int c = 0; c < rowsize; c++) {
+            for (int r = 0; r < collumnsize; r++) {
+                areas.add(size, new Area(xmax * (r), xmax * (r + 1), ymax * (c), ymax * (c + 1), r + 1, c + 1));
+                size++;
+            }
+        }
 
         /*
 
@@ -107,7 +165,106 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         }.execute();
         */
+
+        // The beacons locations
+        beacon1 = new Beacon(0, 0);
+        //beacon2 = new Beacon(width, 0);
+        //beacon3 = new Beacon(width, height);
+
+        // Get values from all 3 beacons
+        int rssiB1 = -85;
+        int rssiB2 = -95;
+        int rssiB3 = -90;
+
+        // Get radius from the beacons (in pixels)
+        double radius1 = getDistance(rssiB1);
+        double radius2 = getDistance(rssiB2);
+        double radius3 = getDistance(rssiB3);
+
+        //get radius in area blocks
+        int radiiArea1 = meterToAreaBlockDistance(radius1, 35/8);
+
+        //test with occupied circle Area
+        testCircle = new Circle(0);
+        testCircle.setRadius(getDistance(-85));
+        // Create circles and output x and y that is within the circle
+        getAreasInCircle( radiiArea1, beacon1, testCircle); /*test...*/
+//
+//        getAreasInCircle((int) Math.floor(radius2), beacon2);
+//        getAreasInCircle((int) Math.floor(radius3), beacon3);
+
+
     }
+
+
+
+    private void getAreasInCircle(int radius, Beacon beacon, Circle circle) {
+        int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
+
+        // Iterate through every areas
+        for (int x = 0;  /*#nr or areas in x direction*/ x < xAreas; x++) {
+            for(int y = 0; /*#nr of areas in y direction*/ y < yAreas; y++){
+                //compare (circle equation)...
+                if( (x-beacon.a)*(x-beacon.a)+(y-beacon.getB())*(y-beacon.getB()) <= radius*radius ){
+                    //store occupied area inside the circle
+                    circle.setArea(x,y);
+                }
+            }
+        }
+    }
+    //need to store every circle area somewhere in an array and pull everyone in there to compare
+    //for an accurate assessment of the location...
+    //one to do this would be to add +1 for every beacon found, thus
+    //you could just print out the highest value in the matrix.
+    //for example if the area reads: +3 then you know 3 beacons are detected in that
+    //area and thus it is highly likely you are in that area.
+    private void setLocationArea(Circle circle){
+        int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
+
+        // Iterate through every areas
+        for (int x = 0;  /*#nr or areas in x direction*/ x < xAreas; x++) {
+            for(int y = 0; /*#nr of areas in y direction*/ y < yAreas; y++){
+                //compare all circles
+                if( circle.getArea(x,y) == 1 ){
+                    //set myLocation to +1 in specified area
+                    myLocation[x][y] += 1;
+                }
+            }
+        }
+    }
+    private void clearLocationArea(){
+        for(int x=0;x<8;x++){
+            for(int y=0;y<10;y++){
+                myLocation[x][y] = 0;
+            }
+        }
+    }
+
+    private int meterToAreaBlockDistance(double rssiMeters, float xAreaPerMeter){
+        //need to know areas/meter from floorplans, pass in as distanceToPixelCount...
+        //as in 1 meter represents x amount of pixels(area blocks) in x or y direction.
+        //  (# area count in x direction )/ (# meters  )
+        return Math.round( (float)rssiMeters / xAreaPerMeter );
+        //xAreaPerMeter = xmax
+    }
+
+    // EXPERIMENTALLY DEVELOPED FORMULA
+    // Returns distance for a given rssi
+    double getDistance(int rssi) {
+        //check for max? distance...
+        if(rssi < -100){
+            return 9.0;
+        }
+        else  {
+            double e = 0.6859;
+            double b = Math.pow(2389, e);
+            double n = Math.pow((4447 + 50 * rssi), e);
+            return b / n;
+        }
+    }
+
+
+
 
 
     public void onResume() {
@@ -140,7 +297,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         if (v.getId() == R.id.warningMessageBtn) {
             Intent myIntent = new Intent(getApplicationContext(), ShowMessagesActivity.class);
             myIntent.putExtra("MESSAGETYPE", MessageType.WARNING);
-           myIntent.putExtra("WARNINGMESSAGES", warningMessages);
+            myIntent.putExtra("WARNINGMESSAGES", warningMessages);
             warningMessageBtn.setBackgroundColor(Color.BLACK);
             context.startActivity(myIntent);
 
@@ -152,4 +309,69 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             context.startActivity(myIntent);
         }
     }
+
+
+    private class Beacon {
+        // Location in pixels
+        private int a, b;
+
+        private ArrayList<Area> coverAreas = new ArrayList<>();
+
+
+        // Set location
+        public Beacon(int a, int b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        public int getA() {
+            return a;
+        }
+
+        public void setA(int a) {
+            this.a = a;
+        }
+
+        public int getB() {
+            return b;
+        }
+
+        public void setB(int b) {
+            this.b = b;
+        }
+
+        public void addArea(Area area){
+            coverAreas.add(area);
+        }
+    }
+
+
+    private class Circle {
+        private double radius;
+
+        //Area of floorplan, (8x10 default) containing circle area of detected beacon.
+        private int[][] circleArea = new int[8][10];
+
+        public Circle(double radius) {
+            this.radius = radius;
+        }
+
+        public double getRadius() {
+            return radius;
+        }
+
+        public void setRadius(double radius) {
+            this.radius = radius;
+        }
+
+        public void setArea(int x, int y){
+            //set specified area as occupied by the beacon circle
+            this.circleArea[x][y] = 1;
+        }
+        public int getArea(int x, int y){
+            return circleArea[x][y];
+        }
+    }
+
+
 }

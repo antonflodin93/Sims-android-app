@@ -2,25 +2,41 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/floorplanLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textViewFloorPlan"
-        android:text="Floor 1"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textSize="40dp"
-        android:textAlignment="center"
-        />
+        android:layout_weight="0.1"
+        android:orientation="horizontal">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/floorplanImageView"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewFloorPlan"
+            android:text="asdasd"
+            android:textSize="20dp"
+            android:textAlignment="center"
+            android:layout_weight="0.9"
+            />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/listObjectsBtn"
+            android:text="List objects"
+            android:layout_weight="0.1"/>
+
+
+    </LinearLayout>
+
+
 
 
 </LinearLayout>
