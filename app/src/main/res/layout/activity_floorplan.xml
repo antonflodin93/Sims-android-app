@@ -10,8 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textViewFloorPlan"
-        android:text="asdasd"
-        android:textSize="20dp"
+        android:text="Floor 1"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="40dp"
         android:textAlignment="center"
         />
 

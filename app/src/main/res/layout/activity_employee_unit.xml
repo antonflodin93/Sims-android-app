@@ -13,12 +13,12 @@
             android:background="#000000">
 
                 <ImageButton
+                    android:id="@+id/warningMessageBtn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.15"
-                    android:src="@drawable/warningmessage"
                     android:background="#000000"
-                    android:id="@+id/warningMessageBtn" />
+                    android:src="@drawable/warningmessage" />
 
                 <ImageView
                     android:layout_width="0dp"
@@ -39,39 +39,27 @@
         </TableRow>
 
         <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="0.01"
-            android:background="#000000">
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
                 <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.1"
+
                     android:src="@drawable/info"
                     android:background="#000000"
-                    android:id="@+id/infoNewMessageTextView" />
+                    android:id="@+id/infoNewMessageTextView"
+                    android:layout_column="0" />
 
-                <TextView
-                    android:id="@+id/newMessageTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.9"
-                    android:background="#e6e6e6" />
+                <EditText
+                    android:id="@+id/newmessageEditText"
+                    android:hint="                     enter a new message                  "
+                    android:layout_column="1" />
+
         </TableRow>
 
 
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="0.99">
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/map"
-                    android:id="@+id/mapImageView" />
-        </TableRow>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.99"></TableRow>
 
 </TableLayout>

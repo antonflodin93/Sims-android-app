@@ -83,7 +83,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         this.regularMessageIntent = new Intent(this, RegularMessageService.class);
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
 
-        mapImageView = (ImageView) findViewById(R.id.mapImageView);
+
 
         /*
 

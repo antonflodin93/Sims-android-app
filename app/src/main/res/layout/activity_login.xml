@@ -10,15 +10,19 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:paddingTop="16dp"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    android:background="#CCCCFF">
 
 
     <TextView
         android:id="@+id/loginTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login"
-        android:textSize="35dp" />
+        android:text="LOGIN"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/holo_blue_dark"
+        android:gravity="center_horizontal"
+        android:textSize="50dp" />
 
     <EditText
         android:id="@+id/accountNameEditText"
@@ -26,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="46dp"
         android:hint="Enter email/username"
+        android:textStyle="italic"
         android:textColorHighlight="#ff7eff15"
         android:textColorHint="#af898e" />
 
@@ -37,6 +42,7 @@
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
+        android:textStyle="italic"
         android:textColorHighlight="#ff7eff15"
         android:textColorHint="#af898e" />
 
@@ -61,13 +67,17 @@
             android:layout_width="0.0dip"
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
-            android:text="Create new account" />
+            android:background="#9999FF"
+            android:text="Create new account"
+            android:textSize="20dp"/>
 
         <Button
             android:id="@+id/loginBtn"
             android:layout_width="0.0dip"
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
+            android:background="#33CC33"
+            android:textSize="30dp"
             android:text="Login" />
 
     </LinearLayout>
