@@ -76,6 +76,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         //access android bluetooth object
         mBluetoothAdapter = bluetoothManager.getAdapter();
+
     }
 
     @Override
@@ -85,8 +86,6 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
             if(mScanning && bluetoothEnable()){
                 Toast.makeText(getApplicationContext(), "Stopping Scan", Toast.LENGTH_SHORT).show();
                 stopScan();
-                //display batch results with scanComplete();
-                //scanComplete();
             }
             else if (bluetoothEnable()){
                 Toast.makeText(getApplicationContext(), "Starting Scan", Toast.LENGTH_SHORT).show();
@@ -223,7 +222,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
 //    }
 
     //stop scanning for ble devices
-    private void stopScan(){
+    public void stopScan(){
         if(mScanning && mBluetoothAdapter != null && mBluetoothAdapter.isEnabled() && mBluetoothLeScanner != null) {
             mBluetoothLeScanner.stopScan(mScanCallback);
         }
@@ -289,5 +288,8 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
 //        };
 //        timer.schedule(task,0,milliSecondDuration);
 //    }
+
+//    Handler mHandler = new Handler();
+//                mHandler.postDelayed(this::stopScan, 30000);
 
 }

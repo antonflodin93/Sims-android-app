@@ -1,6 +1,7 @@
 package se.miun.android_app.EmployeeUnit;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,12 +10,12 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Vector;
 
 import se.miun.android_app.Adapter.RegularMessageAdapter;
@@ -46,12 +47,17 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private ImageView mapImageView;
     float xmax, ymax;
 
+    //ble
+    private BluetoothAdapter    mBluetoothAdapter;
+    private BleScanner          mBleScanner;
+    Map<String, Integer>        scanResults;
 
+    //triangulation
     private ArrayList<Area> areas;
     private Beacon beacon1, beacon2, beacon3;
     private Circle testCircle;
     //test of my location
-    //store my location in x,y (area coordinate), occupied area = 1
+    //store my location in x,y (area coordinate), occupied area >= 1
     private int[][] myLocation = new int[][]{
             {0,0,0,0,0,0,0,0},
             {0,0,0,0,0,0,0,0},
@@ -151,6 +157,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         }.execute();
         */
 
+
+
         // The beacons locations
         beacon1 = new Beacon(0, 0);
         //beacon2 = new Beacon(width, 0);
@@ -179,7 +187,33 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 //        getAreasInCircle((int) Math.floor(radius3), beacon3);
 
 
+
+        /* Check and enable bluetooth if it is disabled */
+        if(!bluetoothEnable() ){
+            requestBluetoothEnable();
+        }
+        //start bluetooth scans for beacons
+        mBleScanner = new BleScanner(scanResults);
+        mBleScanner.startScan(false);
+
     }
+
+    //check if bluetooth is enabled or disabled
+    private boolean bluetoothEnable(){
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            return false;
+        }
+        return true;
+    }
+    //request enable / turn on bluetooth
+    private void requestBluetoothEnable(){
+        // displays a dialog requesting user permission to enable Bluetooth.
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        int REQUEST_ENABLE_BT = 1;
+        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+    }
+
+
 
 
 
@@ -192,7 +226,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //compare (circle equation)...
                 if( (x-beacon.a)*(x-beacon.a)+(y-beacon.getB())*(y-beacon.getB()) <= radius*radius ){
                     //store occupied area inside the circle
-                    circle.setArea(x,y);
+                    circle.setOccupiedArea(x,y);
+                }
+                //this is for reuse, clear area "between" measurements.
+                else{
+                    circle.clearOccupiedArea(x,y);
                 }
             }
         }
@@ -349,9 +387,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             this.radius = radius;
         }
 
-        public void setArea(int x, int y){
+        public void setOccupiedArea(int x, int y){
             //set specified area as occupied by the beacon circle
             this.circleArea[x][y] = 1;
+        }
+        public void clearOccupiedArea(int x, int y){
+            this.circleArea[x][y] = 0;
         }
         public int getArea(int x, int y){
             return circleArea[x][y];

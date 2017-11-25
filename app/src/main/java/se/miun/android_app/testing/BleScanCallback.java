@@ -32,6 +32,8 @@ public class BleScanCallback extends ScanCallback {
     }
 
     //function gets called every time a scan is successful
+    //this mode is used with the low_latency setting (primarily) but also works for
+    // batch scan results
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
         /* Test of live update of rssi values */
@@ -60,6 +62,8 @@ public class BleScanCallback extends ScanCallback {
     }
 
     //batch results
+    //note: this is primarily used with the low_power scan setting and results are deliverd in
+    //batches every ~4.5 seconds
     @Override
     public void onBatchScanResults(List<ScanResult> results){
         for(ScanResult result: results){
