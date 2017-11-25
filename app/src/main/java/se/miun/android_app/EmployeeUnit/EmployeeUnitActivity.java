@@ -61,6 +61,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private ArrayList<Area> areas;
     private Beacon beacon1, beacon2, beacon3;
     private Circle testCircle;
+    Map<String, Circle> circleContainer;
     //test of my location
     //store my location in x,y (area coordinate), occupied area >= 1
     private int[][] myLocation = new int[][]{
@@ -176,33 +177,32 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         // The beacons locations
         beacon1 = new Beacon(0, 0);
-        //beacon2 = new Beacon(width, 0);
-        //beacon3 = new Beacon(width, height);
 
-        // Get values from all 3 beacons
-        int rssiB1 = -85;
-        int rssiB2 = -95;
-        int rssiB3 = -90;
-
-        // Get radius from the beacons (in pixels)
-        double radius1 = getDistance(rssiB1);
-        double radius2 = getDistance(rssiB2);
-        double radius3 = getDistance(rssiB3);
-
-        //get radius in area blocks
-        int radiiArea1 = meterToAreaBlockDistance(radius1, 35/8);
-
-        //test with occupied circle Area
-        testCircle = new Circle(0);
-        testCircle.setRadius(getDistance(-85));
-        // Create circles and output x and y that is within the circle
-        getAreasInCircle( radiiArea1, beacon1, testCircle); /*test...*/
+//        // Get values from all 3 beacons
+//        int rssiB1 = -85;
 //
-//        getAreasInCircle((int) Math.floor(radius2), beacon2);
-//        getAreasInCircle((int) Math.floor(radius3), beacon3);
+//        // Get radius from the beacons (in pixels)
+//        double radius1 = getDistance(rssiB1);
+//
+//        //get radius in area blocks
+//        int radiiArea1 = meterToAreaBlockDistance(radius1, 35/8);
+//
+//        //test with occupied circle Area
+//        testCircle = new Circle(0);
+//        testCircle.setRadius(getDistance(-85));
+//        // Create circles and output x and y that is within the circle
+//        getAreasInCircle( radiiArea1, beacon1, testCircle); /*test...*/
 
 
 
+        //COMMENT OUT THIS SECTOPM IF YOU DON'T WANT BLUETOOTH TO START WHEN U ARE TESTING!!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
         /* Check and enable bluetooth if it is disabled */
         if(!bluetoothEnable() ){
             requestBluetoothEnable();
@@ -210,7 +210,48 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         //start bluetooth scans for beacons
         mBleScanner = new BleScanner(scanResults);
         mBleScanner.startScan(false);
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
 
+
+    }
+
+    private void updateLocation(){
+        //todo update the display of scan results..
+        //needs to be a callback function to function in this way,
+        // otherwise need to implement everything in the employeeScanCallback class
+        // and use the callbacks in there
+        for(Map.Entry<String, Circle> entry : circleContainer.entrySet()) {
+            String deviceAddress = entry.getKey();  //key
+            Circle mCircle = entry.getValue();        //value
+
+            //go trough location circles and estimate myLocation
+            setLocationArea(mCircle);
+        }
+    }
+
+    private void processScanResults(){
+        //go trough the map
+        for(Map.Entry<String, Integer> entry : scanResults.entrySet()) {
+            String deviceAddress = entry.getKey();  //key
+            Integer rssi = entry.getValue();        //value
+
+            //get distance in meters from beacon
+            double dist = getDistance(rssi);
+            //convert from meters to area blocks
+            int distArea = meterToAreaBlockDistance(dist, xmax);
+            //create new circle object
+            Circle nCircle = new Circle(dist);
+            //calculate the area coverage of the circle
+            getAreasInCircle(distArea, beacon1, nCircle);
+            //store new circles in map
+            circleContainer.put(deviceAddress, nCircle);
+        }
     }
 
     //check if bluetooth is enabled or disabled
@@ -228,10 +269,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     }
 
-
-
-
-
     private void getAreasInCircle(int radius, Beacon beacon, Circle circle) {
         int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
 
@@ -244,6 +281,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     circle.setOccupiedArea(x,y);
                 }
                 //this is for reuse, clear area "between" measurements.
+                //might be unnecessary...
                 else{
                     circle.clearOccupiedArea(x,y);
                 }
