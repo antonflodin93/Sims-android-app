@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -58,10 +59,13 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     Map<String, Integer>        scanResults;
 
     //triangulation
+    Thread pollThread;  //needed for continues update of scan methods
+
     private ArrayList<Area> areas;
     private Beacon beacon1, beacon2, beacon3;
     private Circle testCircle;
     Map<String, Circle> circleContainer;
+
     //test of my location
     //store my location in x,y (area coordinate), occupied area >= 1
     private int[][] myLocation = new int[][]{
@@ -178,23 +182,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         // The beacons locations
         beacon1 = new Beacon(0, 0);
 
-//        // Get values from all 3 beacons
-//        int rssiB1 = -85;
-//
-//        // Get radius from the beacons (in pixels)
-//        double radius1 = getDistance(rssiB1);
-//
-//        //get radius in area blocks
-//        int radiiArea1 = meterToAreaBlockDistance(radius1, 35/8);
-//
-//        //test with occupied circle Area
-//        testCircle = new Circle(0);
-//        testCircle.setRadius(getDistance(-85));
-//        // Create circles and output x and y that is within the circle
-//        getAreasInCircle( radiiArea1, beacon1, testCircle); /*test...*/
-
-
-
         //COMMENT OUT THIS SECTOPM IF YOU DON'T WANT BLUETOOTH TO START WHEN U ARE TESTING!!!!
         //SEE ABOVE!!!
         //SEE ABOVE!!!
@@ -218,6 +205,38 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         //SEE ABOVE!!!
         //SEE ABOVE!!!
 
+        //Create a new thread to run updateLocation()
+        //parallel to other threads (increase responsiveness of app)
+        pollThread = new Thread(){
+            @Override
+            public void run(){
+                //loop "forever"
+                while( !isInterrupted() ){
+                    try {
+                        Thread.sleep( 5000 );   // 5 seconds
+
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "Running Update Method", Toast.LENGTH_SHORT).show();
+
+                                //run the scan update functions
+                                //processScanResults();
+                                //updateLocation();
+                            }
+                        });
+
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        //start the thread
+//        pollThread.start();
 
     }
 
@@ -226,6 +245,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         //needs to be a callback function to function in this way,
         // otherwise need to implement everything in the employeeScanCallback class
         // and use the callbacks in there
+
+        //clear myLocation
+        clearLocationArea();
+
         for(Map.Entry<String, Circle> entry : circleContainer.entrySet()) {
             String deviceAddress = entry.getKey();  //key
             Circle mCircle = entry.getValue();        //value
@@ -233,6 +256,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             //go trough location circles and estimate myLocation
             setLocationArea(mCircle);
         }
+
+        //todo process myLocation to display..
+
     }
 
     private void processScanResults(){
@@ -249,7 +275,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             Circle nCircle = new Circle(dist);
             //calculate the area coverage of the circle
             getAreasInCircle(distArea, beacon1, nCircle);
-            //store new circles in map
+            //store new circles in map, clear map if needed?
+            if( !circleContainer.isEmpty() ){
+                circleContainer.clear();
+            }
             circleContainer.put(deviceAddress, nCircle);
         }
     }
