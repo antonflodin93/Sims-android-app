@@ -14,6 +14,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -225,8 +226,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                                 Toast.makeText(getApplicationContext(), "Running Update Method", Toast.LENGTH_SHORT).show();
 
                                 //run the scan update functions
-                                //processScanResults();
-                                //updateLocation();
+                                processScanResults();
+                                updateLocation();
                             }
                         });
 
@@ -239,7 +240,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         };
 
         //start the thread
-//        pollThread.start();
+        pollThread.start();
 
     }
 
@@ -282,41 +283,54 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         //needs to be a callback function to function in this way,
         // otherwise need to implement everything in the employeeScanCallback class
         // and use the callbacks in there
+        if( circleContainer != null) {
 
-        //clear myLocation
-        clearLocationArea();
+            //clear myLocation
+            clearLocationArea();
 
-        for(Map.Entry<String, Circle> entry : circleContainer.entrySet()) {
-            String deviceAddress = entry.getKey();  //key
-            Circle mCircle = entry.getValue();        //value
+            for (Map.Entry<String, Circle> entry : circleContainer.entrySet()) {
+                String deviceAddress = entry.getKey();  //key
+                Circle mCircle = entry.getValue();        //value
 
-            //go trough location circles and estimate myLocation
-            setLocationArea(mCircle);
+                //go trough location circles and estimate myLocation
+                setLocationArea(mCircle);
+            }
+
+            //todo process myLocation to display..
+
         }
-
-        //todo process myLocation to display..
+        else {
+            Log.e("123", "MAP circleContainer NULLPTR EXCEPTION");
+        }
 
     }
 
     private void processScanResults(){
-        //go trough the map
-        for(Map.Entry<String, Integer> entry : scanResults.entrySet()) {
-            String deviceAddress = entry.getKey();  //key
-            Integer rssi = entry.getValue();        //value
 
-            //get distance in meters from beacon
-            double dist = getDistance(rssi);
-            //convert from meters to area blocks
-            int distArea = meterToAreaBlockDistance(dist, xmax);
-            //create new circle object
-            Circle nCircle = new Circle(dist);
-            //calculate the area coverage of the circle
-            getAreasInCircle(distArea, beacon1, nCircle);
-            //store new circles in map, clear map if needed?
-            if( !circleContainer.isEmpty() ){
-                circleContainer.clear();
+        if( scanResults != null ) {
+
+            //go trough the map
+            for (Map.Entry<String, Integer> entry : scanResults.entrySet()) {
+                String deviceAddress = entry.getKey();  //key
+                int rssi = entry.getValue();        //value
+
+                //get distance in meters from beacon
+                double dist = getDistance(rssi);
+                //convert from meters to area blocks
+                int distArea = meterToAreaBlockDistance(dist, xmax);
+                //create new circle object
+                Circle nCircle = new Circle(dist);
+                //calculate the area coverage of the circle
+                getAreasInCircle(distArea, beacon1, nCircle);
+                //store new circles in map, clear map if needed?
+                if (!circleContainer.isEmpty()) {
+                    circleContainer.clear();
+                }
+                circleContainer.put(deviceAddress, nCircle);
             }
-            circleContainer.put(deviceAddress, nCircle);
+        }
+        else {
+            Log.e("123", "MAP scanResults NULLPTR EXCEPTION");
         }
     }
 
@@ -431,6 +445,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         // Maybee needed
         //this.unregisterReceiver(this.broadcastReceiver);
+
+        //stop polling the scan update functions
+        pollThread.interrupt();
     }
 
     @Override
