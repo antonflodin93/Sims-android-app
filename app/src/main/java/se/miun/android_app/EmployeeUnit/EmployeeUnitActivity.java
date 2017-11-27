@@ -1,6 +1,7 @@
 package se.miun.android_app.EmployeeUnit;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,12 +14,13 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Vector;
 
 import se.miun.android_app.Adapter.RegularMessageAdapter;
@@ -51,12 +53,21 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private MediaPlayer warningSignal, regularSignal;
     float xmax, ymax;
 
+    //ble
+    private BluetoothAdapter    mBluetoothAdapter;
+    private BleScanner          mBleScanner;
+    Map<String, Integer>        scanResults;
+
+    //triangulation
+    Thread pollThread;  //needed for continues update of scan methods
 
     private ArrayList<Area> areas;
     private Beacon beacon1, beacon2, beacon3;
     private Circle testCircle;
+    Map<String, Circle> circleContainer;
+
     //test of my location
-    //store my location in x,y (area coordinate), occupied area = 1
+    //store my location in x,y (area coordinate), occupied area >= 1
     private int[][] myLocation = new int[][]{
             {0,0,0,0,0,0,0,0},
             {0,0,0,0,0,0,0,0},
@@ -166,37 +177,126 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         }.execute();
         */
 
+
+
         // The beacons locations
         beacon1 = new Beacon(0, 0);
-        //beacon2 = new Beacon(width, 0);
-        //beacon3 = new Beacon(width, height);
 
-        // Get values from all 3 beacons
-        int rssiB1 = -85;
-        int rssiB2 = -95;
-        int rssiB3 = -90;
+        //COMMENT OUT THIS SECTOPM IF YOU DON'T WANT BLUETOOTH TO START WHEN U ARE TESTING!!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        /* Check and enable bluetooth if it is disabled */
+        if(!bluetoothEnable() ){
+            requestBluetoothEnable();
+        }
+        //start bluetooth scans for beacons
+        mBleScanner = new BleScanner(scanResults);
+        mBleScanner.startScan(false);
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
+        //SEE ABOVE!!!
 
-        // Get radius from the beacons (in pixels)
-        double radius1 = getDistance(rssiB1);
-        double radius2 = getDistance(rssiB2);
-        double radius3 = getDistance(rssiB3);
+        //Create a new thread to run updateLocation()
+        //parallel to other threads (increase responsiveness of app)
+        pollThread = new Thread(){
+            @Override
+            public void run(){
+                //loop "forever"
+                while( !isInterrupted() ){
+                    try {
+                        Thread.sleep( 5000 );   // 5 seconds
 
-        //get radius in area blocks
-        int radiiArea1 = meterToAreaBlockDistance(radius1, 35/8);
 
-        //test with occupied circle Area
-        testCircle = new Circle(0);
-        testCircle.setRadius(getDistance(-85));
-        // Create circles and output x and y that is within the circle
-        getAreasInCircle( radiiArea1, beacon1, testCircle); /*test...*/
-//
-//        getAreasInCircle((int) Math.floor(radius2), beacon2);
-//        getAreasInCircle((int) Math.floor(radius3), beacon3);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "Running Update Method", Toast.LENGTH_SHORT).show();
 
+                                //run the scan update functions
+                                //processScanResults();
+                                //updateLocation();
+                            }
+                        });
+
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        //start the thread
+//        pollThread.start();
 
     }
 
+    private void updateLocation(){
+        //todo update the display of scan results..
+        //needs to be a callback function to function in this way,
+        // otherwise need to implement everything in the employeeScanCallback class
+        // and use the callbacks in there
 
+        //clear myLocation
+        clearLocationArea();
+
+        for(Map.Entry<String, Circle> entry : circleContainer.entrySet()) {
+            String deviceAddress = entry.getKey();  //key
+            Circle mCircle = entry.getValue();        //value
+
+            //go trough location circles and estimate myLocation
+            setLocationArea(mCircle);
+        }
+
+        //todo process myLocation to display..
+
+    }
+
+    private void processScanResults(){
+        //go trough the map
+        for(Map.Entry<String, Integer> entry : scanResults.entrySet()) {
+            String deviceAddress = entry.getKey();  //key
+            Integer rssi = entry.getValue();        //value
+
+            //get distance in meters from beacon
+            double dist = getDistance(rssi);
+            //convert from meters to area blocks
+            int distArea = meterToAreaBlockDistance(dist, xmax);
+            //create new circle object
+            Circle nCircle = new Circle(dist);
+            //calculate the area coverage of the circle
+            getAreasInCircle(distArea, beacon1, nCircle);
+            //store new circles in map, clear map if needed?
+            if( !circleContainer.isEmpty() ){
+                circleContainer.clear();
+            }
+            circleContainer.put(deviceAddress, nCircle);
+        }
+    }
+
+    //check if bluetooth is enabled or disabled
+    private boolean bluetoothEnable(){
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            return false;
+        }
+        return true;
+    }
+    //request enable / turn on bluetooth
+    private void requestBluetoothEnable(){
+        // displays a dialog requesting user permission to enable Bluetooth.
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        int REQUEST_ENABLE_BT = 1;
+        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+    }
 
     private void getAreasInCircle(int radius, Beacon beacon, Circle circle) {
         int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
@@ -207,7 +307,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //compare (circle equation)...
                 if( (x-beacon.a)*(x-beacon.a)+(y-beacon.getB())*(y-beacon.getB()) <= radius*radius ){
                     //store occupied area inside the circle
-                    circle.setArea(x,y);
+                    circle.setOccupiedArea(x,y);
+                }
+                //this is for reuse, clear area "between" measurements.
+                //might be unnecessary...
+                else{
+                    circle.clearOccupiedArea(x,y);
                 }
             }
         }
@@ -364,9 +469,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             this.radius = radius;
         }
 
-        public void setArea(int x, int y){
+        public void setOccupiedArea(int x, int y){
             //set specified area as occupied by the beacon circle
             this.circleArea[x][y] = 1;
+        }
+        public void clearOccupiedArea(int x, int y){
+            this.circleArea[x][y] = 0;
         }
         public int getArea(int x, int y){
             return circleArea[x][y];
