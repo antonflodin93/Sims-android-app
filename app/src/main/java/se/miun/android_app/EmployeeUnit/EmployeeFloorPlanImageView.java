@@ -130,9 +130,10 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
         Paint transparent = new Paint();
         red.setColor(Color.TRANSPARENT);
 
-        // Just to show the area
+
         if (clickedObject != null) {
 
+            // Just to show the area
             if(blinking) {
                 canvas.drawRect(startx, starty, endx, endy, red);
             }

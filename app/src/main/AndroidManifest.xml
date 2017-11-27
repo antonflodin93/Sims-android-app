@@ -62,6 +62,10 @@
             android:name=".Service.RegularMessageService"
             android:label="Regular message service" />
 
+        <service
+            android:name=".Service.ObjectMessageService"
+            android:label="Object message service" />
+
         <activity android:name=".MasterUnit.ListEmployeesActivity" />
         <activity android:name=".MasterUnit.ListBuildingsInfoActivity" />
         <activity android:name=".MasterUnit.FloorplanActivity" />
