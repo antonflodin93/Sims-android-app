@@ -41,6 +41,7 @@ import se.miun.android_app.Model.Building;
 import se.miun.android_app.Model.Floor;
 import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
+import se.miun.android_app.Service.ObjectMessageService;
 import se.miun.android_app.Service.RegularMessageService;
 import se.miun.android_app.Service.WarningMessageService;
 import se.miun.android_app.testing.Area;
@@ -57,7 +58,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
     private ImageButton warningMessageBtn, regularMessageBtn;
     private Context context;
-    private Intent regularMessageIntent, warningMessageIntent;
+    private Intent regularMessageIntent, warningMessageIntent, objectMessageIntent;
     private ArrayList<Message> regularMessages;
     private LinearLayout floorplanLinearLayout;
     private RelativeLayout headerLayout;
@@ -128,6 +129,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
                     warningSignal.start();
                 }
+            } else if (intent.getAction().equals("ObjectMessageService")){
+                Toast.makeText(context, "Message!", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -148,6 +151,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         this.regularMessageIntent = new Intent(this, RegularMessageService.class);
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
+        this.objectMessageIntent = new Intent(this, ObjectMessageService.class);
 
 
         // Get floor info and set imageview
@@ -428,10 +432,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         this.startService(this.warningMessageIntent);
         this.startService(this.regularMessageIntent);
+        this.startService(this.objectMessageIntent);
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("RegularMessageService");
         intentFilter.addAction("WarningMessageService");
+        intentFilter.addAction("ObjectMessageService");
         this.registerReceiver(this.broadcastReceiver, intentFilter);
     }
 
@@ -441,6 +447,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             this.unregisterReceiver(this.broadcastReceiver);
             this.stopService(this.regularMessageIntent);
             this.stopService(this.warningMessageIntent);
+            this.stopService(this.objectMessageIntent);
         }
 
         // Maybee needed
