@@ -5,8 +5,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -31,9 +33,11 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
     private Bitmap bmp;
     private Boolean clicked = false;
     private Area clickedArea;
-    private ArrayList<Area> areas = new ArrayList<>();
+    private float startx, starty, endx, endy;
+    private ArrayList<Area> objectAreas = new ArrayList<>();
     private ArrayList<FactoryObject> objects;
     private FactoryObject clickedObject;
+    private boolean blinking;
     private enum MessageType {
         WARNING, REGULAR
     }
@@ -109,7 +113,7 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
             for (int c = 0; c < collumnsize; c++) {
                 Area area = new Area(xmax * (c), xmax * (c + 1), ymax * (r), ymax * (r + 1), c + 1, r + 1);
                 area.setRealLimits(c * sizeX, c * sizeX + sizeX, r * sizeY, r * sizeY + sizeY);
-                areas.add(area);
+                objectAreas.add(area);
                 //Toast.makeText(context, "Area: " + xmax *(r) + ", " + xmax * (r+1), Toast.LENGTH_SHORT).show();
             }
         }
@@ -121,12 +125,21 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Paint p = new Paint();
+        Paint red = new Paint();
+        red.setColor(Color.red(Color.RED));
+        Paint transparent = new Paint();
+        red.setColor(Color.TRANSPARENT);
 
         // Just to show the area
-        if (clicked) {
-            //canvas.drawRect(clickedArea.getXstart(), clickedArea.getYstart(), clickedArea.getXend(), clickedArea.getYend(), p);
-            //Toast.makeText(context, clickedArea.getXstart() + " " + clickedArea.getYstart() + " " + clickedArea.getXend() + " " + clickedArea.getYend(), Toast.LENGTH_SHORT).show();
+        if (clickedObject != null) {
+
+            if(blinking) {
+                canvas.drawRect(startx, starty, endx, endy, red);
+            }
+            else {
+                canvas.drawRect(startx, starty, endx, endy, transparent);
+            }
+
 
         }
 
@@ -139,7 +152,6 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
         super.onTouchEvent(event);
         final int eventAction = event.getAction();
         switch (eventAction) {
-
 
             case MotionEvent.ACTION_DOWN:
                 clicked = true;
@@ -161,12 +173,12 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
                 float py = (y / h) * 100;
 
                 //depending on where the screen is touched
-                for (int i = 0; i < areas.size(); i++) {
-                    if (px > areas.get(i).getxmin() && px < areas.get(i).getxmax() && areas.get(i).getymin() < py && areas.get(i).getymax() > py) {
-                        clickedArea = areas.get(i);
+                for (int i = 0; i < objectAreas.size(); i++) {
+                    if (px > objectAreas.get(i).getxmin() && px < objectAreas.get(i).getxmax() && objectAreas.get(i).getymin() < py && objectAreas.get(i).getymax() > py) {
+                        clickedArea = objectAreas.get(i);
                         // Check if there is any object in the area clicked
                         checkObjectForArea();
-                        // Toast.makeText(context, "Clicked Area: " + areas.get(i).getrow() + ", " + areas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Clicked Area: " + objectAreas.get(i).getrow() + ", " + objectAreas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
                         //Toast.makeText(context, "Clicked Area: " + areas.get(i).getxmin() + "-" + areas.get(i).getxmax() + ", " + areas.get(i).getymin() + "-" + areas.get(i).getymax(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -195,10 +207,55 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
             if (clickedArea.getrow() >= object.getAreaXStart() && clickedArea.getrow() <= object.getAreaXEnd() && clickedArea.getcollumn() >= object.getAreaYStart() && clickedArea.getcollumn() <= object.getAreaYEnd()) {
                 Toast.makeText(context, "Its object " + object.getObjectName(), Toast.LENGTH_SHORT).show();
                 clickedObject = object;
+                setCoordinatesForObject(clickedObject);
+
+
 
 
             }
         }
+    }
+
+    // Sets limits to be able to draw object
+    void setCoordinatesForObject(FactoryObject factoryObject){
+        for(Area a : objectAreas){
+            if(a.getrow() == factoryObject.getAreaXStart()){
+                startx = a.getXstart();
+            } else if(a.getrow() == factoryObject.getAreaXEnd()){
+                endx = a.getXend();
+            } else if(a.getcollumn() == factoryObject.getAreaYStart()){
+                starty = a.getYstart();
+            } else if(a.getcollumn() == factoryObject.getAreaYEnd()){
+                endy = a.getYend();
+            }
+        }
+
+        blink();
+    }
+
+
+
+    private void blink(){
+        final Handler handler = new Handler();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int timeToBlink = 2000;
+                try{Thread.sleep(timeToBlink);}catch (Exception e) {}
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(blinking){
+                            blinking = false;
+                        }else{
+                            blinking = true;
+                        }
+                        invalidate();
+                        blink();
+                    }
+                });
+            }
+        }).start();
     }
 }
 
