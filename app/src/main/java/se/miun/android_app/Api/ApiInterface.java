@@ -15,6 +15,7 @@ import retrofit2.http.Path;
 import se.miun.android_app.Model.Building;
 import se.miun.android_app.Model.Company;
 import se.miun.android_app.Model.Employee;
+import se.miun.android_app.Model.Floor;
 import se.miun.android_app.Model.Message;
 
 public interface ApiInterface {
@@ -129,6 +130,10 @@ public interface ApiInterface {
     /*
     *   FLOOR
     */
+
+    // Get a floor by id
+    @GET("floors/{floorId}")
+    Call<Floor> getFloorById(@Path("floorId") int floorId);
 
 
 }

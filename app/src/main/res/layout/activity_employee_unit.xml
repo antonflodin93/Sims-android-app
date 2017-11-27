@@ -1,65 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:shrinkColumns="1"
-    >
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="0.01"
-            android:background="#000000">
-
-                <ImageButton
-                    android:id="@+id/warningMessageBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.15"
-                    android:background="#000000"
-                    android:src="@drawable/warningmessage" />
-
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.7"
-                    android:background="#000000"
-                    android:src="@drawable/logotype"
-                    android:id="@+id/logotypeImageView" />
+    android:id="@+id/floorplanLinearLayout"
+    android:orientation="vertical">
 
 
-                <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.15"
-                    android:background="#000000"
-                    android:src="@drawable/regularmessage"
-                    android:id="@+id/regularMessageBtn" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-
-                <ImageView
-
-                    android:src="@drawable/info"
-                    android:background="#000000"
-                    android:id="@+id/infoNewMessageTextView"
-                    android:layout_column="0" />
-
-                <EditText
-                    android:id="@+id/newmessageEditText"
-                    android:hint="                     enter a new message                  "
-                    android:layout_column="1" />
-
-        </TableRow>
-
-
-    <TableRow
+    <RelativeLayout
+        android:layout_height="0dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.99"></TableRow>
+        android:background="#000000"
+        android:id="@+id/headerLayout"
+        android:layout_weight="0.2">
 
-</TableLayout>
+
+        <ImageButton
+            android:id="@+id/warningMessageBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/regularMessageBtn"
+            android:layout_alignParentStart="true"
+            android:background="#000000"
+            android:src="@drawable/warningmessage" />
+
+        <ImageButton
+            android:id="@+id/regularMessageBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:background="#000000"
+            android:src="@drawable/regularmessage" />
+    </RelativeLayout>
+
+
+
+
+</LinearLayout>

@@ -17,13 +17,27 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import se.miun.android_app.Adapter.BuildingListAdapter;
 import se.miun.android_app.Adapter.RegularMessageAdapter;
+import se.miun.android_app.Api.ApiClient;
+import se.miun.android_app.Api.ApiInterface;
+import se.miun.android_app.Model.Building;
+import se.miun.android_app.Model.Floor;
 import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
 import se.miun.android_app.Service.RegularMessageService;
@@ -31,6 +45,8 @@ import se.miun.android_app.Service.WarningMessageService;
 import se.miun.android_app.testing.Area;
 
 public class EmployeeUnitActivity extends Activity implements View.OnClickListener {
+
+    private static final int HTTP_RESPONSE_ACCEPTED = 200;
 
     public enum MessageType {
         WARNING, REGULAR;
@@ -42,6 +58,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private Context context;
     private Intent regularMessageIntent, warningMessageIntent;
     private ArrayList<Message> regularMessages;
+    private LinearLayout floorplanLinearLayout;
+    private RelativeLayout headerLayout;
     private ArrayList<Message> warningMessages;
     private RecyclerView messageRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -49,9 +67,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private int numOfReceievedRegularMessages, numOfReceievedWarningMessages;
     private boolean clickedButton = false;
     private Bitmap bmp;
-    private ImageView mapImageView;
+    private EmployeeFloorPlanImageView employeeFloorPlanImageView;
     private MediaPlayer warningSignal, regularSignal;
     float xmax, ymax;
+    private int floorId = 1; // Rejekthus
+    private Floor floor;
 
     //ble
     private BluetoothAdapter    mBluetoothAdapter;
@@ -122,8 +142,16 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         warningMessageBtn.setOnClickListener(this);
         regularMessageBtn = (ImageButton) findViewById(R.id.regularMessageBtn);
         regularMessageBtn.setOnClickListener(this);
+        floorplanLinearLayout = (LinearLayout) findViewById(R.id.floorplanLinearLayout);
+
+
         this.regularMessageIntent = new Intent(this, RegularMessageService.class);
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
+
+
+        // Get floor info and set imageview
+        getFloorPlanInfo(floorId);
+
 
 
 
@@ -153,31 +181,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 size++;
             }
         }
-
-        /*
-
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    InputStream in = new URL("http://193.10.119.34:8080/WS/webapi/floorplans/testimage.png").openStream();
-                    bmp = BitmapFactory.decodeStream(in);
-                } catch (Exception e) {
-                    // log error
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void result) {
-                if (bmp != null)
-                    mapImageView.setImageBitmap(bmp);
-            }
-
-        }.execute();
-        */
-
-
 
         // The beacons locations
         beacon1 = new Beacon(0, 0);
@@ -238,6 +241,40 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         //start the thread
 //        pollThread.start();
 
+    }
+
+
+    // Get floorplan from db
+    private void getFloorPlanInfo(int floorId) {
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<Floor> call;
+        call = apiInterface.getFloorById(floorId);
+        call.enqueue(new Callback<Floor>() {
+            @Override
+            public void onResponse(Call<Floor> call, Response<Floor> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+                    floor = response.body();
+                    // Set floorplan
+                    employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects());
+                    employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
+                    floorplanLinearLayout.addView(employeeFloorPlanImageView);
+
+                } else{
+                    try {
+                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Floor> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void updateLocation(){
