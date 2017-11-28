@@ -9,46 +9,26 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 import java.util.Vector;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import se.miun.android_app.Adapter.BuildingListAdapter;
 import se.miun.android_app.Adapter.RegularMessageAdapter;
-import se.miun.android_app.Api.ApiClient;
-import se.miun.android_app.Api.ApiInterface;
-import se.miun.android_app.Model.Building;
-import se.miun.android_app.Model.Floor;
 import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
-import se.miun.android_app.Service.ObjectMessageService;
 import se.miun.android_app.Service.RegularMessageService;
 import se.miun.android_app.Service.WarningMessageService;
 import se.miun.android_app.testing.Area;
 
 public class EmployeeUnitActivity extends Activity implements View.OnClickListener {
-
-    private static final int HTTP_RESPONSE_ACCEPTED = 200;
 
     public enum MessageType {
         WARNING, REGULAR;
@@ -58,10 +38,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
     private ImageButton warningMessageBtn, regularMessageBtn;
     private Context context;
-    private Intent regularMessageIntent, warningMessageIntent, objectMessageIntent;
+    private Intent regularMessageIntent, warningMessageIntent;
     private ArrayList<Message> regularMessages;
-    private LinearLayout floorplanLinearLayout;
-    private RelativeLayout headerLayout;
     private ArrayList<Message> warningMessages;
     private RecyclerView messageRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -69,11 +47,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private int numOfReceievedRegularMessages, numOfReceievedWarningMessages;
     private boolean clickedButton = false;
     private Bitmap bmp;
-    private EmployeeFloorPlanImageView employeeFloorPlanImageView;
+    private ImageView mapImageView;
     private MediaPlayer warningSignal, regularSignal;
     float xmax, ymax;
-    private int floorId = 1; // Rejekthus
-    private Floor floor;
 
     //ble
     private BluetoothAdapter    mBluetoothAdapter;
@@ -129,8 +105,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
                     warningSignal.start();
                 }
-            } else if (intent.getAction().equals("ObjectMessageService")){
-                Toast.makeText(context, "Message!", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -146,17 +120,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         warningMessageBtn.setOnClickListener(this);
         regularMessageBtn = (ImageButton) findViewById(R.id.regularMessageBtn);
         regularMessageBtn.setOnClickListener(this);
-        floorplanLinearLayout = (LinearLayout) findViewById(R.id.floorplanLinearLayout);
-
-
         this.regularMessageIntent = new Intent(this, RegularMessageService.class);
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
-        this.objectMessageIntent = new Intent(this, ObjectMessageService.class);
-
-
-        // Get floor info and set imageview
-        getFloorPlanInfo(floorId);
-
 
 
 
@@ -187,31 +152,56 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             }
         }
 
+        /*
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    InputStream in = new URL("http://193.10.119.34:8080/WS/webapi/floorplans/testimage.png").openStream();
+                    bmp = BitmapFactory.decodeStream(in);
+                } catch (Exception e) {
+                    // log error
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                if (bmp != null)
+                    mapImageView.setImageBitmap(bmp);
+            }
+
+        }.execute();
+        */
+
+
+
         // The beacons locations
         beacon1 = new Beacon(0, 0);
 
-        //COMMENT OUT THIS SECTOPM IF YOU DON'T WANT BLUETOOTH TO START WHEN U ARE TESTING!!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
+
+        //initialize Map containers
+        scanResults = new HashMap<>();
+        circleContainer = new HashMap<>();
+
+        //COMMENT OUT THIS Section IF YOU DON'T WANT BLUETOOTH TO START WHEN U ARE TESTING!!!!
         //SEE ABOVE!!!
         /* Check and enable bluetooth if it is disabled */
         if(!bluetoothEnable() ){
             requestBluetoothEnable();
         }
         //start bluetooth scans for beacons
+
+
         mBleScanner = new BleScanner(scanResults);
         mBleScanner.startScan(false);
         //SEE ABOVE!!!
         //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
+
+
+        //test map containers
+        //scanResults.put("ED:0E:FF:9C:A9:6D", -75);
 
         //Create a new thread to run updateLocation()
         //parallel to other threads (increase responsiveness of app)
@@ -227,11 +217,31 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(), "Running Update Method", Toast.LENGTH_SHORT).show();
+                               // Toast.makeText(getApplicationContext(), "Running Update Method", Toast.LENGTH_SHORT).show();
 
                                 //run the scan update functions
-                                processScanResults();
-                                updateLocation();
+                                //processScanResults();
+                                //updateLocation();
+
+
+                                String deviceAddress = "EB:09:BD:0E:78:37";  //key
+                                int rssi = -83;        //value
+
+                                //get distance in meters from beacon
+                                double dist = getDistance(rssi);
+                                //convert from meters to area blocks
+                                int distArea = meterToAreaBlockDistance(dist, xmax);
+                                //create new circle object
+                                Circle nCircle = new Circle(dist);
+                                //calculate the area coverage of the circle
+                                getAreasInCircle(distArea, beacon1, nCircle);
+                                //store new circles in map, clear map if needed?
+//                                if( !circleContainer.isEmpty() ){
+//                                    circleContainer.clear();
+//                                }
+//                                circleContainer.put(deviceAddress, nCircle);
+
+
                             }
                         });
 
@@ -244,42 +254,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         };
 
         //start the thread
-        pollThread.start();
+       pollThread.start();
 
-    }
-
-
-    // Get floorplan from db
-    private void getFloorPlanInfo(int floorId) {
-        Retrofit retrofit;
-        retrofit = ApiClient.getApiClient();
-        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-        Call<Floor> call;
-        call = apiInterface.getFloorById(floorId);
-        call.enqueue(new Callback<Floor>() {
-            @Override
-            public void onResponse(Call<Floor> call, Response<Floor> response) {
-                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
-                    floor = response.body();
-                    // Set floorplan
-                    employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects());
-                    employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
-                    floorplanLinearLayout.addView(employeeFloorPlanImageView);
-
-                } else{
-                    try {
-                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Floor> call, Throwable t) {
-                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void updateLocation(){
@@ -287,54 +263,48 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         //needs to be a callback function to function in this way,
         // otherwise need to implement everything in the employeeScanCallback class
         // and use the callbacks in there
-        if( circleContainer != null) {
 
-            //clear myLocation
-            clearLocationArea();
-
-            for (Map.Entry<String, Circle> entry : circleContainer.entrySet()) {
-                String deviceAddress = entry.getKey();  //key
-                Circle mCircle = entry.getValue();        //value
-
-                //go trough location circles and estimate myLocation
-                setLocationArea(mCircle);
-            }
-
-            //todo process myLocation to display..
-
+        if(circleContainer.isEmpty() ){
+            return;
         }
-        else {
-            Log.e("123", "MAP circleContainer NULLPTR EXCEPTION");
+
+        //clear myLocation
+        clearLocationArea();
+
+        for(Map.Entry<String, Circle> entry : circleContainer.entrySet()) {
+            String deviceAddress = entry.getKey();  //key
+            Circle mCircle = entry.getValue();        //value
+
+            //go trough location circles and estimate myLocation
+            setLocationArea(mCircle);
         }
+
+        //todo process myLocation to display..
 
     }
 
     private void processScanResults(){
-
-        if( scanResults != null ) {
-
-            //go trough the map
-            for (Map.Entry<String, Integer> entry : scanResults.entrySet()) {
-                String deviceAddress = entry.getKey();  //key
-                int rssi = entry.getValue();        //value
-
-                //get distance in meters from beacon
-                double dist = getDistance(rssi);
-                //convert from meters to area blocks
-                int distArea = meterToAreaBlockDistance(dist, xmax);
-                //create new circle object
-                Circle nCircle = new Circle(dist);
-                //calculate the area coverage of the circle
-                getAreasInCircle(distArea, beacon1, nCircle);
-                //store new circles in map, clear map if needed?
-                if (!circleContainer.isEmpty()) {
-                    circleContainer.clear();
-                }
-                circleContainer.put(deviceAddress, nCircle);
-            }
+        if( scanResults.isEmpty() ){
+            return;
         }
-        else {
-            Log.e("123", "MAP scanResults NULLPTR EXCEPTION");
+
+        for(Map.Entry<String, Integer> entry : scanResults.entrySet()) {
+            String deviceAddress = entry.getKey();  //key
+            Integer rssi = entry.getValue();        //value
+
+            //get distance in meters from beacon
+            double dist = getDistance(rssi);
+            //convert from meters to area blocks
+            int distArea = meterToAreaBlockDistance(dist, xmax);
+            //create new circle object
+            Circle nCircle = new Circle(dist);
+            //calculate the area coverage of the circle
+            getAreasInCircle(distArea, beacon1, nCircle);
+            //store new circles in map, clear map if needed?
+            if( !circleContainer.isEmpty() ){
+                circleContainer.clear();
+            }
+            circleContainer.put(deviceAddress, nCircle);
         }
     }
 
@@ -432,12 +402,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         this.startService(this.warningMessageIntent);
         this.startService(this.regularMessageIntent);
-        this.startService(this.objectMessageIntent);
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("RegularMessageService");
         intentFilter.addAction("WarningMessageService");
-        intentFilter.addAction("ObjectMessageService");
         this.registerReceiver(this.broadcastReceiver, intentFilter);
     }
 
@@ -447,13 +415,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             this.unregisterReceiver(this.broadcastReceiver);
             this.stopService(this.regularMessageIntent);
             this.stopService(this.warningMessageIntent);
-            this.stopService(this.objectMessageIntent);
         }
 
         // Maybee needed
         //this.unregisterReceiver(this.broadcastReceiver);
-
-        //stop polling the scan update functions
         pollThread.interrupt();
     }
 
