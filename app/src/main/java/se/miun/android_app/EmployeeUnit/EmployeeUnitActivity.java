@@ -2,6 +2,7 @@ package se.miun.android_app.EmployeeUnit;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -92,26 +93,26 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
     //test of my location
     //store my location in x,y (area coordinate), occupied area >= 1
-    /*private int[][] myLocation = new int[][]{
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-    };*/
-
     private int[][] myLocation = new int[][]{
-            {0,0,0,0,},
-            {0,0,0,0,},
-            {0,0,0,0,},
-            {0,0,0,0,},
-            {0,0,0,0,},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
     };
+
+//    private int[][] myLocation = new int[][]{
+//            {0,0,0,0,},
+//            {0,0,0,0,},
+//            {0,0,0,0,},
+//            {0,0,0,0,},
+//            {0,0,0,0,},
+//    };
 
 
 
@@ -176,8 +177,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
 
 
-        collumnsize = 4;
-        rowsize = 5;
+        collumnsize = 8;
+        rowsize = 10;
         //number of total areas
 
         Vector<Area> areas = new Vector<>();
@@ -199,34 +200,26 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         // The beacons locations
         beacon1 = new Beacon(0, 0);
 
+        //init map containers
         scanResults = new HashMap<>();
         circleContainer = new HashMap<>();
-        //COMMENT OUT THIS SECTOPM IF YOU DON'T WANT BLUETOOTH TO START WHEN U ARE TESTING!!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
+
         /* Check and enable bluetooth if it is disabled */
         if(!bluetoothEnable() ){
             requestBluetoothEnable();
         }
-        //start bluetooth scans for beacons
-        mBleScanner = new BleScanner(scanResults);
-        mBleScanner.startScan(false);
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
+        //init bluetooth manager
+        final BluetoothManager bluetoothManager =
+                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        //access android bluetooth object
+        mBluetoothAdapter = bluetoothManager.getAdapter();
+        mBleScanner = new BleScanner(scanResults, mBluetoothAdapter);
+        //start scans
+        mBleScanner.startScan(0);
         //SEE ABOVE!!!
 
         //Create a new thread to run updateLocation()
         //parallel to other threads (increase responsiveness of app)
-
         pollThread = new Thread(){
             @Override
             public void run(){
@@ -239,7 +232,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(), "Running Update Method", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getApplicationContext(), "Running Update Method", Toast.LENGTH_SHORT).show();
 
                                 //run the scan update functions
                                 processScanResults();
@@ -256,7 +249,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         };
 
         //start the thread
-        //pollThread.start();
+        pollThread.start();
 
     }
 
@@ -295,7 +288,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     }
 
     private void updateLocation(){
-        //todo update the display of scan results..
         //needs to be a callback function to function in this way,
         // otherwise need to implement everything in the employeeScanCallback class
         // and use the callbacks in there
@@ -320,7 +312,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 }
             }
             Toast.makeText(EmployeeUnitActivity.this, locationz, Toast.LENGTH_SHORT).show();
-
+            //Log.e("111", locationz);
             //todo process myLocation to display..
 
         }
@@ -333,6 +325,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private void processScanResults(){
 
         if( scanResults != null ) {
+
+            //fetch results
+            scanResults = mBleScanner.getResults();
 
             //go trough the map
             for (Map.Entry<String, Integer> entry : scanResults.entrySet()) {

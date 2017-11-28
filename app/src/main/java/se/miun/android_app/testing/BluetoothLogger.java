@@ -127,12 +127,12 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         //create callback
         HashMap mScanResults = new HashMap<>();
 
-//        //temp scanfilter(to get MAC addresses from the beacons...
-//        List<ScanFilter> filtersTmp = new ArrayList<>();
-//                //no scan filter
-//        ScanFilter scanFilterTmp = new ScanFilter.Builder().build();
-//        filtersTmp.add(scanFilterTmp);
-//        //end of temp scanfilters
+        //temp scanfilter(to get MAC addresses from the beacons...
+        List<ScanFilter> filtersTmp = new ArrayList<>();
+                //no scan filter
+        ScanFilter scanFilterTmp = new ScanFilter.Builder().build();
+        filtersTmp.add(scanFilterTmp);
+        //end of temp scanfilters
 
         mScanCallback = new BleScanCallback(mScanResults, displayDataTextView);
         //start the scan
