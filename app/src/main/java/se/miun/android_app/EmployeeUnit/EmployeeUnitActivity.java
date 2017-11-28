@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
@@ -190,6 +191,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         // The beacons locations
         beacon1 = new Beacon(0, 0);
 
+        scanResults = new HashMap<>();
+        circleContainer = new HashMap<>();
         //COMMENT OUT THIS SECTOPM IF YOU DON'T WANT BLUETOOTH TO START WHEN U ARE TESTING!!!!
         //SEE ABOVE!!!
         //SEE ABOVE!!!
