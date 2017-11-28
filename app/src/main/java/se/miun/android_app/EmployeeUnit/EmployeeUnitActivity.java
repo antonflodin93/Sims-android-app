@@ -75,6 +75,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     float xmax, ymax;
     private int floorId = 1; // Rejekthus
     private Floor floor;
+    int rowsize, collumnsize;
 
     //ble
     private BluetoothAdapter    mBluetoothAdapter;
@@ -91,18 +92,27 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
     //test of my location
     //store my location in x,y (area coordinate), occupied area >= 1
+    /*private int[][] myLocation = new int[][]{
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0},
+    };*/
+
     private int[][] myLocation = new int[][]{
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
+            {0,0,0,0,},
+            {0,0,0,0,},
+            {0,0,0,0,},
+            {0,0,0,0,},
+            {0,0,0,0,},
     };
+
 
 
 
@@ -166,12 +176,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
 
 
-        int collumnsize = 8;
-        int rowsize = 10;
+        collumnsize = 4;
+        rowsize = 5;
         //number of total areas
-        int areasize = rowsize * collumnsize;
 
-        Vector<Area> areas = new Vector<>(areasize);
+        Vector<Area> areas = new Vector<>();
 
         //get xmax and ymax for the first area
         xmax = 25 / collumnsize;
@@ -184,7 +193,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         for (int c = 0; c < rowsize; c++) {
             for (int r = 0; r < collumnsize; r++) {
                 areas.add(size, new Area(xmax * (r), xmax * (r + 1), ymax * (c), ymax * (c + 1), r + 1, c + 1));
-                size++;
             }
         }
 
@@ -302,6 +310,15 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //go trough location circles and estimate myLocation
                 setLocationArea(mCircle);
             }
+            String locationz = " ";
+
+            for(int y = 0; y < rowsize; y++) {
+                locationz += "\n";
+                for (int x = 0; x < collumnsize; x++) {
+                    locationz += myLocation[y][x];
+                }
+            }
+            Toast.makeText(EmployeeUnitActivity.this, locationz, Toast.LENGTH_SHORT).show();
 
             //todo process myLocation to display..
 
@@ -357,11 +374,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     }
 
     private void getAreasInCircle(int radius, Beacon beacon, Circle circle) {
-        int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
+        //int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
 
         // Iterate through every areas
-        for (int x = 0;  /*#nr or areas in x direction*/ x < xAreas; x++) {
-            for(int y = 0; /*#nr of areas in y direction*/ y < yAreas; y++){
+        for (int x = 0;  /*#nr or areas in x direction*/ x < collumnsize; x++) {
+            for(int y = 0; /*#nr of areas in y direction*/ y < rowsize; y++){
                 //compare (circle equation)...
                 if( (x-beacon.a)*(x-beacon.a)+(y-beacon.getB())*(y-beacon.getB()) <= radius*radius ){
                     //store occupied area inside the circle
@@ -382,11 +399,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     //for example if the area reads: +3 then you know 3 beacons are detected in that
     //area and thus it is highly likely you are in that area.
     private void setLocationArea(Circle circle){
-        int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
+        //int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
 
         // Iterate through every areas
-        for (int x = 0;  /*#nr or areas in x direction*/ x < xAreas; x++) {
-            for(int y = 0; /*#nr of areas in y direction*/ y < yAreas; y++){
+        for (int x = 0;  /*#nr or areas in x direction*/ x < collumnsize; x++) {
+            for(int y = 0; /*#nr of areas in y direction*/ y < rowsize; y++){
                 //compare all circles
                 if( circle.getArea(x,y) == 1 ){
                     //set myLocation to +1 in specified area
@@ -396,9 +413,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         }
     }
     private void clearLocationArea(){
-        for(int x=0;x<8;x++){
-            for(int y=0;y<10;y++){
-                myLocation[x][y] = 0;
+        for(int x=0;x<collumnsize;x++){
+            for(int y=0;y<rowsize;y++){
+                myLocation[y][x] = 0;
             }
         }
     }
@@ -519,7 +536,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         private double radius;
 
         //Area of floorplan, (8x10 default) containing circle area of detected beacon.
-        private int[][] circleArea = new int[8][10];
+        private int[][] circleArea = new int[collumnsize][rowsize];
 
         public Circle(double radius) {
             this.radius = radius;
