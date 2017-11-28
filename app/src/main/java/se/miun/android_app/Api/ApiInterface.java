@@ -105,6 +105,16 @@ public interface ApiInterface {
     Call<ResponseBody> insertWarningMessageFactoryObject(@Body Message message, @Path("factoryobjectId") int factoryobjectId);
 
 
+    // Get all warning messages for an object
+
+    // Get all regular messages for an object
+    @GET("messages/regular/company/{companyName}")
+    Call<ArrayList<Message>> getRegularObjectMessages(@Path("companyName") String companyName);
+
+    // Get all warning messages for objects in floor
+
+    // Get all regular messages for objects in floor
+
 
     /*
     *  COMPANY

@@ -218,6 +218,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         //Create a new thread to run updateLocation()
         //parallel to other threads (increase responsiveness of app)
+
         pollThread = new Thread(){
             @Override
             public void run(){
@@ -247,7 +248,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         };
 
         //start the thread
-        pollThread.start();
+        //pollThread.start();
 
     }
 
