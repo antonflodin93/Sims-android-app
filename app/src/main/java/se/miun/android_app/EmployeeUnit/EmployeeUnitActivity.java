@@ -337,7 +337,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
                 //calculate the area coverage of the circle
                 //compare to beacon position (1,2,3 => first floor, >4 second floor)
-                if (deviceAddress.equals(beacon1.deviceID)) {
+                if (deviceAddress.equals(beacon1.getDeviceID())) {
                     getAreasInCircle(distArea, beacon1, nCircle);
                     Log.e("456", "Using Beacon 1");
 
@@ -349,9 +349,13 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     getAreasInCircle(distArea, beacon3, nCircle);
                     Log.e("456", "Using Beacon 3");
 
+                    //add a fourth beacon here and if detected call some function to let master know
+                    //that you have entered the second floor of the building.
+
+
                 } else {
                     getAreasInCircle(distArea, beacon1, nCircle);
-                    Log.e("456", "Using default");
+                    Log.e("456", "Using default beacon");
 
                 }
 
