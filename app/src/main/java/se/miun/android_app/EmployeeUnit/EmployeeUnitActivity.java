@@ -77,6 +77,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private int floorId = 1; // Rejekthus
     private Floor floor;
     int rowsize, collumnsize;
+    private int employeeId;
 
     //ble
     private BluetoothAdapter    mBluetoothAdapter;
@@ -143,6 +144,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee_unit);
         context = this;
+
+        employeeId = getIntent().getIntExtra("employeeId", 0);
+
 
         // Init components
         warningMessageBtn = (ImageButton) findViewById(R.id.warningMessageBtn);

@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private final static int HTTP_RESPONSE_NOT_FOUND = 404;
     private final static int HTTP_RESPONSE_ACCEPTED = 202;
     private ProgressBar loginprogressBar;
+    private int employeeId;
 
     private Callback<ResponseBody> loginCallback;
 
@@ -71,12 +72,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             accountNameEditText.setText("masterunit");
             createAccountBtn.setEnabled(false);
             createAccountBtn.setVisibility(View.GONE);
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         } else{
             passwordEditText.setText("employee");
             accountNameEditText.setText("employee");
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
         // When the user is logging in
@@ -92,7 +91,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         context.startActivity(myIntent);
 
                     } else if (userType.equals("EMPLOYEE")) {
+                        try {
+                            employeeId = Integer.parseInt(response.body().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         Intent myIntent = new Intent(getApplicationContext(), EmployeeUnitActivity.class);
+                        myIntent.putExtra("employeeId", employeeId);
+
                         context.startActivity(myIntent);
                     }
 

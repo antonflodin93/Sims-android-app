@@ -11,6 +11,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.GET;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import se.miun.android_app.Model.Building;
 import se.miun.android_app.Model.Company;
@@ -68,6 +69,24 @@ public interface ApiInterface {
     // Get employees in floor
     @GET("employees/floor/{floorId}")
     Call<ArrayList<Employee>> getEmployeesInFloor(@Path("floorId") int floorId);
+
+
+    // Delete employee in building
+    @DELETE("employees/building/{employeeID}/")
+    Call<ResponseBody> deleteEmployeeInBuilding(@Path("employeeID") int employeeID);
+
+    // Change floor for a employee
+    @PUT("employees/floor/{floorId}/employee/employeeID")
+    Call<ResponseBody> updateEmployeeFloor(@Path("floorId") int floorId , @Path("employeeID") int employeeID);
+
+    // Employee enters building
+    @POST("employees/building/{buildingId}/employee/employeeID")
+    Call<ResponseBody> enterBuildingEmployee(@Path("buildingId") int buildingId , @Path("employeeID") int employeeID);
+
+    // Employee enters floor first time
+    @POST("employees/floor/{floorId}/employee/employeeID")
+    Call<ResponseBody> enterFloorEmployee(@Path("floorId") int floorId , @Path("employeeID") int employeeID);
+
 
     /*
     *  MESSAGES
