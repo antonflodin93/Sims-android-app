@@ -13,6 +13,9 @@ public class Building {
     @SerializedName("buildingName")
     private String buildingName;
 
+    @SerializedName("numOfEmployees")
+    private int numOfEmployees;
+
     @SerializedName("floors")
     private ArrayList<Floor> floors;
 
@@ -20,10 +23,11 @@ public class Building {
     }
 
 
-    public Building(int buildingId, String buildingName, ArrayList<Floor> floors) {
+    public Building(int buildingId, String buildingName, ArrayList<Floor> floors, int numOfEmployees) {
         this.buildingId = buildingId;
         this.buildingName = buildingName;
         this.floors = floors;
+        this.numOfEmployees = numOfEmployees;
     }
 
     public Building(String buildingName) {
@@ -52,5 +56,13 @@ public class Building {
 
     public void setFloors(ArrayList<Floor> floors) {
         this.floors = floors;
+    }
+
+    public int getNumOfEmployees() {
+        return numOfEmployees;
+    }
+
+    public void setNumOfEmployees(int numOfEmployees) {
+        this.numOfEmployees = numOfEmployees;
     }
 }

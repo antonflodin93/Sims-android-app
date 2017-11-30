@@ -61,6 +61,13 @@ public interface ApiInterface {
     @DELETE("employees/{id}")
     Call<Employee> deleteEmployeeById(@Path("id") int id);
 
+    // Get employees in building
+    @GET("employees/building/{buildingId}")
+    Call<ArrayList<Employee>> getEmployeesInBuilding(@Path("buildingId") int buildingId);
+
+    // Get employees in floor
+    @GET("employees/floor/{floorId}")
+    Call<ArrayList<Employee>> getEmployeesInFloor(@Path("floorId") int floorId);
 
     /*
     *  MESSAGES
@@ -104,6 +111,16 @@ public interface ApiInterface {
     @POST("messages/warning/factoryobject/{factoryobjectId}")
     Call<ResponseBody> insertWarningMessageFactoryObject(@Body Message message, @Path("factoryobjectId") int factoryobjectId);
 
+
+    // Get all warning messages for an object
+
+    // Get all regular messages for an object
+    @GET("messages/regular/company/{companyName}")
+    Call<ArrayList<Message>> getRegularObjectMessages(@Path("companyName") String companyName);
+
+    // Get all warning messages for objects in floor
+
+    // Get all regular messages for objects in floor
 
 
     /*

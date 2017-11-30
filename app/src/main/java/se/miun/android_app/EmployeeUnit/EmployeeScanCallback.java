@@ -14,7 +14,7 @@ import static android.content.ContentValues.TAG;
  */
 
 class EmployeeScanCallback extends ScanCallback {
-    Map<String, Integer> scanResults;
+    private Map<String, Integer> scanResults;
 
     EmployeeScanCallback(Map<String, Integer> scanResults) {
         this.scanResults = scanResults;
@@ -40,7 +40,15 @@ class EmployeeScanCallback extends ScanCallback {
     private void addResults(ScanResult result){
         int rssi = result.getRssi();
         String deviceAddress = result.getDevice().getAddress();
+
+        Log.e("201", "scanResults.put" + deviceAddress);
+        Log.e("202", "rssi: " + rssi);
+
         scanResults.put(deviceAddress, rssi);
+    }
+
+    public Map<String, Integer> getResults(){
+        return scanResults;
     }
 
 }

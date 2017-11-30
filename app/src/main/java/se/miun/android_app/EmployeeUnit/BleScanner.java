@@ -5,6 +5,7 @@ import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,16 +19,16 @@ public class BleScanner {
 
     private BluetoothAdapter    mBluetoothAdapter;
     private ScanCallback        mScanCallback;
-    List<ScanFilter>            filters;
+    private List<ScanFilter>    filters;
     private boolean             mScanning;
     private BluetoothLeScanner  mBluetoothLeScanner;
     private ScanSettings        settings;
-    Map<String, Integer>        scanResults;
+    private Map<String, Integer>        scanResults;
 
 
 
     //Filter ble devices on MAC address.
-    String[] filterlist = {
+    private String[] filterlist = {
             "ED:0E:FF:9C:A9:6D",
             "EE:2B:8F:54:76:14",
             "D4:C4:D4:66:72:C5",
@@ -39,17 +40,20 @@ public class BleScanner {
 
 
 
-    BleScanner(Map<String, Integer> scanResults){
+    BleScanner(Map<String, Integer> scanResults, BluetoothAdapter mBluetoothAdapter){
         this.scanResults = scanResults;
+        this.mBluetoothAdapter = mBluetoothAdapter;
     }
 
-    public void startScan(boolean scanMode){
+    public void startScan(int scanMode){
         //exit if scan is already going
         if(mScanning){
+            Log.e("101", "BLE already scanning");
             return;
         }
         //exit if bluetooth is NOT turned on
         else if (! bluetoothEnable() ){
+            Log.e("100", "Bluetooth not enabled");
             return;
         }
         else {
@@ -60,8 +64,20 @@ public class BleScanner {
             mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
             //callback on scans
             mScanCallback = new EmployeeScanCallback(scanResults);
+
+
+            //temp scanfilter(to get MAC addresses from the beacons...
+            List<ScanFilter> filtersTmp = new ArrayList<>();
+            //no scan filter
+            ScanFilter scanFilterTmp = new ScanFilter.Builder().build();
+            filtersTmp.add(scanFilterTmp);
+            //end of temp scanfilters
+
+
+
+
             //start the scan
-            mBluetoothLeScanner.startScan(filters /* REPLACE WITH 'filters' when testing is complete*/, settings, mScanCallback);
+            mBluetoothLeScanner.startScan(filtersTmp, settings, mScanCallback);
             mScanning = true;
         }
     }
@@ -75,19 +91,22 @@ public class BleScanner {
         mScanning = false;
     }
 
-    private void setScanSettings(boolean scanMode){
+    private void setScanSettings(int scanMode){
         //0 for low power scan (batch scan results)
-        if (!scanMode){
-            settings = new ScanSettings.Builder()
+        switch (scanMode){
+            case 0:             settings = new ScanSettings.Builder()
                     .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
                     .build();
-        }
-        else {
-            settings = new ScanSettings.Builder()
+                    break;
+            case 1:            settings = new ScanSettings.Builder()
                     .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                     .build();
+                    break;
+            default:             settings = new ScanSettings.Builder()
+                    .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                    .build();
+                    break;
         }
-
     }
 
     //setup of filter settings for the scan (filters on mac address)
@@ -102,9 +121,14 @@ public class BleScanner {
 
     //check if bluetooth is enabled or disabled
     private boolean bluetoothEnable(){
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+        if (mBluetoothAdapter == null || mBluetoothAdapter.isEnabled()==false  ) {
             return false;
         }
         return true;
     }
+
+    public Map<String, Integer> getResults(){
+        return scanResults;
+    }
+
 }

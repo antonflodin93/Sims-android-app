@@ -42,6 +42,10 @@ public class BleScanCallback extends ScanCallback {
         String deviceName = result.getDevice().getName();
         String bleTime = timeConverter(result);
         //display "live" data
+
+        Log.e("123", result.getDevice().getAddress());
+
+
         displayTextView.append( "\nName: " + deviceName );
         displayTextView.append( "\t " + deviceAddress );
         displayTextView.append( "\t RSSI: " + rssi );

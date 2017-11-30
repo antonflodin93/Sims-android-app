@@ -2,6 +2,7 @@ package se.miun.android_app.EmployeeUnit;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
@@ -74,6 +76,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     float xmax, ymax;
     private int floorId = 1; // Rejekthus
     private Floor floor;
+    int rowsize, collumnsize;
 
     //ble
     private BluetoothAdapter    mBluetoothAdapter;
@@ -165,12 +168,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
 
 
-        int collumnsize = 8;
-        int rowsize = 10;
+        collumnsize = 8;
+        rowsize = 10;
         //number of total areas
-        int areasize = rowsize * collumnsize;
 
-        Vector<Area> areas = new Vector<>(areasize);
+        Vector<Area> areas = new Vector<>();
 
         //get xmax and ymax for the first area
         xmax = 25 / collumnsize;
@@ -183,35 +185,30 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         for (int c = 0; c < rowsize; c++) {
             for (int r = 0; r < collumnsize; r++) {
                 areas.add(size, new Area(xmax * (r), xmax * (r + 1), ymax * (c), ymax * (c + 1), r + 1, c + 1));
-                size++;
             }
         }
 
         // The beacons locations
-        beacon1 = new Beacon(0, 0);
+        beacon1 = new Beacon(0, 0, null);
+        beacon2 = new Beacon(5, collumnsize, null);
+        beacon3 = new Beacon(rowsize, 0, null);
 
-        //COMMENT OUT THIS SECTOPM IF YOU DON'T WANT BLUETOOTH TO START WHEN U ARE TESTING!!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
+        //init map containers
+        scanResults = new HashMap<>();
+        circleContainer = new HashMap<>();
+
         /* Check and enable bluetooth if it is disabled */
         if(!bluetoothEnable() ){
             requestBluetoothEnable();
         }
-        //start bluetooth scans for beacons
-        mBleScanner = new BleScanner(scanResults);
-        mBleScanner.startScan(false);
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
-        //SEE ABOVE!!!
+        //init bluetooth manager
+        final BluetoothManager bluetoothManager =
+                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        //access android bluetooth object
+        mBluetoothAdapter = bluetoothManager.getAdapter();
+        mBleScanner = new BleScanner(scanResults, mBluetoothAdapter);
+        //start scans
+        mBleScanner.startScan(0);
 
         //Create a new thread to run updateLocation()
         //parallel to other threads (increase responsiveness of app)
@@ -227,7 +224,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(), "Running Update Method", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getApplicationContext(), "Running Update Method", Toast.LENGTH_SHORT).show();
 
                                 //run the scan update functions
                                 processScanResults();
@@ -283,13 +280,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     }
 
     private void updateLocation(){
-        //todo update the display of scan results..
         //needs to be a callback function to function in this way,
         // otherwise need to implement everything in the employeeScanCallback class
         // and use the callbacks in there
         if( circleContainer != null) {
 
-            //clear myLocation
+            //clear previous myLocation
             clearLocationArea();
 
             for (Map.Entry<String, Circle> entry : circleContainer.entrySet()) {
@@ -299,6 +295,17 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //go trough location circles and estimate myLocation
                 setLocationArea(mCircle);
             }
+            String locationz = " ";
+
+            for(int y = 0; y < rowsize; y++) {
+                locationz += "\n";
+                for (int x = 0; x < collumnsize; x++) {
+                    locationz += myLocation[y][x];
+                }
+            }
+            Toast.makeText(EmployeeUnitActivity.this, locationz, Toast.LENGTH_SHORT).show();
+
+            //Log.e("111", locationz);
 
             //todo process myLocation to display..
 
@@ -313,6 +320,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         if( scanResults != null ) {
 
+            //fetch results
+            scanResults = mBleScanner.getResults();
+
             //go trough the map
             for (Map.Entry<String, Integer> entry : scanResults.entrySet()) {
                 String deviceAddress = entry.getKey();  //key
@@ -324,9 +334,32 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 int distArea = meterToAreaBlockDistance(dist, xmax);
                 //create new circle object
                 Circle nCircle = new Circle(dist);
+
                 //calculate the area coverage of the circle
-                getAreasInCircle(distArea, beacon1, nCircle);
-                //store new circles in map, clear map if needed?
+                //compare to beacon position (1,2,3 => first floor, >4 second floor)
+                if (deviceAddress.equals(beacon1.getDeviceID())) {
+                    getAreasInCircle(distArea, beacon1, nCircle);
+                    Log.e("456", "Using Beacon 1");
+
+                } else if (deviceAddress.equals(beacon2.getDeviceID())) {
+                    getAreasInCircle(distArea, beacon2, nCircle);
+                    Log.e("456", "Using Beacon 2");
+
+                } else if (deviceAddress.equals(beacon3.getDeviceID())) {
+                    getAreasInCircle(distArea, beacon3, nCircle);
+                    Log.e("456", "Using Beacon 3");
+
+                    //add a fourth beacon here and if detected call some function to let master know
+                    //that you have entered the second floor of the building.
+
+
+                } else {
+                    getAreasInCircle(distArea, beacon1, nCircle);
+                    Log.e("456", "Using default beacon");
+
+                }
+
+                //store new circles in map, clear map if needed
                 if (!circleContainer.isEmpty()) {
                     circleContainer.clear();
                 }
@@ -354,12 +387,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     }
 
     private void getAreasInCircle(int radius, Beacon beacon, Circle circle) {
-        int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
 
-        // Iterate through every areas
-        for (int x = 0;  /*#nr or areas in x direction*/ x < xAreas; x++) {
-            for(int y = 0; /*#nr of areas in y direction*/ y < yAreas; y++){
-                //compare (circle equation)...
+        // Iterate through every area
+        for (int x = 0; x < collumnsize; x++) {
+            for(int y = 0; y < rowsize; y++){
+                //compare (using circle equation)
                 if( (x-beacon.a)*(x-beacon.a)+(y-beacon.getB())*(y-beacon.getB()) <= radius*radius ){
                     //store occupied area inside the circle
                     circle.setOccupiedArea(x,y);
@@ -379,11 +411,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     //for example if the area reads: +3 then you know 3 beacons are detected in that
     //area and thus it is highly likely you are in that area.
     private void setLocationArea(Circle circle){
-        int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
+        //int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
 
         // Iterate through every areas
-        for (int x = 0;  /*#nr or areas in x direction*/ x < xAreas; x++) {
-            for(int y = 0; /*#nr of areas in y direction*/ y < yAreas; y++){
+        for (int x = 0;  /*#nr or areas in x direction*/ x < collumnsize; x++) {
+            for(int y = 0; /*#nr of areas in y direction*/ y < rowsize; y++){
                 //compare all circles
                 if( circle.getArea(x,y) == 1 ){
                     //set myLocation to +1 in specified area
@@ -393,9 +425,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         }
     }
     private void clearLocationArea(){
-        for(int x=0;x<8;x++){
-            for(int y=0;y<10;y++){
-                myLocation[x][y] = 0;
+        for(int x=0;x<collumnsize;x++){
+            for(int y=0;y<rowsize;y++){
+                myLocation[y][x] = 0;
             }
         }
     }
@@ -480,12 +512,19 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private class Beacon {
         // Location in pixels
         private int a, b;
-
+        private String deviceID;
         private ArrayList<Area> coverAreas = new ArrayList<>();
 
 
         // Set location
-        public Beacon(int a, int b) {
+        public Beacon(int a, int b, String deviceID) {
+            if (deviceID == null){
+                this.deviceID = "00:00:00:00:00:00";
+                Log.e("555", "No Device ID set, Setting default 00:");
+            }
+            else {
+                this.deviceID = deviceID;
+            }
             this.a = a;
             this.b = b;
         }
@@ -509,6 +548,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         public void addArea(Area area){
             coverAreas.add(area);
         }
+
+        public String getDeviceID(){
+            return deviceID;
+        }
     }
 
 
@@ -516,7 +559,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         private double radius;
 
         //Area of floorplan, (8x10 default) containing circle area of detected beacon.
-        private int[][] circleArea = new int[8][10];
+        private int[][] circleArea = new int[collumnsize][rowsize];
 
         public Circle(double radius) {
             this.radius = radius;
