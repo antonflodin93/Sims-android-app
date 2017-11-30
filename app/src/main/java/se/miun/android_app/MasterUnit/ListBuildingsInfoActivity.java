@@ -153,8 +153,12 @@ public class ListBuildingsInfoActivity extends AppCompatActivity implements Expa
                         dialog.setTitle("Information about employees");
 
                         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1);
-                        for(Employee employee : employees){
-                            arrayAdapter.add(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ") \n" + employee.getEmployeePhonenumber());
+                        if(employees.isEmpty()){
+                            arrayAdapter.add("No employees in building");
+                        } else{
+                            for(Employee employee : employees){
+                                arrayAdapter.add(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ") \n" + employee.getEmployeePhonenumber());
+                            }
                         }
 
 
@@ -208,9 +212,14 @@ public class ListBuildingsInfoActivity extends AppCompatActivity implements Expa
                         dialog.setTitle("Information about employees");
 
                         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1);
-                        for(Employee employee : employees){
-                            arrayAdapter.add(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ") \n" + employee.getEmployeePhonenumber());
+                        if(employees.isEmpty()){
+                            arrayAdapter.add("No employees in floor");
+                        } else{
+                            for(Employee employee : employees){
+                                arrayAdapter.add(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ") \n" + employee.getEmployeePhonenumber());
+                            }
                         }
+
 
 
                         dialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
