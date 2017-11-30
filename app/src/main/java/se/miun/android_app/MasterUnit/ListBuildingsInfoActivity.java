@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
@@ -88,8 +89,6 @@ public class ListBuildingsInfoActivity extends AppCompatActivity implements Expa
             }
         });
 
-
-
     }
 
     @Override
@@ -119,14 +118,138 @@ public class ListBuildingsInfoActivity extends AppCompatActivity implements Expa
 
 
 
-        return true;
+        return false;
     }
 
 
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(context, "LONG PRESS " + buildingListAdapter.getGroup(position).getNumOfEmployees(), Toast.LENGTH_SHORT).show();
-        return false;
+
+        long packedPosition = buildingsExListView.getExpandableListPosition(position);
+
+        int itemType = ExpandableListView.getPackedPositionType(packedPosition);
+        int buildingPos = ExpandableListView.getPackedPositionGroup(packedPosition);
+        int floorPos = ExpandableListView.getPackedPositionChild(packedPosition);
+
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ArrayList<Employee>> call;
+
+        // If building clicked
+        if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+            call = apiInterface.getEmployeesInBuilding(buildingListAdapter.getGroup(buildingPos).getBuildingId());
+            call.enqueue(new Callback<ArrayList<Employee>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
+                    if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+                        ArrayList<Employee> employees = response.body();
+
+
+                        // Display dialog
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+                        dialog.setIcon(android.R.drawable.ic_dialog_info);
+                        dialog.setTitle("Information about employees");
+
+                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1);
+                        for(Employee employee : employees){
+                            arrayAdapter.add(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ") \n" + employee.getEmployeePhonenumber());
+                        }
+
+
+                        dialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        dialog.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        dialog.show();
+
+
+
+                    } else{
+                        try {
+                            Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<Employee>> call, Throwable t) {
+                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // If floor clicked
+        else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+
+            call = apiInterface.getEmployeesInFloor(buildingListAdapter.getChild(buildingPos, floorPos).getFloorId());
+            call.enqueue(new Callback<ArrayList<Employee>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
+                    if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+                        ArrayList<Employee> employees = response.body();
+
+
+                        // Display dialog
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+                        dialog.setIcon(android.R.drawable.ic_dialog_info);
+                        dialog.setTitle("Information about employees");
+
+                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1);
+                        for(Employee employee : employees){
+                            arrayAdapter.add(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ") \n" + employee.getEmployeePhonenumber());
+                        }
+
+
+                        dialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        dialog.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        dialog.show();
+
+
+
+                    } else{
+                        try {
+                            Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<Employee>> call, Throwable t) {
+                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }
+
+
+
+        return true;
     }
 }
