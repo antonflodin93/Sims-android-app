@@ -8,6 +8,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
@@ -28,7 +30,7 @@ import se.miun.android_app.Model.Building;
 import se.miun.android_app.Model.Employee;
 import se.miun.android_app.R;
 
-public class ListBuildingsInfoActivity extends AppCompatActivity implements ExpandableListView.OnChildClickListener {
+public class ListBuildingsInfoActivity extends AppCompatActivity implements ExpandableListView.OnChildClickListener, ExpandableListView.OnItemLongClickListener {
     private ExpandableListView buildingsExListView;
     private BuildingListAdapter buildingListAdapter;
     private ArrayList<Building> buildings;
@@ -44,10 +46,18 @@ public class ListBuildingsInfoActivity extends AppCompatActivity implements Expa
 
         buildingsExListView = (ExpandableListView) findViewById(R.id.buildingsExListView);
         buildingsExListView.setOnChildClickListener(this);
+        buildingsExListView.setOnItemLongClickListener(this);
 
         // Get all the buildings
         getBuildings();
 
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getBuildings();
     }
 
     private void getBuildings() {
@@ -110,5 +120,13 @@ public class ListBuildingsInfoActivity extends AppCompatActivity implements Expa
 
 
         return true;
+    }
+
+
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        Toast.makeText(context, "LONG PRESS " + buildingListAdapter.getGroup(position).getNumOfEmployees(), Toast.LENGTH_SHORT).show();
+        return false;
     }
 }

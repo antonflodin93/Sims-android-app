@@ -20,10 +20,17 @@ public class Floor implements Serializable {
     @SerializedName("objects")
     private ArrayList<FactoryObject> objects;
 
-    public Floor(int floorId, String floorLevel, String floorPlanFilePath) {
+
+    @SerializedName("numOfEmployees")
+    private int numOfEmployees;
+
+
+
+    public Floor(int floorId, String floorLevel, String floorPlanFilePath, int numOfEmployees) {
         this.floorId = floorId;
         this.floorLevel = floorLevel;
         this.floorPlanFilePath = floorPlanFilePath;
+        this.numOfEmployees = numOfEmployees;
     }
 
     public Floor(String floorLevel, String floorPlanFilePath) {
@@ -32,6 +39,18 @@ public class Floor implements Serializable {
     }
 
     public Floor() {
+    }
+
+    public int getFloorId() {
+        return floorId;
+    }
+
+    public void setFloorId(int floorId) {
+        this.floorId = floorId;
+    }
+
+    public void setFloorLevel(String floorLevel) {
+        this.floorLevel = floorLevel;
     }
 
     public String getFloorLevel() {
@@ -56,5 +75,13 @@ public class Floor implements Serializable {
 
     public void setObjects(ArrayList<FactoryObject> objects) {
         this.objects = objects;
+    }
+
+    public int getNumOfEmployees() {
+        return numOfEmployees;
+    }
+
+    public void setNumOfEmployees(int numOfEmployees) {
+        this.numOfEmployees = numOfEmployees;
     }
 }

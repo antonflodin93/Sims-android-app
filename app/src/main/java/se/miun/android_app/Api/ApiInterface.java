@@ -61,6 +61,13 @@ public interface ApiInterface {
     @DELETE("employees/{id}")
     Call<Employee> deleteEmployeeById(@Path("id") int id);
 
+    // Get employees in building
+    @GET("employees/building/{buildingId}")
+    Call<ArrayList<Employee>> getEmployeesInBuilding(@Path("buildingId") int buildingId);
+
+    // Get employees in floor
+    @GET("employees/floor/{floorId}")
+    Call<ArrayList<Employee>> getEmployeesInFloor(@Path("floorId") int floorId);
 
     /*
     *  MESSAGES
