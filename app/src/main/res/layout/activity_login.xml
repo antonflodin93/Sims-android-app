@@ -67,7 +67,8 @@
             android:layout_width="0.0dip"
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
-            android:background="#9999FF"
+            android:background="#222222"
+            android:textColor="@android:color/white"
             android:text="Create new account"
             android:textSize="20dp"/>
 
@@ -76,9 +77,10 @@
             android:layout_width="0.0dip"
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
-            android:background="#33CC33"
-            android:textSize="30dp"
-            android:text="Login" />
+            android:background="#222222"
+            android:textColor="@android:color/white"
+            android:text="Login"
+            android:textSize="30dp" />
 
     </LinearLayout>
 

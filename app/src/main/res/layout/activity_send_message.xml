@@ -121,15 +121,15 @@
 
         <Button
             android:id="@+id/cancelSendMessageBtn"
-            android:text="@string/cancel"
             android:background="#FF0000"
-            android:textSize="20dp"/>
+            android:text="@string/cancel"
+            android:textSize="20dp" />
 
         <Button
             android:id="@+id/sendMessagesBtn"
-            android:text="@string/send_message"
             android:background="#99FF66"
-            android:textSize="20dp"/>
+            android:text="@string/send_message"
+            android:textSize="20dp" />
 
     </TableRow>
 
