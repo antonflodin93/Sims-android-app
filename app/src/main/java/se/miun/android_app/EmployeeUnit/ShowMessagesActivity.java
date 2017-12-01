@@ -30,6 +30,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     private MessageType messageType;
     private Context context;
     private int numOfReceievedRegularMessages, numOfReceievedWarningMessages;
+    private int employeeId;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -52,7 +53,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 warningMessages = (ArrayList<Message>) intent.getSerializableExtra("messages");
                 if (warningMessages.size() > numOfReceievedWarningMessages) {
                     numOfReceievedWarningMessages = warningMessages.size();
-                    warningAdapter = new WarningMessageAdapter(warningMessages);
+                    warningAdapter = new WarningMessageAdapter(warningMessages, employeeId, context);
                     messageRecyclerView.setAdapter(warningAdapter);
                 }
 
@@ -77,6 +78,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
         // Check if the user wants to display warning or regular messages
         messageType = (MessageType) getIntent().getSerializableExtra("MESSAGETYPE");
+
         if (messageType == MessageType.REGULAR) {
             // Get the messages
             regularMessages = (ArrayList<Message>) getIntent().getSerializableExtra("REGULARMESSAGES");
@@ -90,12 +92,13 @@ public class ShowMessagesActivity extends AppCompatActivity {
             messageRecyclerView.setAdapter(regularAdapter);
 
         } else if (messageType == MessageType.WARNING) {
+            employeeId = getIntent().getIntExtra("employeeId", 0);
             // Get the messages
             warningMessages = (ArrayList<Message>) getIntent().getSerializableExtra("WARNINGMESSAGES");
             numOfReceievedWarningMessages = warningMessages.size();
 
             // Define the adapter and set adapter
-            warningAdapter = new WarningMessageAdapter(warningMessages);
+            warningAdapter = new WarningMessageAdapter(warningMessages, employeeId, context);
             layoutManager = new LinearLayoutManager(getApplicationContext());
             messageRecyclerView.setLayoutManager(layoutManager);
             messageRecyclerView.setItemAnimator(new DefaultItemAnimator());

@@ -143,6 +143,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         context = this;
 
         employeeID = getIntent().getIntExtra("employeeId", 0);
+        Toast.makeText(context, " " + employeeID, Toast.LENGTH_SHORT).show();
 
         if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             hasMinSdk = true;
@@ -602,8 +603,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         // Maybee needed
         //this.unregisterReceiver(this.broadcastReceiver);
 
-        //stop polling the scan update functions
-        pollThread.interrupt();
+        if(hasMinSdk){
+            //stop polling the scan update functions
+            pollThread.interrupt();
+        }
+
     }
 
     @Override
@@ -613,6 +617,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             Intent myIntent = new Intent(getApplicationContext(), ShowMessagesActivity.class);
             myIntent.putExtra("MESSAGETYPE", MessageType.WARNING);
             myIntent.putExtra("WARNINGMESSAGES", warningMessages);
+            myIntent.putExtra("employeeId", employeeID);
             warningMessageBtn.setBackgroundColor(Color.BLACK);
             context.startActivity(myIntent);
 
