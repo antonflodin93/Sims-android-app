@@ -580,6 +580,13 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         enterFloor(floorId);
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        // User exits building
+        exitBuilding();
+    }
+
     public void onPause() {
         super.onPause();
         if(!clickedButton){

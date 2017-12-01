@@ -34,6 +34,8 @@ public class WarningMessageAdapter extends RecyclerView.Adapter<WarningMessageAd
 
         holder.messageLabelTextView.setText(messages.get(position).getMessageLabel());
         holder.messageTextTextView.setText(messages.get(position).getMessageText());
+        holder.dateWarningTextView.setText(messages.get(position).getDate());
+        holder.timeWarningTextView.setText(messages.get(position).getTime());
     }
 
     @Override
@@ -42,7 +44,7 @@ public class WarningMessageAdapter extends RecyclerView.Adapter<WarningMessageAd
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView messageLabelTextView, messageTextTextView;
+        TextView messageLabelTextView, messageTextTextView, dateWarningTextView, timeWarningTextView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -50,6 +52,9 @@ public class WarningMessageAdapter extends RecyclerView.Adapter<WarningMessageAd
             // Init the fields for each row
             messageLabelTextView = (TextView) itemView.findViewById(R.id.messageLabelTextView);
             messageTextTextView = (TextView) itemView.findViewById(R.id.messageTextTextView);
+            dateWarningTextView = (TextView) itemView.findViewById(R.id.dateWarningTextView);
+            timeWarningTextView = (TextView) itemView.findViewById(R.id.timeWarningTextView);
+
 
 
         }

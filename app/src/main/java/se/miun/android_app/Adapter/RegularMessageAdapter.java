@@ -34,6 +34,8 @@ public class RegularMessageAdapter extends RecyclerView.Adapter<RegularMessageAd
 
         holder.messageLabelTextView.setText(messages.get(position).getMessageLabel());
         holder.messageTextTextView.setText(messages.get(position).getMessageText());
+        holder.dateTextView.setText(messages.get(position).getDate());
+        holder.timeTextView.setText(messages.get(position).getTime());
     }
 
     @Override
@@ -42,7 +44,7 @@ public class RegularMessageAdapter extends RecyclerView.Adapter<RegularMessageAd
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView messageLabelTextView, messageTextTextView;
+        TextView messageLabelTextView, messageTextTextView, dateTextView, timeTextView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -50,6 +52,8 @@ public class RegularMessageAdapter extends RecyclerView.Adapter<RegularMessageAd
             // Init the fields for each row
             messageLabelTextView = (TextView) itemView.findViewById(R.id.messageLabelTextView);
             messageTextTextView = (TextView) itemView.findViewById(R.id.messageTextTextView);
+            dateTextView = (TextView) itemView.findViewById(R.id.dateTextView);
+            timeTextView = (TextView) itemView.findViewById(R.id.timeTextView);
 
 
         }

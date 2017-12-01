@@ -17,14 +17,14 @@
 
     <TextView
         android:id="@+id/messageTextTextView"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="26dip"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/messageIcon"
-        android:ellipsize="marquee"
+        android:layout_toEndOf="@+id/messageIcon"
+        android:layout_toStartOf="@+id/timeTextView"
+        android:ellipsize="end"
         android:maxLines="1"
-        android:text="message text"
+        android:text="message text message text message text message text"
         android:textSize="12sp" />
 
     <TextView
@@ -40,7 +40,21 @@
         android:text="Example message"
         android:textSize="16sp" />
 
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:text="28/11" />
 
+    <TextView
+        android:id="@+id/timeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/messageLabelTextView"
+        android:text="18:05" />
 
 
 </RelativeLayout>
