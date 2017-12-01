@@ -68,12 +68,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         createAccountBtn.setEnabled(true);
 
         if(userType.equals("MASTER")) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             passwordEditText.setText("masterunit");
             accountNameEditText.setText("masterunit");
             createAccountBtn.setEnabled(false);
             createAccountBtn.setVisibility(View.GONE);
 
         } else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             passwordEditText.setText("employee");
             accountNameEditText.setText("employee");
         }
