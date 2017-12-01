@@ -73,18 +73,18 @@ public interface ApiInterface {
 
     // Delete employee in building
     @DELETE("employees/building/{employeeID}/")
-    Call<ResponseBody> deleteEmployeeInBuilding(@Path("employeeID") int employeeID);
+    Call<ResponseBody> exitBuildingEmployee(@Path("employeeID") int employeeID);
 
     // Change floor for a employee
-    @PUT("employees/floor/{floorId}/employee/employeeID")
-    Call<ResponseBody> updateEmployeeFloor(@Path("floorId") int floorId , @Path("employeeID") int employeeID);
+    @PUT("employees/floor/{floorId}/employee/{employeeID}")
+    Call<ResponseBody> changeFloorEmployee(@Path("floorId") int floorId , @Path("employeeID") int employeeID);
 
     // Employee enters building
-    @POST("employees/building/{buildingId}/employee/employeeID")
+    @POST("employees/building/{buildingId}/employee/{employeeID}")
     Call<ResponseBody> enterBuildingEmployee(@Path("buildingId") int buildingId , @Path("employeeID") int employeeID);
 
     // Employee enters floor first time
-    @POST("employees/floor/{floorId}/employee/employeeID")
+    @POST("employees/floor/{floorId}/employee/{employeeID}")
     Call<ResponseBody> enterFloorEmployee(@Path("floorId") int floorId , @Path("employeeID") int employeeID);
 
 

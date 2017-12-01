@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,7 +48,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private static final int HTTP_RESPONSE_ACCEPTED = 200;
 
     public enum MessageType {
-        WARNING, REGULAR;
+        WARNING, REGULAR
     }
 
 
@@ -68,10 +69,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private EmployeeFloorPlanImageView employeeFloorPlanImageView;
     private MediaPlayer warningSignal, regularSignal;
     float xmax, ymax;
-    private int floorId = 1; // Rejekthus
+    private int floorId = 1; // Rejekthus, floor 1
+    private int buildingId = 1;
     private Floor floor;
     int rowsize, collumnsize;
-    private int employeeId;
+    private int employeeID;
     private boolean hasMinSdk;
 
     //ble
@@ -140,7 +142,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         setContentView(R.layout.activity_employee_unit);
         context = this;
 
-        employeeId = getIntent().getIntExtra("employeeId", 0);
+        employeeID = getIntent().getIntExtra("employeeId", 0);
 
         if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             hasMinSdk = true;
@@ -168,6 +170,105 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         getFloorPlanInfo(floorId);
 
 
+        setupAreas();
+
+
+        if(hasMinSdk){
+            setupBeaconAndScanner();
+        }
+
+
+
+
+    }
+
+
+    private void enterFloor(int floorId) {
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call;
+        call = apiInterface.enterFloorEmployee(floorId, employeeID);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+
+
+                } else{
+                    try {
+                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void enterBuilding(int buildingId) {
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call;
+        call = apiInterface.enterBuildingEmployee(buildingId, employeeID);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+
+
+                } else{
+                    try {
+                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void exitBuilding(){
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call;
+        call = apiInterface.exitBuildingEmployee(employeeID);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+
+
+                } else{
+                    try {
+                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setupAreas() {
         collumnsize = 8;
         rowsize = 10;
         //number of total areas
@@ -187,13 +288,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 areas.add(size, new Area(xmax * (r), xmax * (r + 1), ymax * (c), ymax * (c + 1), r + 1, c + 1));
             }
         }
-
-        if(hasMinSdk){
-            setupBeaconAndScanner();
-        }
-
-
-
     }
 
     // For tracking location
@@ -480,6 +574,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         intentFilter.addAction("WarningMessageService");
         intentFilter.addAction("ObjectMessageService");
         this.registerReceiver(this.broadcastReceiver, intentFilter);
+
+        // Simulate that user enters building 1 and floor 1
+        enterBuilding(buildingId);
+        enterFloor(floorId);
     }
 
     public void onPause() {
@@ -489,6 +587,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             this.stopService(this.regularMessageIntent);
             this.stopService(this.warningMessageIntent);
             this.stopService(this.objectMessageIntent);
+
+            // User exits building
+            exitBuilding();
         }
 
         // Maybee needed
