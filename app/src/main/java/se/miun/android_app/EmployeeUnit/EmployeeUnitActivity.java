@@ -10,19 +10,15 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -35,11 +31,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import se.miun.android_app.Adapter.BuildingListAdapter;
 import se.miun.android_app.Adapter.RegularMessageAdapter;
 import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
-import se.miun.android_app.Model.Building;
 import se.miun.android_app.Model.Floor;
 import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
@@ -78,6 +72,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private Floor floor;
     int rowsize, collumnsize;
     private int employeeId;
+    private boolean hasMinSdk;
 
     //ble
     private BluetoothAdapter    mBluetoothAdapter;
@@ -134,7 +129,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     warningSignal.start();
                 }
             } else if (intent.getAction().equals("ObjectMessageService")){
-                Toast.makeText(context, "Message!", Toast.LENGTH_SHORT).show();
+
             }
         }
     };
@@ -147,6 +142,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         employeeId = getIntent().getIntExtra("employeeId", 0);
 
+        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            hasMinSdk = true;
+        } else {
+            hasMinSdk = false;
+            Toast.makeText(context, "SDK version must be 21 or greater to be able to track location", Toast.LENGTH_SHORT).show();
+        }
 
         // Init components
         warningMessageBtn = (ImageButton) findViewById(R.id.warningMessageBtn);
@@ -155,6 +156,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         regularMessageBtn.setOnClickListener(this);
         floorplanLinearLayout = (LinearLayout) findViewById(R.id.floorplanLinearLayout);
 
+        warningSignal = MediaPlayer.create(context, R.raw.warningsignal);
+        regularSignal = MediaPlayer.create(context, R.raw.regularsignal);
 
         this.regularMessageIntent = new Intent(this, RegularMessageService.class);
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
@@ -163,13 +166,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         // Get floor info and set imageview
         getFloorPlanInfo(floorId);
-
-
-
-
-        warningSignal = MediaPlayer.create(context, R.raw.warningsignal);
-        regularSignal = MediaPlayer.create(context, R.raw.regularsignal);
-
 
 
         collumnsize = 8;
@@ -192,6 +188,16 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             }
         }
 
+        if(hasMinSdk){
+            setupBeaconAndScanner();
+        }
+
+
+
+    }
+
+    // For tracking location
+    private void setupBeaconAndScanner() {
         // The beacons locations
         beacon1 = new Beacon(0, 0, null);
         beacon2 = new Beacon(5, collumnsize, null);
@@ -246,7 +252,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         //start the thread
         pollThread.start();
-
     }
 
 
