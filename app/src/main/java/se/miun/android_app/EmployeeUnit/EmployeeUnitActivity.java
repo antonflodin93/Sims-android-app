@@ -10,19 +10,15 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -31,15 +27,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import se.miun.android_app.Adapter.BuildingListAdapter;
 import se.miun.android_app.Adapter.RegularMessageAdapter;
 import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
-import se.miun.android_app.Model.Building;
 import se.miun.android_app.Model.Floor;
 import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
@@ -53,7 +48,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private static final int HTTP_RESPONSE_ACCEPTED = 200;
 
     public enum MessageType {
-        WARNING, REGULAR;
+        WARNING, REGULAR
     }
 
 
@@ -74,9 +69,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private EmployeeFloorPlanImageView employeeFloorPlanImageView;
     private MediaPlayer warningSignal, regularSignal;
     float xmax, ymax;
-    private int floorId = 1; // Rejekthus
+    private int floorId = 1; // Rejekthus, floor 1
+    private int buildingId = 1;
     private Floor floor;
     int rowsize, collumnsize;
+    private int employeeID;
+    private boolean hasMinSdk;
 
     //ble
     private BluetoothAdapter    mBluetoothAdapter;
@@ -133,7 +131,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     warningSignal.start();
                 }
             } else if (intent.getAction().equals("ObjectMessageService")){
-                Toast.makeText(context, "Message!", Toast.LENGTH_SHORT).show();
+
             }
         }
     };
@@ -144,6 +142,16 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         setContentView(R.layout.activity_employee_unit);
         context = this;
 
+        employeeID = getIntent().getIntExtra("employeeId", 0);
+        Toast.makeText(context, " " + employeeID, Toast.LENGTH_SHORT).show();
+
+        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            hasMinSdk = true;
+        } else {
+            hasMinSdk = false;
+            Toast.makeText(context, "SDK version must be 21 or greater to be able to track location", Toast.LENGTH_SHORT).show();
+        }
+
         // Init components
         warningMessageBtn = (ImageButton) findViewById(R.id.warningMessageBtn);
         warningMessageBtn.setOnClickListener(this);
@@ -151,6 +159,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         regularMessageBtn.setOnClickListener(this);
         floorplanLinearLayout = (LinearLayout) findViewById(R.id.floorplanLinearLayout);
 
+        warningSignal = MediaPlayer.create(context, R.raw.warningsignal);
+        regularSignal = MediaPlayer.create(context, R.raw.regularsignal);
 
         this.regularMessageIntent = new Intent(this, RegularMessageService.class);
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
@@ -161,13 +171,105 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         getFloorPlanInfo(floorId);
 
 
+        setupAreas();
 
 
-        warningSignal = MediaPlayer.create(context, R.raw.warningsignal);
-        regularSignal = MediaPlayer.create(context, R.raw.regularsignal);
+        if(hasMinSdk){
+            setupBeaconAndScanner();
+        }
 
 
 
+
+    }
+
+
+    private void enterFloor(int floorId) {
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call;
+        call = apiInterface.enterFloorEmployee(floorId, employeeID);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+
+
+                } else{
+                    try {
+                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void enterBuilding(int buildingId) {
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call;
+        call = apiInterface.enterBuildingEmployee(buildingId, employeeID);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+
+
+                } else{
+                    try {
+                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void exitBuilding(){
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call;
+        call = apiInterface.exitBuildingEmployee(employeeID);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+
+
+                } else{
+                    try {
+                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setupAreas() {
         collumnsize = 8;
         rowsize = 10;
         //number of total areas
@@ -187,7 +289,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 areas.add(size, new Area(xmax * (r), xmax * (r + 1), ymax * (c), ymax * (c + 1), r + 1, c + 1));
             }
         }
+    }
 
+    // For tracking location
+    private void setupBeaconAndScanner() {
         // The beacons locations
         beacon1 = new Beacon(0, 0, null);
         beacon2 = new Beacon(5, collumnsize, null);
@@ -242,7 +347,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         //start the thread
         pollThread.start();
-
     }
 
 
@@ -471,6 +575,17 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         intentFilter.addAction("WarningMessageService");
         intentFilter.addAction("ObjectMessageService");
         this.registerReceiver(this.broadcastReceiver, intentFilter);
+
+        // Simulate that user enters building 1 and floor 1
+        enterBuilding(buildingId);
+        enterFloor(floorId);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        // User exits building
+        exitBuilding();
     }
 
     public void onPause() {
@@ -480,13 +595,19 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             this.stopService(this.regularMessageIntent);
             this.stopService(this.warningMessageIntent);
             this.stopService(this.objectMessageIntent);
+
+            // User exits building
+            exitBuilding();
         }
 
         // Maybee needed
         //this.unregisterReceiver(this.broadcastReceiver);
 
-        //stop polling the scan update functions
-        pollThread.interrupt();
+        if(hasMinSdk){
+            //stop polling the scan update functions
+            pollThread.interrupt();
+        }
+
     }
 
     @Override
@@ -496,6 +617,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             Intent myIntent = new Intent(getApplicationContext(), ShowMessagesActivity.class);
             myIntent.putExtra("MESSAGETYPE", MessageType.WARNING);
             myIntent.putExtra("WARNINGMESSAGES", warningMessages);
+            myIntent.putExtra("employeeId", employeeID);
             warningMessageBtn.setBackgroundColor(Color.BLACK);
             context.startActivity(myIntent);
 
