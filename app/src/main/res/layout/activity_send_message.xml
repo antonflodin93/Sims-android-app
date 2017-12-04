@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#777777"
     android:stretchColumns="1">
 
     <TableRow
@@ -121,13 +122,15 @@
 
         <Button
             android:id="@+id/cancelSendMessageBtn"
-            android:background="#FF0000"
+            android:background="#222222"
+            android:textColor="@android:color/white"
             android:text="@string/cancel"
             android:textSize="20dp" />
 
         <Button
             android:id="@+id/sendMessagesBtn"
-            android:background="#99FF66"
+            android:background="#222222"
+            android:textColor="@android:color/white"
             android:text="@string/send_message"
             android:textSize="20dp" />
 
