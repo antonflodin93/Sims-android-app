@@ -61,7 +61,7 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
         textViewFloorPlan = (TextView) findViewById(R.id.textViewFloorPlan);
         floorplanLinearLayout = (LinearLayout) findViewById(R.id.floorplanLinearLayout);
         textViewFloorPlan.setText(building + "/" + floor.getFloorLevel() + " (" + floor.getNumOfEmployees() + " employee(s))");
-        floorplanImageView = new FloorplanImageView(context, filePath, objects);
+        floorplanImageView = new FloorplanImageView(context, filePath, objects, floor.getFloorId());
         floorplanLinearLayout.addView(floorplanImageView);
         listObjectsBtn = (Button) findViewById(R.id.listObjectsBtn);
         listObjectsBtn.setOnClickListener(this);
@@ -104,7 +104,7 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
 
                     // Remove the old imageview and create a new instance of it passing the choosen object
                     floorplanLinearLayout.removeView(floorplanImageView);
-                    floorplanImageView = new FloorplanImageView(context, filePath, objects, objectAdapter.getItem(which));
+                    floorplanImageView = new FloorplanImageView(context, filePath, objects, floor.getFloorId(), objectAdapter.getItem(which));
                     floorplanLinearLayout.addView(floorplanImageView);
 
                 }

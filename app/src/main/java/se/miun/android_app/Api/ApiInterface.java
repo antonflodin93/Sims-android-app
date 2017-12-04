@@ -77,15 +77,15 @@ public interface ApiInterface {
 
     // Change floor for a employee
     @PUT("employees/floor/{floorId}/employee/{employeeID}")
-    Call<ResponseBody> changeFloorEmployee(@Path("floorId") int floorId , @Path("employeeID") int employeeID);
+    Call<ResponseBody> changeFloorEmployee(@Path("floorId") int floorId, @Path("employeeID") int employeeID);
 
     // Employee enters building
     @POST("employees/building/{buildingId}/employee/{employeeID}")
-    Call<ResponseBody> enterBuildingEmployee(@Path("buildingId") int buildingId , @Path("employeeID") int employeeID);
+    Call<ResponseBody> enterBuildingEmployee(@Path("buildingId") int buildingId, @Path("employeeID") int employeeID);
 
     // Employee enters floor first time
     @POST("employees/floor/{floorId}/employee/{employeeID}")
-    Call<ResponseBody> enterFloorEmployee(@Path("floorId") int floorId , @Path("employeeID") int employeeID);
+    Call<ResponseBody> enterFloorEmployee(@Path("floorId") int floorId, @Path("employeeID") int employeeID);
 
 
     /*
@@ -130,17 +130,15 @@ public interface ApiInterface {
     @POST("messages/warning/factoryobject/{factoryobjectId}")
     Call<ResponseBody> insertWarningMessageFactoryObject(@Body Message message, @Path("factoryobjectId") int factoryobjectId);
 
+    //
+    // Post warning message for a floor
+    @POST("messages/warning/floor/{floorId}")
+    Call<ResponseBody> addFloorWarningMessage(@Path("floorId") int floorId, @Body Message message);
 
-    // Get all warning messages for an object
 
-    // Get all regular messages for an object
-    @GET("messages/regular/company/{companyName}")
-    Call<ArrayList<Message>> getRegularObjectMessages(@Path("companyName") String companyName);
-
-    // Get all warning messages for objects in floor
-
-    // Get all regular messages for objects in floor
-
+    // Get all warning messages for a floor
+    @GET("messages/warning/floor/{floorId}")
+    Call<ArrayList<Message>> getFloorWarningMessage(@Path("floorId") int floorId);
 
     /*
     *  COMPANY

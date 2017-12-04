@@ -126,11 +126,11 @@
                 android:layout_marginTop="10dp"
                 android:focusable="true"
                 android:hint="Phone number (0701234567)"
-                android:inputType="text"
+                android:inputType="phone"
                 android:maxLines="1"
                 android:textColorHighlight="#ff7eff15"
                 android:textColorHint="#af898e"
-                android:textStyle="italic"/>
+                android:textStyle="italic" />
 
             <EditText
                 android:id="@+id/companyNameEditText"
@@ -175,6 +175,12 @@
                     android:background="#222222"
                     android:textColor="@android:color/white"
                     android:textSize="20dp"/>
+                <Button
+                    android:id="@+id/spacebtn2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#777777"
+                    android:textSize="5dp" />
 
                 <Button
                     android:id="@+id/createNewAccount"

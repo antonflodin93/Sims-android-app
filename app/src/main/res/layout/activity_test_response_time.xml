@@ -8,6 +8,7 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical"
     android:weightSum="1"
+    android:background="#777777"
     tools:context="se.miun.android_app.testing.BluetoothLogger">
 
 
@@ -20,6 +21,8 @@
         app:layout_constraintHorizontal_bias="0.145"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/bleOnOffButton"
+        android:background="#222222"
+        android:textColor="@android:color/white"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView

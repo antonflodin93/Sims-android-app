@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="25dp"
         android:textColor="#000000"
-        android:text="Choose type of user to sign in"
+        android:text="CHOOSE TYPE OF USER TO SIGN IN"
         android:textAlignment="center"
         android:textStyle="bold"
         android:textSize="20dp" />

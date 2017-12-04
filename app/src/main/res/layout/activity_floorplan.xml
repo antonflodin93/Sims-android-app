@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.1"
+        android:background="#777777"
         android:orientation="horizontal">
 
 
@@ -30,6 +31,9 @@
             android:layout_height="match_parent"
             android:id="@+id/listEmployeesBtn"
             android:text="List employees"
+            android:background="#222222"
+            android:textColor="@android:color/white"
+
             android:layout_weight="0.1"/>
 
         <Button
@@ -37,6 +41,9 @@
             android:layout_height="match_parent"
             android:id="@+id/listObjectsBtn"
             android:text="List objects"
+            android:background="#222222"
+            android:textColor="@android:color/white"
+
             android:layout_weight="0.1"/>
 
 
