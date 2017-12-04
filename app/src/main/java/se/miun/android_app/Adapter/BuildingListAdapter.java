@@ -2,6 +2,7 @@ package se.miun.android_app.Adapter;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,6 +58,9 @@ public class BuildingListAdapter extends BaseExpandableListAdapter {
         }
 
         TextView txtListChild = (TextView) convertView.findViewById(R.id.floorplanTextView);
+        txtListChild.setTextSize(16);
+        txtListChild.setTextColor(Color.WHITE);
+
         // Get number of employees in the building
         txtListChild.setText(childText + " (" + numOfEmployees + " employee(s))");
         return convertView;
