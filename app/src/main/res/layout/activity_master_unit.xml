@@ -42,8 +42,9 @@
         android:layout_width="match_parent"
         android:layout_height="99dp"
         android:layout_weight="0.04"
-        android:background="#222222"
+
         android:text="Employee List"
+        android:background="#222222"
         android:textColor="@android:color/white"
 
         android:textSize="30dp" />
