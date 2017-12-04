@@ -4,15 +4,17 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="#000000">
+    android:background="#222222">
 
 
     <TextView
         android:id="@+id/buildingNameTextView"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="46dp"
+        android:gravity="center"
         android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-        android:textSize="17dp"
-        android:textColor="#f9f93d" />
+        android:text="hej"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
 
 </LinearLayout>
