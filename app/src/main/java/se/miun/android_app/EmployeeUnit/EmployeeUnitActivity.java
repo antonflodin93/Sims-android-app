@@ -85,7 +85,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     Thread pollThread;  //needed for continues update of scan methods
 
     private ArrayList<Area> areas;
-    private Beacon beacon1, beacon2, beacon3;
+    private Beacon beacon1, beacon2, beacon3, beacon4;
     Map<String, Circle> circleContainer;
 
     //test of my location
@@ -172,13 +172,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         setupAreas();
 
-
+//Only start scans if minimum sdk is achieved
         if(hasMinSdk){
             setupBeaconAndScanner();
         }
-
-
-
 
     }
 
@@ -276,8 +273,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         Vector<Area> areas = new Vector<>();
 
         //get xmax and ymax for the first area
-        xmax = 25 / collumnsize;
-        ymax = 40 / rowsize;
+        xmax = 20 / collumnsize;
+        ymax = 15 / rowsize;
 
         //size is used for area position in vector
         int size = 0;
@@ -296,6 +293,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         beacon1 = new Beacon(0, 0, null);
         beacon2 = new Beacon(5, 5, "D7:1F:BE:CB:E0:16");
         beacon3 = new Beacon(rowsize, 0, null);
+        beacon4 = new Beacon(rowsize, collumnsize, null);
 
         //init map containers
         scanResults = new HashMap<>();
@@ -423,6 +421,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             //fetch results
             scanResults = mBleScanner.getResults();
 
+            if (!circleContainer.isEmpty()) {
+                circleContainer.clear();
+            }
+
             //go trough the map
             for (Map.Entry<String, Integer> entry : scanResults.entrySet()) {
                 String deviceAddress = entry.getKey();  //key
@@ -449,9 +451,16 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     getAreasInCircle(distArea, beacon3, nCircle);
                     Log.e("456", "Using Beacon 3");
 
-                    //add a fourth beacon here and if detected call some function to let master know
-                    //that you have entered the second floor of the building.
+                } else if (deviceAddress.equals(beacon4.getDeviceID())) {
+                    if(rssi > -75) {
+                        getAreasInCircle(distArea, beacon4, nCircle);
+                        Log.e("456", "Using Beacon 4");
+                    }
+                    else {
+                        Log.e("456", "Beacon4 to weak SNR");
+                    }
 
+                    //todo call changeFloorPlan() here
 
                 } else {
                     getAreasInCircle(distArea, beacon1, nCircle);
@@ -460,9 +469,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 }
 
                 //store new circles in map, clear map if needed
-                if (!circleContainer.isEmpty()) {
-                    circleContainer.clear();
-                }
                 circleContainer.put(deviceAddress, nCircle);
             }
         }
@@ -545,7 +551,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     double getDistance(int rssi) {
         //check for max? distance...
         if(rssi < -100){
-            return 9.0;
+            return 10.0;
         }
         else  {
             double e = 0.6859;
@@ -698,6 +704,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         public void clearOccupiedArea(int x, int y){
             this.circleArea[x][y] = 0;
         }
+
         public int getArea(int x, int y){
             return circleArea[x][y];
         }
