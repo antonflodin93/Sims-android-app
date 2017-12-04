@@ -360,7 +360,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
                     floor = response.body();
                     // Set floorplan
-                    employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects());
+                    employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
                     employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
                     floorplanLinearLayout.addView(employeeFloorPlanImageView);
                     EmployeeUnitActivity.this.objectMessageIntent.putExtra("floorId", floor.getFloorId());
@@ -400,16 +400,16 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             }
 
             //show myLocation with toast
-            String locationz = " ";
+            /*String locationz = " ";
 
             for(int y = 0; y < rowsize; y++) {
                 locationz += "\n";
                 for (int x = 0; x < collumnsize; x++) {
                     locationz += myLocation[y][x];
                 }
-            }
-            Toast.makeText(EmployeeUnitActivity.this, locationz, Toast.LENGTH_SHORT).show();
-
+            }*/
+            //Toast.makeText(EmployeeUnitActivity.this, locationz, Toast.LENGTH_SHORT).show();
+            setImage();
             //todo process myLocation to display..
 
         }
@@ -714,5 +714,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         }
     }
 
+        public void setImage(){
+            floorplanLinearLayout.removeView(employeeFloorPlanImageView);
+            employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
+            employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
+            floorplanLinearLayout.addView(employeeFloorPlanImageView);
+        }
 
 }
