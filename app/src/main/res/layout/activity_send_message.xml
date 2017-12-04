@@ -128,6 +128,13 @@
             android:textSize="20dp" />
 
         <Button
+            android:id="@+id/spacebtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#777777"
+            android:textSize="5dp" />
+
+        <Button
             android:id="@+id/sendMessagesBtn"
             android:background="#222222"
             android:textColor="@android:color/white"
