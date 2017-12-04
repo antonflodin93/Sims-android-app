@@ -401,7 +401,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
             //show myLocation with toast
             /*String locationz = " ";
-
             for(int y = 0; y < rowsize; y++) {
                 locationz += "\n";
                 for (int x = 0; x < collumnsize; x++) {
@@ -409,6 +408,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 }
             }*/
             //Toast.makeText(EmployeeUnitActivity.this, locationz, Toast.LENGTH_SHORT).show();
+
+
             setImage();
             //todo process myLocation to display..
 
@@ -458,14 +459,15 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
                 } else if (deviceAddress.equals(beacon4.getDeviceID())) {
                     if(rssi > -75) {
+
+                        //todo call changeFloorPlan() here
+
                         getAreasInCircle(distArea, beacon4, nCircle);
                         Log.e("456", "Using Beacon 4");
                     }
                     else {
                         Log.e("456", "Beacon4 to weak SNR");
                     }
-
-                    //todo call changeFloorPlan() here
 
                 } else {
                     getAreasInCircle(distArea, beacon1, nCircle);
