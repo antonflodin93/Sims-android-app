@@ -23,7 +23,7 @@ public class BleScanner {
     private boolean             mScanning;
     private BluetoothLeScanner  mBluetoothLeScanner;
     private ScanSettings        settings;
-    private Map<String, Integer>        scanResults;
+    private Map<String, Integer> scanResults;
 
 
 
@@ -79,6 +79,8 @@ public class BleScanner {
             //start the scan
             mBluetoothLeScanner.startScan(filtersTmp, settings, mScanCallback);
             mScanning = true;
+
+            Log.e("543", "Starting Scans");
         }
     }
 
@@ -86,6 +88,7 @@ public class BleScanner {
     public void stopScan(){
         if(mScanning && mBluetoothAdapter != null && mBluetoothAdapter.isEnabled() && mBluetoothLeScanner != null) {
             mBluetoothLeScanner.stopScan(mScanCallback);
+            Log.e("543", "Stopping Scans");
         }
         mScanCallback = null;
         mScanning = false;

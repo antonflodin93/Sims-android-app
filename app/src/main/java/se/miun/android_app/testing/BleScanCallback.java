@@ -43,14 +43,14 @@ public class BleScanCallback extends ScanCallback {
         String bleTime = timeConverter(result);
         //display "live" data
 
-        Log.e("123", result.getDevice().getAddress());
+//        Log.e("123", result.getDevice().getAddress());
 
 
-        displayTextView.append( "\nName: " + deviceName );
+        displayTextView.append( "\n " + deviceName );
         displayTextView.append( "\t " + deviceAddress );
-        displayTextView.append( "\t RSSI: " + rssi );
-        displayTextView.append( "\t Time: " + bleTime );
-        displayTextView.append( "\t dist: " + getDistance(rssi) );
+        displayTextView.append( "\t " + rssi );
+        displayTextView.append( "\t " + bleTime );
+        displayTextView.append( "\t " + getDistance(rssi) );
 
         //test mData
 //        SparseArray<byte[]> manufacturerData = result.getScanRecord().getManufacturerSpecificData();
@@ -85,16 +85,6 @@ public class BleScanCallback extends ScanCallback {
     public void addScanResult(ScanResult result){
         String deviceAddress = result.getDevice().getName();
         mScanResults.put(deviceAddress, result);
-
-        //test for filter on name...
-//          String deviceAddress = result.getDevice().getName();
-//        String deviceName = result.getDevice().getName();
-//        //only add valid devices to list...
-//        for(int i=0; i<AllowedDevices.length; i++){
-//            if(deviceName == AllowedDevices[i]){
-//                mScanResults.put(deviceAddress, result);
-//            }
-//        }
     }
 
     //convert timestamp to normal time
@@ -114,7 +104,7 @@ public class BleScanCallback extends ScanCallback {
     double getDistance(int rssi) {
         //check for max? distance...
         if(rssi < -100){
-            return 9.0;
+            return 10.0;
         }
         else  {
             double e = 0.6859;
@@ -123,39 +113,5 @@ public class BleScanCallback extends ScanCallback {
             return b / n;
         }
     }
-
-
-    //storage container for beacon data
-    private class BeaconData{
-        private String id;
-        private int rssi;
-        private String time;
-
-        public BeaconData(String id, int rssi, String time){
-            this.id = id;
-            this.rssi = rssi;
-            this.time = time;
-        }
-
-        public String getId(){
-            return id;
-        }
-
-        public void setRssi(int rssi){
-            this.rssi = rssi;
-        }
-        public int getRssi(){
-            return rssi;
-        }
-
-        public void setTime(String time){
-            this.time = time;
-        }
-        public String getTime(){
-            return time;
-        }
-
-    }
-
 }
 

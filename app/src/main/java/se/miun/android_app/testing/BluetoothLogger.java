@@ -104,7 +104,7 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         else if( v.getId() == R.id.saveToFileButton ){
             if(isExternalStorageWritable()){
                 bleLoggData();
-                Toast.makeText(getApplicationContext(), "Stored file in /Downloads", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Saved file to /Downloads", Toast.LENGTH_SHORT).show();
             }
             else{
                 Toast.makeText(getApplicationContext(), "Save to File FAILED", Toast.LENGTH_SHORT).show();
@@ -172,7 +172,6 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
         settings = new ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
                 .build();
-        //SCAN_MODE_LOW_LATENCY <-- use for fastest scan period
     }
 
     //setup of filter settings for the scan (filters on mac address)
@@ -183,6 +182,36 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
             ScanFilter filter = new ScanFilter.Builder().setDeviceAddress(filterList[i]).build();
             filters.add(filter);
         }
+    }
+
+    //stop scanning for ble devices
+    public void stopScan(){
+        if(mScanning && mBluetoothAdapter != null && mBluetoothAdapter.isEnabled() && mBluetoothLeScanner != null) {
+            mBluetoothLeScanner.stopScan(mScanCallback);
+        }
+        mScanCallback = null;
+        mScanning = false;
+    }
+
+    //check if bluetooth is enabled or disabled
+    private boolean bluetoothEnable(){
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            return false;
+        }
+        return true;
+    }
+
+    //request enable / turn on bluetooth
+    private void requestBluetoothEnable(){
+        // displays a dialog requesting user permission to enable Bluetooth.
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        int REQUEST_ENABLE_BT = 1;
+        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+    }
+
+    //disable bluetooth
+    private void requestBluetoothDisable(){
+        mBluetoothAdapter.disable();
     }
 
     //check and display scan results (for test purposes)
@@ -220,76 +249,5 @@ public class BluetoothLogger extends AppCompatActivity implements View.OnClickLi
 //            }
 //        }
 //    }
-
-    //stop scanning for ble devices
-    public void stopScan(){
-        if(mScanning && mBluetoothAdapter != null && mBluetoothAdapter.isEnabled() && mBluetoothLeScanner != null) {
-            mBluetoothLeScanner.stopScan(mScanCallback);
-        }
-        mScanCallback = null;
-        mScanning = false;
-    }
-
-    //check if bluetooth is enabled or disabled
-    private boolean bluetoothEnable(){
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            return false;
-        }
-        return true;
-    }
-
-    //request enable / turn on bluetooth
-    private void requestBluetoothEnable(){
-        // displays a dialog requesting user permission to enable Bluetooth.
-        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        int REQUEST_ENABLE_BT = 1;
-        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-    }
-
-    //disable bluetooth
-    private void requestBluetoothDisable(){
-        mBluetoothAdapter.disable();
-    }
-
-
-    //algorithm used for distance calculation by Altbeacon.org
-//    public double calculateDistance(int txPower, double rssi) {
-//        if (rssi == 0) {
-//            return -1.0; // if we cannot determine accuracy, return -1.
-//        }
-//        double ratio = rssi*1.0/txPower;
-//        if (ratio < 1.0) {
-//            return Math.pow(ratio,10);
-//        }
-//        else {
-//            double accuracy =  (0.89976)*Math.pow(ratio,7.7095) + 0.111;
-//            return accuracy;
-//        }
-//    }
-
-    //timer function, if called, performs the run() function at the specified time (milliSecondDuration)
-//    public void timeMe(int milliSecondDuration) {
-//        Timer timer = new Timer();
-//        TimerTask task = new TimerTask() {
-//            private final int MAX_TIME = 10;
-//            int counter = 0;
-//
-//            @Override
-//            public void run() {
-//                if (counter < MAX_TIME) {
-//                    startScan();
-//                    counter++;
-//                } else {
-//                    cancel();
-//                    //displayDataTextView.append("counter is now: " + counter);
-//                    stopScan();
-//                }
-//            }
-//        };
-//        timer.schedule(task,0,milliSecondDuration);
-//    }
-
-//    Handler mHandler = new Handler();
-//                mHandler.postDelayed(this::stopScan, 30000);
 
 }

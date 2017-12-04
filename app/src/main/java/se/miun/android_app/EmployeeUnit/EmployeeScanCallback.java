@@ -22,6 +22,7 @@ class EmployeeScanCallback extends ScanCallback {
 
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
+        Log.e("201", "onScanResult: " + result.getDevice().getAddress());
         addResults(result);
     }
 
@@ -29,6 +30,7 @@ class EmployeeScanCallback extends ScanCallback {
     public void onBatchScanResults(List<ScanResult> results){
         for(ScanResult result: results){
             addResults(result);
+            Log.e("201", "onBatchResult: " + result.getDevice().getAddress());
         }
     }
 
@@ -41,8 +43,8 @@ class EmployeeScanCallback extends ScanCallback {
         int rssi = result.getRssi();
         String deviceAddress = result.getDevice().getAddress();
 
-        Log.e("201", "scanResults.put" + deviceAddress);
-        Log.e("202", "rssi: " + rssi);
+        Log.e("202", "scanResults.put " + deviceAddress);
+        Log.e("202", "rssi.put " + rssi);
 
         scanResults.put(deviceAddress, rssi);
     }

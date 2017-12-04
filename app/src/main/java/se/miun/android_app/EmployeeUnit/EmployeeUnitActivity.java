@@ -86,7 +86,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
     private ArrayList<Area> areas;
     private Beacon beacon1, beacon2, beacon3;
-    private Circle testCircle;
     Map<String, Circle> circleContainer;
 
     //test of my location
@@ -295,7 +294,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private void setupBeaconAndScanner() {
         // The beacons locations
         beacon1 = new Beacon(0, 0, null);
-        beacon2 = new Beacon(5, collumnsize, null);
+        beacon2 = new Beacon(5, 5, "D7:1F:BE:CB:E0:16");
         beacon3 = new Beacon(rowsize, 0, null);
 
         //init map containers
@@ -316,7 +315,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         mBleScanner.startScan(0);
 
         //Create a new thread to run updateLocation()
-        //parallel to other threads (increase responsiveness of app)
         pollThread = new Thread(){
             @Override
             public void run(){
@@ -329,8 +327,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                //Toast.makeText(getApplicationContext(), "Running Update Method", Toast.LENGTH_SHORT).show();
-
                                 //run the scan update functions
                                 processScanResults();
                                 updateLocation();
@@ -399,6 +395,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //go trough location circles and estimate myLocation
                 setLocationArea(mCircle);
             }
+
+            //show myLocation with toast
             String locationz = " ";
 
             for(int y = 0; y < rowsize; y++) {
@@ -408,8 +406,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 }
             }
             Toast.makeText(EmployeeUnitActivity.this, locationz, Toast.LENGTH_SHORT).show();
-
-            //Log.e("111", locationz);
 
             //todo process myLocation to display..
 
