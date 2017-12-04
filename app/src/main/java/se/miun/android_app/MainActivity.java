@@ -12,6 +12,7 @@ import se.miun.android_app.testing.ImageTestActivity;
 import se.miun.android_app.testing.RangetestActivity;
 import se.miun.android_app.testing.TestResponseTime;
 
+
 public class MainActivity extends Activity implements View.OnClickListener{
     private Button rangeTestBtn, testCoordinateSystemBtn, imageTestBtn, ontouchTestBtn, bluetoothLogger, responseTimeBtn;
 
