@@ -28,7 +28,7 @@ import se.miun.android_app.MasterUnit.MasterUnitActivity;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button loginBtn, createAccountBtn;
+    private Button loginBtn, createAccountBtn, spacebtn;
     private EditText passwordEditText, accountNameEditText;
     private TextView errormessageTextView;
     private ApiInterface apiInterface;
@@ -55,6 +55,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Initialize components
         loginBtn = (Button) findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(this);
+        spacebtn = (Button) findViewById(R.id.spacebtn);
         createAccountBtn = (Button) findViewById(R.id.createAccountBtn);
         createAccountBtn.setOnClickListener(this);
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
@@ -73,6 +74,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             accountNameEditText.setText("masterunit");
             createAccountBtn.setEnabled(false);
             createAccountBtn.setVisibility(View.GONE);
+            spacebtn.setVisibility(View.GONE);
+
 
         } else{
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

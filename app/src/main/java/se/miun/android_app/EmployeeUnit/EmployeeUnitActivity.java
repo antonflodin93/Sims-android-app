@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -12,6 +13,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -75,6 +77,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     int rowsize, collumnsize;
     private int employeeID;
     private boolean hasMinSdk;
+    private boolean dialogActive = false;
 
     //ble
     private BluetoothAdapter    mBluetoothAdapter;
@@ -130,12 +133,22 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     warningSignal.start();
                 }
             } else if (intent.getAction().equals("FloorMessageService")){
-                Toast.makeText(context, "FLoor message", Toast.LENGTH_SHORT).show();
-                warningFloorMessages = (ArrayList<Message>) intent.getSerializableExtra("messages");
-                Toast.makeText(context, "Size" + warningFloorMessages.size(), Toast.LENGTH_SHORT).show();
+                ArrayList<Message> tempMessages = (ArrayList<Message>) intent.getSerializableExtra("messages");
+                // Check if there is any messages that is not acknowledged
+                if(!tempMessages.isEmpty() && !dialogActive){
+                    // Check if the warning message already exists in list before adding
+                    for(Message message : tempMessages){
+                        //if(!warningFloorMessages.contains(message)){
+                           // warningFloorMessages.add(message);
+                        //}
+                        displayDialog(message);
+                    }
+                }
             }
         }
     };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -364,6 +377,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
                     floorplanLinearLayout.addView(employeeFloorPlanImageView);
                     EmployeeUnitActivity.this.objectMessageIntent.putExtra("floorId", floor.getFloorId());
+                    EmployeeUnitActivity.this.objectMessageIntent.putExtra("employeeId", employeeID);
                     EmployeeUnitActivity.this.startService(EmployeeUnitActivity.this.objectMessageIntent);
 
                 } else{
@@ -380,6 +394,27 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void displayDialog(Message message) {
+        dialogActive = true;
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+
+        dialog.setIcon(android.R.drawable.ic_dialog_alert);
+        dialog.setTitle("ALERT: NEW WARNING MESSAGE");
+        dialog.setMessage(message.getMessageText());
+        dialog.setPositiveButton("Acknowledge", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                dialogActive = false;
+            }
+        });
+
+        dialog.show();
+
+
+
     }
 
     private void updateLocation(){

@@ -23,7 +23,7 @@ public class FloorMessageService extends Service {
     private ApiInterface apiInterface;
     private ArrayList<Message> messages = new ArrayList<>();
     private Call<List<Message>> call;
-    private int floorId;
+    private int floorId, employeeId;
     Intent intent;
     int counter = 0;
     private Callback<ArrayList<Message>> messageCallback = new Callback<ArrayList<Message>>() {
@@ -51,7 +51,7 @@ public class FloorMessageService extends Service {
             retrofit = ApiClient.getApiClient();
             ApiInterface apiInterface = retrofit.create(ApiInterface.class);
             Call<ArrayList<Message>> call = null;
-            call = apiInterface.getFloorWarningMessage(floorId);
+            call = apiInterface.getFloorWarningMessage(floorId, employeeId);
             call.enqueue(messageCallback);
             FloorMessageService.this.handler.postDelayed(this, 5000);
         }
@@ -68,14 +68,13 @@ public class FloorMessageService extends Service {
 
     public void onStart(Intent intent, int startId) {
         floorId = intent.getIntExtra("floorId", 0);
+        employeeId = intent.getIntExtra("employeeId", 0);
         this.handler.removeCallbacks(this.sendUpdatesToUI);
         this.handler.postDelayed(this.sendUpdatesToUI, 1000L);
     }
 
     private void DisplayLoggingInfo() {
         this.intent.putExtra("messages", messages);
-        //this.intent.putExtra("time", (new Date()).toLocaleString());
-        //this.intent.putExtra("counter", String.valueOf(++this.counter));
         this.sendBroadcast(this.intent);
     }
 

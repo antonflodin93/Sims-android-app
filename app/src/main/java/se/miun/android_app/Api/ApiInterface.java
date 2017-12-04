@@ -136,9 +136,12 @@ public interface ApiInterface {
     Call<ResponseBody> addFloorWarningMessage(@Path("floorId") int floorId, @Body Message message);
 
 
-    // Get all warning messages for a floor
-    @GET("messages/warning/floor/{floorId}")
-    Call<ArrayList<Message>> getFloorWarningMessage(@Path("floorId") int floorId);
+    // Get all warning messages for a floor that are not yet acknowledged by user
+    @GET("messages/warning/floor/{floorId}/employee/{employeeID}")
+    Call<ArrayList<Message>> getFloorWarningMessage(@Path("floorId") int floorId, @Path("employeeID") int employeeID);
+
+
+
 
     /*
     *  COMPANY
