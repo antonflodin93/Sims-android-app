@@ -64,7 +64,7 @@
             android:label="Regular message service" />
 
         <service
-            android:name=".Service.ObjectMessageService"
+            android:name=".Service.FloorMessageService"
             android:label="Object message service" />
 
         <activity android:name=".MasterUnit.ListEmployeesActivity" />

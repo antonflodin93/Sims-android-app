@@ -1,6 +1,5 @@
 package se.miun.android_app.EmployeeUnit;
 
-import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -8,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -40,7 +38,7 @@ import se.miun.android_app.Api.ApiInterface;
 import se.miun.android_app.Model.Floor;
 import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
-import se.miun.android_app.Service.ObjectMessageService;
+import se.miun.android_app.Service.FloorMessageService;
 import se.miun.android_app.Service.RegularMessageService;
 import se.miun.android_app.Service.WarningMessageService;
 import se.miun.android_app.testing.Area;
@@ -61,7 +59,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private ArrayList<Message> regularMessages;
     private LinearLayout floorplanLinearLayout;
     private RelativeLayout headerLayout;
-    private ArrayList<Message> warningMessages;
+    private ArrayList<Message> warningMessages, warningFloorMessages;
     private RecyclerView messageRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RegularMessageAdapter adapter;
@@ -131,8 +129,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
                     warningSignal.start();
                 }
-            } else if (intent.getAction().equals("ObjectMessageService")){
-
+            } else if (intent.getAction().equals("FloorMessageService")){
+                Toast.makeText(context, "FLoor message", Toast.LENGTH_SHORT).show();
+                warningFloorMessages = (ArrayList<Message>) intent.getSerializableExtra("messages");
+                Toast.makeText(context, "Size" + warningFloorMessages.size(), Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -165,7 +165,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         this.regularMessageIntent = new Intent(this, RegularMessageService.class);
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
-        this.objectMessageIntent = new Intent(this, ObjectMessageService.class);
+        this.objectMessageIntent = new Intent(this, FloorMessageService.class);
+
 
 
         // Get floor info and set imageview
@@ -362,6 +363,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects());
                     employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
                     floorplanLinearLayout.addView(employeeFloorPlanImageView);
+                    EmployeeUnitActivity.this.objectMessageIntent.putExtra("floorId", floor.getFloorId());
+                    EmployeeUnitActivity.this.startService(EmployeeUnitActivity.this.objectMessageIntent);
 
                 } else{
                     try {
@@ -572,12 +575,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         this.startService(this.warningMessageIntent);
         this.startService(this.regularMessageIntent);
-        this.startService(this.objectMessageIntent);
+
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("RegularMessageService");
         intentFilter.addAction("WarningMessageService");
-        intentFilter.addAction("ObjectMessageService");
+        intentFilter.addAction("FloorMessageService");
         this.registerReceiver(this.broadcastReceiver, intentFilter);
 
         // Simulate that user enters building 1 and floor 1
@@ -599,7 +602,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             this.stopService(this.regularMessageIntent);
             this.stopService(this.warningMessageIntent);
             this.stopService(this.objectMessageIntent);
-
             // User exits building
             exitBuilding();
         }
