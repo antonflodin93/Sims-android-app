@@ -35,6 +35,7 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
     private Area clickedArea;
     private float startx, starty, endx, endy;
     private ArrayList<Area> objectAreas = new ArrayList<>();
+    private int [][] myLocation;
     private ArrayList<FactoryObject> objects;
     private FactoryObject clickedObject;
     private boolean blinking;
@@ -44,11 +45,12 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
 
 
     // Imageview with no item selected
-    public EmployeeFloorPlanImageView(final Context context, String filePath, ArrayList<FactoryObject> objects) {
+    public EmployeeFloorPlanImageView(final Context context, String filePath, ArrayList<FactoryObject> objects, int [][] myLocation) {
         super(context);
         this.context = context;
         this.filePath = filePath;
         this.objects = objects;
+        this.myLocation = myLocation;
         getImage();
         setImageAreas();
     }
@@ -130,19 +132,25 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
         Paint transparent = new Paint();
         red.setColor(Color.TRANSPARENT);
 
+        //820 710 907 852
+        //canvas.drawRect(startx, starty, endx, endy, red);
+        //canvas.drawRect(820.8f, 710.4f, 907.2f, 852.48f, red);
+        //Toast.makeText(context, "sx: " + startx + "sy: " + starty +"ex: " + endx + "ey: " + endy, Toast.LENGTH_SHORT).show();
+        canvas.drawRect(820.8f, 710.4f, 907.2f, 852.48f, transparent);
 
-        if (clickedObject != null) {
+        /*if (clickedObject != null) {
 
             // Just to show the area
             if(blinking) {
-                canvas.drawRect(startx, starty, endx, endy, red);
+                //canvas.drawRect(820.8f, 710.4f, 907.2f, 852.48f, red);
+                //canvas.drawRect(startx, starty, endx, endy, red);
             }
             else {
-                canvas.drawRect(startx, starty, endx, endy, transparent);
+                canvas.drawRect(820.8f, 710.4f, 907.2f, 852.48f, transparent);
+                //canvas.drawRect(startx, starty, endx, endy, transparent);
             }
 
-
-        }
+        }*/
 
 
     }
@@ -179,7 +187,8 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
                         clickedArea = objectAreas.get(i);
                         // Check if there is any object in the area clicked
                         checkObjectForArea();
-                        Toast.makeText(context, "Clicked Area: " + objectAreas.get(i).getrow() + ", " + objectAreas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "Clicked Area: " + objectAreas.get(i).getrow() + ", " + objectAreas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "sx: " + startx + "sy: " + starty +"ex: " + endx + "ey: " + endy, Toast.LENGTH_SHORT).show();
                         //Toast.makeText(context, "Clicked Area: " + areas.get(i).getxmin() + "-" + areas.get(i).getxmax() + ", " + areas.get(i).getymin() + "-" + areas.get(i).getymax(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -206,7 +215,7 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
 */
 
             if (clickedArea.getrow() >= object.getAreaXStart() && clickedArea.getrow() <= object.getAreaXEnd() && clickedArea.getcollumn() >= object.getAreaYStart() && clickedArea.getcollumn() <= object.getAreaYEnd()) {
-                Toast.makeText(context, "Its object " + object.getObjectName(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Its object " + object.getObjectName(), Toast.LENGTH_SHORT).show();
                 clickedObject = object;
                 setCoordinatesForObject(clickedObject);
 
