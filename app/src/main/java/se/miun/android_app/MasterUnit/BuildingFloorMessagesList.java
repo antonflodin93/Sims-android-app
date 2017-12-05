@@ -134,6 +134,14 @@ public class BuildingFloorMessagesList extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
+    // When a message is clicked in adapter
+    public void messageClicked(Message message){
+        Intent myIntent = new Intent(getApplicationContext(), ListEmployeeInfo.class);
+        myIntent.putExtra("message", message);
+        this.startActivity(myIntent);
+    }
+
+    // When message is swiped
     private void removeMessageFromDB(String messageId) {
         Retrofit retrofit;
         retrofit = ApiClient.getApiClient();

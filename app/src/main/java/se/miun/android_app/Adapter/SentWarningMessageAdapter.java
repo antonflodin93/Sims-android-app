@@ -15,6 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import se.miun.android_app.MasterUnit.BuildingFloorMessagesList;
 import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
 
@@ -61,13 +62,14 @@ public class SentWarningMessageAdapter extends RecyclerView.Adapter<SentWarningM
 
 
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView messageHeader, messageTextView;
         ImageView messageSentIcon;
         List<Message> messages;
 
         public MyViewHolder(View itemView, List<Message> messages) {
             super(itemView);
+            itemView.setOnClickListener(this);
             this.messages = messages;
             // Init the fields for each row
             messageHeader = (TextView) itemView.findViewById(R.id.messageHeader);
@@ -75,6 +77,12 @@ public class SentWarningMessageAdapter extends RecyclerView.Adapter<SentWarningM
             messageSentIcon = (ImageView) itemView.findViewById(R.id.messageSentIcon);
 
 
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            ((BuildingFloorMessagesList) context).messageClicked(this.messages.get(position));
         }
     }
 

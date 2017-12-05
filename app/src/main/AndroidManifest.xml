@@ -23,7 +23,7 @@
         android:roundIcon="@drawable/welcomescreen"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StartActivity"></activity>
+        <activity android:name=".StartActivity" />
         <activity android:name=".testing.ImageTestActivity" />
         <activity android:name=".testing.RangetestActivity" />
         <activity android:name=".testing.OnTouchTestActivity" />
@@ -69,7 +69,8 @@
         <activity android:name=".MasterUnit.ListBuildingsInfoActivity" />
         <activity android:name=".MasterUnit.FloorplanActivity" />
         <activity android:name=".testing.TestResponseTime" />
-        <activity android:name=".MasterUnit.BuildingFloorMessagesList"></activity>
+        <activity android:name=".MasterUnit.BuildingFloorMessagesList" />
+        <activity android:name=".MasterUnit.ListEmployeeInfo"></activity>
     </application>
 
 </manifest>

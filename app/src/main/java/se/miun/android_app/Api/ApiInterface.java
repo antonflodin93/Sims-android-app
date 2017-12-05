@@ -87,6 +87,10 @@ public interface ApiInterface {
     @POST("employees/floor/{floorId}/employee/{employeeID}")
     Call<ResponseBody> enterFloorEmployee(@Path("floorId") int floorId, @Path("employeeID") int employeeID);
 
+    // Gets all employees that have acknowledged message
+    @GET("employees/message/{messageId}")
+    Call<ArrayList<Employee>> getEmployeesAcknowledged(@Path("messageId") int messageId);
+
 
     /*
     *  MESSAGES
