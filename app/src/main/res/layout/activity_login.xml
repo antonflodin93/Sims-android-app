@@ -32,7 +32,7 @@
         android:hint="Enter email/username"
         android:textStyle="italic"
         android:textColorHighlight="#ff7eff15"
-        android:textColorHint="#af898e" />
+        android:textColorHint="#000000"/>
 
 
     <EditText
@@ -44,7 +44,7 @@
         android:inputType="textPassword"
         android:textStyle="italic"
         android:textColorHighlight="#ff7eff15"
-        android:textColorHint="#af898e" />
+        android:textColorHint="#000000" />
 
     <TextView
         android:id="@+id/errormessageTextView"
@@ -69,8 +69,8 @@
             android:layout_weight="1.0"
             android:background="#222222"
             android:textColor="@android:color/white"
-            android:text="Create new account"
-            android:textSize="10dp"/>
+            android:text="New account"
+            android:textSize="20dp"/>
         <Button
             android:id="@+id/spacebtn"
             android:layout_width="wrap_content"
