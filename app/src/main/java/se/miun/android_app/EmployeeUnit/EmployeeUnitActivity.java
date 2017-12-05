@@ -283,7 +283,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         Vector<Area> areas = new Vector<>();
 
         //get xmax and ymax for the first area
-        xmax = 20 / collumnsize;
+        xmax = 25 / collumnsize;
         ymax = 15 / rowsize;
 
         //size is used for area position in vector

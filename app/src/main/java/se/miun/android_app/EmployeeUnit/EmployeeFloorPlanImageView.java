@@ -103,11 +103,12 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
         float height = display.getHeight();
         float width = display.getWidth();
 
+        //46 is imagebutton heigth
         float sizeY = height / rowsize;
         float sizeX = width / rowsize;
 
         //get xmax and ymax for the first area
-        float xmax = 20 / collumnsize;
+        float xmax = 25 / collumnsize;
         float ymax = 15 / rowsize;
 
 
@@ -134,27 +135,31 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
         red.setColor(Color.TRANSPARENT);
 
 
-
         int locationmax = 0;
-        for(int x=0;x<collumnsize;x++){
-            for(int y=0;y<rowsize;y++){
-                if(myLocation[y][x] > locationmax){
+        for (int x = 0; x < collumnsize; x++) {
+            for (int y = 0; y < rowsize; y++) {
+                if (myLocation[y][x] > locationmax) {
                     locationmax = myLocation[y][x];
-                };
+                }
             }
         }
 
         //draws rectangle on locations
-        if(locationmax>0) {
+        int currentarea  = 0;
+        if (locationmax > 0) {
             for (int x = 0; x < collumnsize; x++) {
                 for (int y = 0; y < rowsize; y++) {
                     if (myLocation[y][x] == locationmax) {
-                        canvas.drawRect(objectAreas.get(((x + 1) * (y + 1)) - 1).getXstart(), objectAreas.get(((x + 1) * (y + 1)) - 1).getYstart(), objectAreas.get(((x + 1) * (y + 1)) - 1).getXend(), objectAreas.get(((x + 1) * (y + 1)) - 1).getYend(), transparent);
+                        //draws rect based on limits of the current area in loop, all areas 0-79. 10*8
+                        canvas.drawRect(objectAreas.get(currentarea).getXstart(), objectAreas.get(currentarea).getYstart(), objectAreas.get(currentarea).getXend(), objectAreas.get(currentarea).getYend(), transparent);
                     }
+                    currentarea++;
                 }
             }
         }
-       // canvas.drawRect(objectAreas.get(((3+1)*(2+1))-1).getXstart(), objectAreas.get(((3+1)*(2+1))-1).getYstart(), objectAreas.get(((3+1)*(2+1))-1).getXend(), objectAreas.get(((3+1)*(2+1))-1).getYend(), transparent);
+
+        //canvas.drawRect((objectAreas.get(((5 + 0) * (5 + 0)) ).getxmin()*collumnsize), (objectAreas.get(((5 + 0) * (5 + 0)) ).getymin()*rowsize), (objectAreas.get(((5 + 0) * (5 + 0)) ).getxmax()*collumnsize), (objectAreas.get(((5 + 0) * (5 + 0)) ).getymax()*rowsize), transparent);
+         //canvas.drawRect(objectAreas.get(65).getXstart(), objectAreas.get(65).getYstart(), objectAreas.get(65).getXend(), objectAreas.get(65).getYend(), transparent);
 
         /*if (clickedObject != null) {
 
@@ -169,9 +174,9 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
             }
 
         }*/
-
-
     }
+
+
 
 
     @Override
