@@ -142,7 +142,7 @@
                 android:inputType="text"
                 android:maxLines="1"
                 android:textColorHighlight="#ff7eff15"
-                a android:textColorHint="#000000"
+                android:textColorHint="#000000"
                 android:textStyle="italic"/>
 
             <TextView
