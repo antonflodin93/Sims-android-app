@@ -144,14 +144,16 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
             }
         }
 
-        for(int x=0;x<collumnsize;x++){
-            for(int y=0;y<rowsize;y++){
-                if(myLocation[y][x] == locationmax){
-                    canvas.drawRect(objectAreas.get(((x+1)*(y+1))-1).getXstart(), objectAreas.get(((x+1)*(y+1))-1).getYstart(), objectAreas.get(((x+1)*(y+1))-1).getXend(), objectAreas.get(((x+1)*(y+1))-1).getYend(), transparent);
-                };
+        //draws rectangle on locations
+        if(locationmax>0) {
+            for (int x = 0; x < collumnsize; x++) {
+                for (int y = 0; y < rowsize; y++) {
+                    if (myLocation[y][x] == locationmax) {
+                        canvas.drawRect(objectAreas.get(((x + 1) * (y + 1)) - 1).getXstart(), objectAreas.get(((x + 1) * (y + 1)) - 1).getYstart(), objectAreas.get(((x + 1) * (y + 1)) - 1).getXend(), objectAreas.get(((x + 1) * (y + 1)) - 1).getYend(), transparent);
+                    }
+                }
             }
         }
-
        // canvas.drawRect(objectAreas.get(((3+1)*(2+1))-1).getXstart(), objectAreas.get(((3+1)*(2+1))-1).getYstart(), objectAreas.get(((3+1)*(2+1))-1).getXend(), objectAreas.get(((3+1)*(2+1))-1).getYend(), transparent);
 
         /*if (clickedObject != null) {
