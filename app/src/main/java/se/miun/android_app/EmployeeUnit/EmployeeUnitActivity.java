@@ -61,7 +61,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private ArrayList<Message> regularMessages;
     private LinearLayout floorplanLinearLayout;
     private RelativeLayout headerLayout;
-    private ArrayList<Message> warningMessages, warningFloorMessages;
+    private ArrayList<Message> warningMessages, warningFloorMessages = new ArrayList<>();
+    private ArrayList<Integer> messagesToBeAck = new ArrayList<>();
     private RecyclerView messageRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RegularMessageAdapter adapter;
@@ -121,7 +122,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
 
                 }
-                //ShowMessagesActivity.this.updateUIRegularMessages(intent);
 
                 // When receiving warning messages
             } else if (intent.getAction().equals("WarningMessageService")) {
@@ -136,13 +136,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 ArrayList<Message> tempMessages = (ArrayList<Message>) intent.getSerializableExtra("messages");
                 // Check if there is any messages that is not acknowledged
                 if(!tempMessages.isEmpty() && !dialogActive){
-                    // Check if the warning message already exists in list before adding
-                    for(Message message : tempMessages){
-                        //if(!warningFloorMessages.contains(message)){
-                           // warningFloorMessages.add(message);
-                        //}
-                        displayDialog(message);
-                    }
+                    displayDialog(tempMessages.get(0));
                 }
             }
         }
@@ -396,25 +390,54 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         });
     }
 
-    private void displayDialog(Message message) {
+    // When user gets new floorplan messages
+    private void displayDialog(final Message message) {
         dialogActive = true;
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
-        dialog.setIcon(android.R.drawable.ic_dialog_alert);
-        dialog.setTitle("ALERT: NEW WARNING MESSAGE");
-        dialog.setMessage(message.getMessageText());
-        dialog.setPositiveButton("Acknowledge", new DialogInterface.OnClickListener() {
+            dialog.setIcon(android.R.drawable.ic_dialog_alert);
+            dialog.setTitle("ALERT: NEW WARNING MESSAGE, NEED CONFIRMATION");
+            dialog.setMessage(message.getMessageText());
+            dialog.setCancelable(false);
+            dialog.setPositiveButton("Yes, I understand", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                    acknowledgeMessage(Integer.parseInt(message.getMessageId()));
+                }
+            });
+
+            dialog.show();
+
+    }
+
+    private void acknowledgeMessage(int messageId) {
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call;
+        call = apiInterface.acknowledgeMessage(messageId, employeeID);
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-                dialogActive = false;
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+                    dialogActive = false;
+                    Toast.makeText(EmployeeUnitActivity.this, "Acknowledged message", Toast.LENGTH_SHORT).show();
+
+                } else{
+                    try {
+                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-        dialog.show();
-
-
-
     }
 
     private void updateLocation(){

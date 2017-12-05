@@ -130,7 +130,7 @@ public interface ApiInterface {
     @POST("messages/warning/factoryobject/{factoryobjectId}")
     Call<ResponseBody> insertWarningMessageFactoryObject(@Body Message message, @Path("factoryobjectId") int factoryobjectId);
 
-    //
+
     // Post warning message for a floor
     @POST("messages/warning/floor/{floorId}")
     Call<ResponseBody> addFloorWarningMessage(@Path("floorId") int floorId, @Body Message message);
@@ -140,8 +140,9 @@ public interface ApiInterface {
     @GET("messages/warning/floor/{floorId}/employee/{employeeID}")
     Call<ArrayList<Message>> getFloorWarningMessage(@Path("floorId") int floorId, @Path("employeeID") int employeeID);
 
-
-
+    // Acknowledge warning message /warning/{messageId}/employee/{employeeID}
+    @POST("messages/warning/{messageId}/employee/{employeeID}")
+    Call<ResponseBody> acknowledgeMessage(@Path("messageId") int messageId, @Path("employeeID") int employeeID);
 
     /*
     *  COMPANY
