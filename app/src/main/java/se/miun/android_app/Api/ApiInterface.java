@@ -87,6 +87,10 @@ public interface ApiInterface {
     @POST("employees/floor/{floorId}/employee/{employeeID}")
     Call<ResponseBody> enterFloorEmployee(@Path("floorId") int floorId, @Path("employeeID") int employeeID);
 
+    // Gets all employees that have acknowledged message
+    @GET("employees/message/{messageId}")
+    Call<ArrayList<Employee>> getEmployeesAcknowledged(@Path("messageId") int messageId);
+
 
     /*
     *  MESSAGES
@@ -146,6 +150,9 @@ public interface ApiInterface {
     @POST("messages/warning/{messageId}/employee/{employeeID}")
     Call<ResponseBody> acknowledgeMessage(@Path("messageId") int messageId, @Path("employeeID") int employeeID);
 
+    // Delete building message
+    @DELETE("messages/warning/building/{messageId}")
+    Call<ResponseBody> deleteBuildingMessage(@Path("messageId") String messageId);
 
 
     /*

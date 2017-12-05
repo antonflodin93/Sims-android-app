@@ -29,6 +29,11 @@ public class Employee {
     @SerializedName("employeeCompany")
     private String employeeCompany;
 
+    @SerializedName("acknowledgeCurrentMillis")
+    private Long acknowledgeCurrentMillis;
+
+    private boolean acknowledged;
+
 
     public Employee(String employeeFirstName, String employeeLastName, String employeeUsername,
                     String employeeEmail, String employeePassword, String employeePhonenumber, String employeeCompany) {
@@ -58,6 +63,53 @@ public class Employee {
         this.employeeCompany = employeeCompany;
     }
 
+    public boolean isAcknowledged() {
+        return acknowledged;
+    }
+
+    public void setAcknowledged(boolean acknowledged) {
+        this.acknowledged = acknowledged;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public void setEmployeeFirstName(String employeeFirstName) {
+        this.employeeFirstName = employeeFirstName;
+    }
+
+    public void setEmployeeLastName(String employeeLastName) {
+        this.employeeLastName = employeeLastName;
+    }
+
+    public void setEmployeeUsername(String employeeUsername) {
+        this.employeeUsername = employeeUsername;
+    }
+
+    public void setEmployeeEmail(String employeeEmail) {
+        this.employeeEmail = employeeEmail;
+    }
+
+    public void setEmployeePassword(String employeePassword) {
+        this.employeePassword = employeePassword;
+    }
+
+    public void setEmployeePhonenumber(String employeePhonenumber) {
+        this.employeePhonenumber = employeePhonenumber;
+    }
+
+    public void setEmployeeCompany(String employeeCompany) {
+        this.employeeCompany = employeeCompany;
+    }
+
+    public Long getAcknowledgeCurrentMillis() {
+        return acknowledgeCurrentMillis;
+    }
+
+    public void setAcknowledgeCurrentMillis(Long acknowledgeCurrentMillis) {
+        this.acknowledgeCurrentMillis = acknowledgeCurrentMillis;
+    }
 
     public String getEmployeeId() {
         return employeeId;

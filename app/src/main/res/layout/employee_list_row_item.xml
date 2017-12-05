@@ -1,39 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="80dp"
-    android:background="#777777"
-
-    android:orientation="horizontal">
+    android:layout_marginBottom="25dp"
+    android:background="#222222">
 
     <TextView
         android:id="@+id/employeeNameTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="0.5"
-        android:gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="25dp"
         android:layout_marginStart="25dp"
-        android:text="asdfsad"
-        android:textSize="15dp"
         android:background="#222222"
+        android:gravity="center_vertical"
+        android:text="asdfsad"
         android:textColor="@android:color/white"
-        android:textStyle="bold" />
+        android:textSize="15dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/employeeCompanyTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
         android:id="@+id/employeeCompanyTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="0.5"
-        android:gravity="center_vertical"
-        android:layout_marginStart="25dp"
-        android:text="asdfsad"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#222222"
+        android:gravity="center_vertical"
+        android:text="asdfsad"
         android:textColor="@android:color/white"
         android:textSize="15dp"
-        android:textStyle="italic" />
+        android:textStyle="italic"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/employeeNameTextView"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
