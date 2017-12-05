@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
@@ -31,8 +32,9 @@ import se.miun.android_app.Model.Building;
 import se.miun.android_app.Model.Employee;
 import se.miun.android_app.R;
 
-public class ListBuildingsInfoActivity extends AppCompatActivity implements ExpandableListView.OnChildClickListener, ExpandableListView.OnItemLongClickListener {
+public class ListBuildingsInfoActivity extends AppCompatActivity implements ExpandableListView.OnChildClickListener, ExpandableListView.OnItemLongClickListener, View.OnClickListener {
     private ExpandableListView buildingsExListView;
+    private Button manageMessagesBtn;
     private BuildingListAdapter buildingListAdapter;
     private ArrayList<Building> buildings;
     private Context context;
@@ -44,6 +46,8 @@ public class ListBuildingsInfoActivity extends AppCompatActivity implements Expa
         setContentView(R.layout.activity_list_buildings_info);
         context = this;
 
+        manageMessagesBtn = (Button) findViewById(R.id.manageMessagesBtn);
+        manageMessagesBtn.setOnClickListener(this);
 
         buildingsExListView = (ExpandableListView) findViewById(R.id.buildingsExListView);
         buildingsExListView.setOnChildClickListener(this);
@@ -102,7 +106,7 @@ public class ListBuildingsInfoActivity extends AppCompatActivity implements Expa
                     public void onClick(DialogInterface dialog, int which) {
                         Intent myIntent = new Intent(getApplicationContext(), FloorplanActivity.class);
                         myIntent.putExtra("filePath", buildingListAdapter.getChild(groupPosition, childPosition).getFloorPlanFilePath());
-                        myIntent.putExtra("building", buildingListAdapter.getGroup(groupPosition).getBuildingName());
+                        myIntent.putExtra("building", buildingListAdapter.getGroup(groupPosition));
                         myIntent.putExtra("floor", buildingListAdapter.getChild(groupPosition, childPosition));
 
                         context.startActivity(myIntent);
@@ -260,5 +264,14 @@ public class ListBuildingsInfoActivity extends AppCompatActivity implements Expa
 
 
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.manageMessagesBtn){
+            // List messages and get info of employees acknowledgement
+            Intent myIntent = new Intent(getApplicationContext(), BuildingFloorMessagesList.class);
+            this.startActivity(myIntent);
+        }
     }
 }

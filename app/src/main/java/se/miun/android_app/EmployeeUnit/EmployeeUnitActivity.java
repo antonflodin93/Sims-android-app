@@ -40,7 +40,7 @@ import se.miun.android_app.Api.ApiInterface;
 import se.miun.android_app.Model.Floor;
 import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
-import se.miun.android_app.Service.FloorMessageService;
+import se.miun.android_app.Service.BuildingMessageService;
 import se.miun.android_app.Service.RegularMessageService;
 import se.miun.android_app.Service.WarningMessageService;
 import se.miun.android_app.testing.Area;
@@ -132,7 +132,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
                     warningSignal.start();
                 }
-            } else if (intent.getAction().equals("FloorMessageService")){
+            } else if (intent.getAction().equals("BuildingMessageService")){
                 ArrayList<Message> tempMessages = (ArrayList<Message>) intent.getSerializableExtra("messages");
                 // Check if there is any messages that is not acknowledged
                 if(!tempMessages.isEmpty() && !dialogActive){
@@ -172,7 +172,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         this.regularMessageIntent = new Intent(this, RegularMessageService.class);
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
-        this.objectMessageIntent = new Intent(this, FloorMessageService.class);
+        this.objectMessageIntent = new Intent(this, BuildingMessageService.class);
 
 
 
@@ -370,7 +370,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
                     employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
                     floorplanLinearLayout.addView(employeeFloorPlanImageView);
-                    EmployeeUnitActivity.this.objectMessageIntent.putExtra("floorId", floor.getFloorId());
+                    EmployeeUnitActivity.this.objectMessageIntent.putExtra("buildingId", buildingId);
                     EmployeeUnitActivity.this.objectMessageIntent.putExtra("employeeId", employeeID);
                     EmployeeUnitActivity.this.startService(EmployeeUnitActivity.this.objectMessageIntent);
 
@@ -640,7 +640,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("RegularMessageService");
         intentFilter.addAction("WarningMessageService");
-        intentFilter.addAction("FloorMessageService");
+        intentFilter.addAction("BuildingMessageService");
         this.registerReceiver(this.broadcastReceiver, intentFilter);
 
         // Simulate that user enters building 1 and floor 1

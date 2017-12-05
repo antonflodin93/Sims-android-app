@@ -2,16 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
+    android:background="#777777"
     android:orientation="vertical"
-    android:padding="8dp"
-    android:background="#777777">
+    android:padding="8dp">
 
+    <Button
+        android:id="@+id/manageMessagesBtn"
+        android:layout_width="match_parent"
+        android:layout_height="76dp"
+        android:background="#222222"
+        android:text="List messages and status"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
 
     <ExpandableListView
         android:id="@+id/buildingsExListView"
         android:layout_width="fill_parent"
-        android:textSize="20sp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="20sp" />
 
 
 </LinearLayout>

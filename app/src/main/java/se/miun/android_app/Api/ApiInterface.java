@@ -130,19 +130,23 @@ public interface ApiInterface {
     @POST("messages/warning/factoryobject/{factoryobjectId}")
     Call<ResponseBody> insertWarningMessageFactoryObject(@Body Message message, @Path("factoryobjectId") int factoryobjectId);
 
+    // Post warning message for a building
+    @POST("messages/warning/building/{buildingId}")
+    Call<ResponseBody> addBuildingWarningMessage(@Path("buildingId") int buildingId, @Body Message message);
 
-    // Post warning message for a floor
-    @POST("messages/warning/floor/{floorId}")
-    Call<ResponseBody> addFloorWarningMessage(@Path("floorId") int floorId, @Body Message message);
+    // Get all warning messages for all buildings
+    @GET("messages/warning/building")
+    Call<ArrayList<Message>> getAllBuildingWarningMessages();
 
-
-    // Get all warning messages for a floor that are not yet acknowledged by user
-    @GET("messages/warning/floor/{floorId}/employee/{employeeID}")
-    Call<ArrayList<Message>> getFloorWarningMessage(@Path("floorId") int floorId, @Path("employeeID") int employeeID);
+    // Get all warning messages for a building that are not yet acknowledged by user
+    @GET("messages/warning/building/{buildingId}/employee/{employeeID}")
+    Call<ArrayList<Message>> getBuildingWarningMessageNotAcked(@Path("buildingId") int buildingId, @Path("employeeID") int employeeID);
 
     // Acknowledge warning message /warning/{messageId}/employee/{employeeID}
     @POST("messages/warning/{messageId}/employee/{employeeID}")
     Call<ResponseBody> acknowledgeMessage(@Path("messageId") int messageId, @Path("employeeID") int employeeID);
+
+
 
     /*
     *  COMPANY

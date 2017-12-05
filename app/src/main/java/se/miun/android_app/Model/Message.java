@@ -26,12 +26,19 @@ public class Message implements Serializable {
     @SerializedName("date")
     private String date;
 
+    @SerializedName("buildingId")
+    private int buildingId;
+
+    @SerializedName("buildingName")
+    private String buildingName;
 
     public Message(String messageLabel, String messageText) {
         this.messageLabel = messageLabel;
         this.messageText = messageText;
         this.messageType = "REGULAR";
     }
+
+
 
     public Message(String messageLabel, String messageText, String messageType) {
         this.messageLabel = messageLabel;
@@ -49,6 +56,22 @@ public class Message implements Serializable {
 
     public Message(){
 
+    }
+
+    public String getBuildingName() {
+        return buildingName;
+    }
+
+    public void setBuildingName(String buildingName) {
+        this.buildingName = buildingName;
+    }
+
+    public int getBuildingId() {
+        return buildingId;
+    }
+
+    public void setBuildingId(int buildingId) {
+        this.buildingId = buildingId;
     }
 
     public String getMessageLabel() {

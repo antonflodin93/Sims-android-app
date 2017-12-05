@@ -3,7 +3,6 @@
     package="se.miun.android_app">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- Bluetooth Permissions -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -24,7 +23,7 @@
         android:roundIcon="@drawable/welcomescreen"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StartActivity"> </activity>
+        <activity android:name=".StartActivity"></activity>
         <activity android:name=".testing.ImageTestActivity" />
         <activity android:name=".testing.RangetestActivity" />
         <activity android:name=".testing.OnTouchTestActivity" />
@@ -62,16 +61,15 @@
         <service
             android:name=".Service.RegularMessageService"
             android:label="Regular message service" />
-
         <service
-            android:name=".Service.FloorMessageService"
+            android:name=".Service.BuildingMessageService"
             android:label="Object message service" />
 
         <activity android:name=".MasterUnit.ListEmployeesActivity" />
         <activity android:name=".MasterUnit.ListBuildingsInfoActivity" />
         <activity android:name=".MasterUnit.FloorplanActivity" />
         <activity android:name=".testing.TestResponseTime" />
-
+        <activity android:name=".MasterUnit.BuildingFloorMessagesList"></activity>
     </application>
 
 </manifest>
