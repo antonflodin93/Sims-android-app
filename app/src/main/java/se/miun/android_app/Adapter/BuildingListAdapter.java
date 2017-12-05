@@ -58,7 +58,7 @@ public class BuildingListAdapter extends BaseExpandableListAdapter {
         }
 
         TextView txtListChild = (TextView) convertView.findViewById(R.id.floorplanTextView);
-        txtListChild.setTextSize(16);
+        txtListChild.setTextSize(20);
         txtListChild.setTextColor(Color.WHITE);
 
         // Get number of employees in the building

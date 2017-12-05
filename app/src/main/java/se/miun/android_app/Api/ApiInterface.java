@@ -77,15 +77,19 @@ public interface ApiInterface {
 
     // Change floor for a employee
     @PUT("employees/floor/{floorId}/employee/{employeeID}")
-    Call<ResponseBody> changeFloorEmployee(@Path("floorId") int floorId , @Path("employeeID") int employeeID);
+    Call<ResponseBody> changeFloorEmployee(@Path("floorId") int floorId, @Path("employeeID") int employeeID);
 
     // Employee enters building
     @POST("employees/building/{buildingId}/employee/{employeeID}")
-    Call<ResponseBody> enterBuildingEmployee(@Path("buildingId") int buildingId , @Path("employeeID") int employeeID);
+    Call<ResponseBody> enterBuildingEmployee(@Path("buildingId") int buildingId, @Path("employeeID") int employeeID);
 
     // Employee enters floor first time
     @POST("employees/floor/{floorId}/employee/{employeeID}")
-    Call<ResponseBody> enterFloorEmployee(@Path("floorId") int floorId , @Path("employeeID") int employeeID);
+    Call<ResponseBody> enterFloorEmployee(@Path("floorId") int floorId, @Path("employeeID") int employeeID);
+
+    // Gets all employees that have acknowledged message
+    @GET("employees/message/{messageId}")
+    Call<ArrayList<Employee>> getEmployeesAcknowledged(@Path("messageId") int messageId);
 
 
     /*
@@ -130,16 +134,25 @@ public interface ApiInterface {
     @POST("messages/warning/factoryobject/{factoryobjectId}")
     Call<ResponseBody> insertWarningMessageFactoryObject(@Body Message message, @Path("factoryobjectId") int factoryobjectId);
 
+    // Post warning message for a building
+    @POST("messages/warning/building/{buildingId}")
+    Call<ResponseBody> addBuildingWarningMessage(@Path("buildingId") int buildingId, @Body Message message);
 
-    // Get all warning messages for an object
+    // Get all warning messages for all buildings
+    @GET("messages/warning/building")
+    Call<ArrayList<Message>> getAllBuildingWarningMessages();
 
-    // Get all regular messages for an object
-    @GET("messages/regular/company/{companyName}")
-    Call<ArrayList<Message>> getRegularObjectMessages(@Path("companyName") String companyName);
+    // Get all warning messages for a building that are not yet acknowledged by user
+    @GET("messages/warning/building/{buildingId}/employee/{employeeID}")
+    Call<ArrayList<Message>> getBuildingWarningMessageNotAcked(@Path("buildingId") int buildingId, @Path("employeeID") int employeeID);
 
-    // Get all warning messages for objects in floor
+    // Acknowledge warning message /warning/{messageId}/employee/{employeeID}
+    @POST("messages/warning/{messageId}/employee/{employeeID}")
+    Call<ResponseBody> acknowledgeMessage(@Path("messageId") int messageId, @Path("employeeID") int employeeID);
 
-    // Get all regular messages for objects in floor
+    // Delete building message
+    @DELETE("messages/warning/building/{messageId}")
+    Call<ResponseBody> deleteBuildingMessage(@Path("messageId") String messageId);
 
 
     /*

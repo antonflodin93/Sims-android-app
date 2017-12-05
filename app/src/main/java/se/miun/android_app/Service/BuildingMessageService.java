@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +17,13 @@ import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
 import se.miun.android_app.Model.Message;
 
-public class ObjectMessageService extends Service {
+public class BuildingMessageService extends Service {
     private final Handler handler = new Handler();
     private Retrofit retrofit;
     private ApiInterface apiInterface;
     private ArrayList<Message> messages = new ArrayList<>();
     private Call<List<Message>> call;
+    private int buildingId, employeeId;
     Intent intent;
     int counter = 0;
     private Callback<ArrayList<Message>> messageCallback = new Callback<ArrayList<Message>>() {
@@ -51,29 +51,30 @@ public class ObjectMessageService extends Service {
             retrofit = ApiClient.getApiClient();
             ApiInterface apiInterface = retrofit.create(ApiInterface.class);
             Call<ArrayList<Message>> call = null;
-            call = apiInterface.getRegularMessages();
+            call = apiInterface.getBuildingWarningMessageNotAcked(buildingId, employeeId);
             call.enqueue(messageCallback);
-            ObjectMessageService.this.handler.postDelayed(this, 5000);
+            BuildingMessageService.this.handler.postDelayed(this, 5000);
         }
     };
 
-    public ObjectMessageService() {
+    public BuildingMessageService() {
     }
 
     public void onCreate() {
         super.onCreate();
-        this.intent = new Intent("ObjectMessageService");
+        this.intent = new Intent("BuildingMessageService");
+
     }
 
     public void onStart(Intent intent, int startId) {
+        buildingId = intent.getIntExtra("buildingId", 0);
+        employeeId = intent.getIntExtra("employeeId", 0);
         this.handler.removeCallbacks(this.sendUpdatesToUI);
         this.handler.postDelayed(this.sendUpdatesToUI, 1000L);
     }
 
     private void DisplayLoggingInfo() {
         this.intent.putExtra("messages", messages);
-        //this.intent.putExtra("time", (new Date()).toLocaleString());
-        //this.intent.putExtra("counter", String.valueOf(++this.counter));
         this.sendBroadcast(this.intent);
     }
 

@@ -26,6 +26,7 @@ import retrofit2.Retrofit;
 import se.miun.android_app.Adapter.ObjectAdapter;
 import se.miun.android_app.Api.ApiClient;
 import se.miun.android_app.Api.ApiInterface;
+import se.miun.android_app.Model.Building;
 import se.miun.android_app.Model.Employee;
 import se.miun.android_app.Model.FactoryObject;
 import se.miun.android_app.Model.Floor;
@@ -38,7 +39,7 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
     private String filePath;
     private Context context;
     private int numofemployees = 0;
-    private String building;
+    private Building building;
     private Floor floor;
     private ArrayList<FactoryObject> objects;
     private ObjectAdapter objectAdapter;
@@ -52,7 +53,7 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
         setContentView(R.layout.activity_floorplan);
         context = this;
         filePath = getIntent().getStringExtra("filePath");
-        building = getIntent().getStringExtra("building");
+        building = (Building) getIntent().getSerializableExtra("building");
         floor = (Floor) getIntent().getSerializableExtra("floor");
 
         // Get objects for the floorplan
@@ -60,8 +61,8 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
 
         textViewFloorPlan = (TextView) findViewById(R.id.textViewFloorPlan);
         floorplanLinearLayout = (LinearLayout) findViewById(R.id.floorplanLinearLayout);
-        textViewFloorPlan.setText(building + "/" + floor.getFloorLevel() + " (" + floor.getNumOfEmployees() + " employee(s))");
-        floorplanImageView = new FloorplanImageView(context, filePath, objects);
+        textViewFloorPlan.setText(building.getBuildingName() + "/" + floor.getFloorLevel() + " (" + floor.getNumOfEmployees() + " employee(s))");
+        floorplanImageView = new FloorplanImageView(context, filePath, objects, floor.getFloorId());
         floorplanLinearLayout.addView(floorplanImageView);
         listObjectsBtn = (Button) findViewById(R.id.listObjectsBtn);
         listObjectsBtn.setOnClickListener(this);
@@ -84,7 +85,7 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
             AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
             builderSingle.setCancelable(false);
             builderSingle.setIcon(android.R.drawable.ic_dialog_info);
-            builderSingle.setTitle("Objects in " + building + "/" + floor.getFloorLevel());
+            builderSingle.setTitle("Objects in " + building.getBuildingName() + "/" + floor.getFloorLevel());
 
             objectAdapter= new ObjectAdapter (FloorplanActivity.this, 0, objects);
             //objectListView.setAdapter(objectAdapter);
@@ -104,7 +105,7 @@ public class FloorplanActivity extends Activity implements View.OnClickListener{
 
                     // Remove the old imageview and create a new instance of it passing the choosen object
                     floorplanLinearLayout.removeView(floorplanImageView);
-                    floorplanImageView = new FloorplanImageView(context, filePath, objects, objectAdapter.getItem(which));
+                    floorplanImageView = new FloorplanImageView(context, filePath, objects, building.getBuildingId(), objectAdapter.getItem(which));
                     floorplanLinearLayout.addView(floorplanImageView);
 
                 }

@@ -35,6 +35,8 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
     private Area clickedArea;
     private float startx, starty, endx, endy;
     private ArrayList<Area> objectAreas = new ArrayList<>();
+    private int [][] myLocation;
+    private int collumnsize, rowsize;
     private ArrayList<FactoryObject> objects;
     private FactoryObject clickedObject;
     private boolean blinking;
@@ -44,11 +46,12 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
 
 
     // Imageview with no item selected
-    public EmployeeFloorPlanImageView(final Context context, String filePath, ArrayList<FactoryObject> objects) {
+    public EmployeeFloorPlanImageView(final Context context, String filePath, ArrayList<FactoryObject> objects, int [][] myLocation) {
         super(context);
         this.context = context;
         this.filePath = filePath;
         this.objects = objects;
+        this.myLocation = myLocation;
         getImage();
         setImageAreas();
     }
@@ -92,8 +95,8 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
     }
 
     private void setImageAreas() {
-        int collumnsize = 25;
-        int rowsize = 25;
+        collumnsize = 8;
+        rowsize = 10;
 
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -104,8 +107,8 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
         float sizeX = width / rowsize;
 
         //get xmax and ymax for the first area
-        float xmax = 100 / collumnsize;
-        float ymax = 100 / rowsize;
+        float xmax = 20 / collumnsize;
+        float ymax = 15 / rowsize;
 
 
         //add areas according to row and collumn sizes
@@ -131,18 +134,41 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
         red.setColor(Color.TRANSPARENT);
 
 
-        if (clickedObject != null) {
+
+        int locationmax = 0;
+        for(int x=0;x<collumnsize;x++){
+            for(int y=0;y<rowsize;y++){
+                if(myLocation[y][x] > locationmax){
+                    locationmax = myLocation[y][x];
+                };
+            }
+        }
+
+        //draws rectangle on locations
+        if(locationmax>0) {
+            for (int x = 0; x < collumnsize; x++) {
+                for (int y = 0; y < rowsize; y++) {
+                    if (myLocation[y][x] == locationmax) {
+                        canvas.drawRect(objectAreas.get(((x + 1) * (y + 1)) - 1).getXstart(), objectAreas.get(((x + 1) * (y + 1)) - 1).getYstart(), objectAreas.get(((x + 1) * (y + 1)) - 1).getXend(), objectAreas.get(((x + 1) * (y + 1)) - 1).getYend(), transparent);
+                    }
+                }
+            }
+        }
+       // canvas.drawRect(objectAreas.get(((3+1)*(2+1))-1).getXstart(), objectAreas.get(((3+1)*(2+1))-1).getYstart(), objectAreas.get(((3+1)*(2+1))-1).getXend(), objectAreas.get(((3+1)*(2+1))-1).getYend(), transparent);
+
+        /*if (clickedObject != null) {
 
             // Just to show the area
             if(blinking) {
-                canvas.drawRect(startx, starty, endx, endy, red);
+                //canvas.drawRect(820.8f, 710.4f, 907.2f, 852.48f, red);
+                //canvas.drawRect(startx, starty, endx, endy, red);
             }
             else {
-                canvas.drawRect(startx, starty, endx, endy, transparent);
+                canvas.drawRect(820.8f, 710.4f, 907.2f, 852.48f, transparent);
+                //canvas.drawRect(startx, starty, endx, endy, transparent);
             }
 
-
-        }
+        }*/
 
 
     }
@@ -170,8 +196,8 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
 
 
                 //px is the x coordinate varying from 0-100 on screen touch, py is the same
-                float px = (x / w) * 100;
-                float py = (y / h) * 100;
+                float px = (x / w) * 25;
+                float py = (y / h) * 15;
 
                 //depending on where the screen is touched
                 for (int i = 0; i < objectAreas.size(); i++) {
@@ -179,7 +205,8 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
                         clickedArea = objectAreas.get(i);
                         // Check if there is any object in the area clicked
                         checkObjectForArea();
-                        Toast.makeText(context, "Clicked Area: " + objectAreas.get(i).getrow() + ", " + objectAreas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "Clicked Area: " + objectAreas.get(i).getrow() + ", " + objectAreas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "sx: " + startx + "sy: " + starty +"ex: " + endx + "ey: " + endy, Toast.LENGTH_SHORT).show();
                         //Toast.makeText(context, "Clicked Area: " + areas.get(i).getxmin() + "-" + areas.get(i).getxmax() + ", " + areas.get(i).getymin() + "-" + areas.get(i).getymax(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -206,7 +233,7 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
 */
 
             if (clickedArea.getrow() >= object.getAreaXStart() && clickedArea.getrow() <= object.getAreaXEnd() && clickedArea.getcollumn() >= object.getAreaYStart() && clickedArea.getcollumn() <= object.getAreaYEnd()) {
-                Toast.makeText(context, "Its object " + object.getObjectName(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Its object " + object.getObjectName(), Toast.LENGTH_SHORT).show();
                 clickedObject = object;
                 setCoordinatesForObject(clickedObject);
 

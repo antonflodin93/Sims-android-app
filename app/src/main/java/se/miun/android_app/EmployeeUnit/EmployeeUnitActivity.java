@@ -1,19 +1,19 @@
 package se.miun.android_app.EmployeeUnit;
 
-import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -40,7 +40,7 @@ import se.miun.android_app.Api.ApiInterface;
 import se.miun.android_app.Model.Floor;
 import se.miun.android_app.Model.Message;
 import se.miun.android_app.R;
-import se.miun.android_app.Service.ObjectMessageService;
+import se.miun.android_app.Service.BuildingMessageService;
 import se.miun.android_app.Service.RegularMessageService;
 import se.miun.android_app.Service.WarningMessageService;
 import se.miun.android_app.testing.Area;
@@ -61,7 +61,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private ArrayList<Message> regularMessages;
     private LinearLayout floorplanLinearLayout;
     private RelativeLayout headerLayout;
-    private ArrayList<Message> warningMessages;
+    private ArrayList<Message> warningMessages, warningFloorMessages = new ArrayList<>();
+    private ArrayList<Integer> messagesToBeAck = new ArrayList<>();
     private RecyclerView messageRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RegularMessageAdapter adapter;
@@ -77,6 +78,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     int rowsize, collumnsize;
     private int employeeID;
     private boolean hasMinSdk;
+    private boolean dialogActive = false;
 
     //ble
     private BluetoothAdapter    mBluetoothAdapter;
@@ -120,7 +122,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
 
                 }
-                //ShowMessagesActivity.this.updateUIRegularMessages(intent);
 
                 // When receiving warning messages
             } else if (intent.getAction().equals("WarningMessageService")) {
@@ -131,11 +132,17 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
                     warningSignal.start();
                 }
-            } else if (intent.getAction().equals("ObjectMessageService")){
-
+            } else if (intent.getAction().equals("BuildingMessageService")){
+                ArrayList<Message> tempMessages = (ArrayList<Message>) intent.getSerializableExtra("messages");
+                // Check if there is any messages that is not acknowledged
+                if(!tempMessages.isEmpty() && !dialogActive){
+                    displayDialog(tempMessages.get(0));
+                }
             }
         }
     };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,7 +172,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         this.regularMessageIntent = new Intent(this, RegularMessageService.class);
         this.warningMessageIntent = new Intent(this, WarningMessageService.class);
-        this.objectMessageIntent = new Intent(this, ObjectMessageService.class);
+        this.objectMessageIntent = new Intent(this, BuildingMessageService.class);
+
 
 
         // Get floor info and set imageview
@@ -359,9 +367,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
                     floor = response.body();
                     // Set floorplan
-                    employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects());
+                    employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
                     employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
                     floorplanLinearLayout.addView(employeeFloorPlanImageView);
+                    EmployeeUnitActivity.this.objectMessageIntent.putExtra("buildingId", buildingId);
+                    EmployeeUnitActivity.this.objectMessageIntent.putExtra("employeeId", employeeID);
+                    EmployeeUnitActivity.this.startService(EmployeeUnitActivity.this.objectMessageIntent);
 
                 } else{
                     try {
@@ -374,6 +385,56 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
             @Override
             public void onFailure(Call<Floor> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // When user gets new floorplan messages
+    private void displayDialog(final Message message) {
+        dialogActive = true;
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+
+            dialog.setIcon(android.R.drawable.ic_dialog_alert);
+            dialog.setTitle("ALERT: NEW WARNING MESSAGE, NEED CONFIRMATION");
+            dialog.setMessage(message.getMessageText());
+            dialog.setCancelable(false);
+            dialog.setPositiveButton("Yes, I understand", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                    acknowledgeMessage(Integer.parseInt(message.getMessageId()));
+                }
+            });
+
+            dialog.show();
+
+    }
+
+    private void acknowledgeMessage(int messageId) {
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call;
+        call = apiInterface.acknowledgeMessage(messageId, employeeID);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+                    dialogActive = false;
+                    Toast.makeText(EmployeeUnitActivity.this, "Acknowledged message", Toast.LENGTH_SHORT).show();
+
+                } else{
+                    try {
+                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -397,16 +458,17 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             }
 
             //show myLocation with toast
-            String locationz = " ";
-
+            /*String locationz = " ";
             for(int y = 0; y < rowsize; y++) {
                 locationz += "\n";
                 for (int x = 0; x < collumnsize; x++) {
                     locationz += myLocation[y][x];
                 }
-            }
-            Toast.makeText(EmployeeUnitActivity.this, locationz, Toast.LENGTH_SHORT).show();
+            }*/
+            //Toast.makeText(EmployeeUnitActivity.this, locationz, Toast.LENGTH_SHORT).show();
 
+
+            setImage();
             //todo process myLocation to display..
 
         }
@@ -455,14 +517,15 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
                 } else if (deviceAddress.equals(beacon4.getDeviceID())) {
                     if(rssi > -75) {
+
+                        //todo call changeFloorPlan() here
+
                         getAreasInCircle(distArea, beacon4, nCircle);
                         Log.e("456", "Using Beacon 4");
                     }
                     else {
                         Log.e("456", "Beacon4 to weak SNR");
                     }
-
-                    //todo call changeFloorPlan() here
 
                 } else {
                     getAreasInCircle(distArea, beacon1, nCircle);
@@ -572,12 +635,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         this.startService(this.warningMessageIntent);
         this.startService(this.regularMessageIntent);
-        this.startService(this.objectMessageIntent);
+
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("RegularMessageService");
         intentFilter.addAction("WarningMessageService");
-        intentFilter.addAction("ObjectMessageService");
+        intentFilter.addAction("BuildingMessageService");
         this.registerReceiver(this.broadcastReceiver, intentFilter);
 
         // Simulate that user enters building 1 and floor 1
@@ -599,7 +662,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             this.stopService(this.regularMessageIntent);
             this.stopService(this.warningMessageIntent);
             this.stopService(this.objectMessageIntent);
-
             // User exits building
             exitBuilding();
         }
@@ -712,5 +774,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         }
     }
 
+        public void setImage(){
+            floorplanLinearLayout.removeView(employeeFloorPlanImageView);
+            employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
+            employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
+            floorplanLinearLayout.addView(employeeFloorPlanImageView);
+        }
 
 }

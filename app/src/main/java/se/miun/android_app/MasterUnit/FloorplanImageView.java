@@ -55,6 +55,7 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
     private Bitmap bmp;
     private Boolean clicked = false;
     private Area clickedArea;
+    private int buildingId;
     private Boolean drawing = false;
     private float clickedObjectxstart, clickedObjectystart, clickedObjectxend, clickedObjectyend;
     private ArrayList<Area> areas = new ArrayList<>();
@@ -67,21 +68,23 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
 
 
     // Imageview with no item selected
-    public FloorplanImageView(final Context context, final String filePath, ArrayList<FactoryObject> objects) {
+    public FloorplanImageView(final Context context, final String filePath, ArrayList<FactoryObject> objects, int buildingId) {
         super(context);
         this.filePath = filePath;
         this.context = context;
         this.objects = objects;
+        this.buildingId = buildingId;
         getImage();
         setImageAreas();
     }
 
     // Imageview with item selected
-    public FloorplanImageView(final Context context, final String filePath, ArrayList<FactoryObject> objects, FactoryObject clickedObject) {
+    public FloorplanImageView(final Context context, final String filePath, ArrayList<FactoryObject> objects, int buildingId, FactoryObject clickedObject) {
         super(context);
         this.filePath = filePath;
         this.context = context;
         this.objects = objects;
+        this.buildingId = buildingId;
         this.clickedObject = clickedObject;
         getImage();
         setImageAreas();
@@ -414,11 +417,11 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
 
         Toast.makeText(context, "Sent " + message + ", " + messageType.name(), Toast.LENGTH_SHORT).show();
         Message m = new Message("(no subject)", message, messageType.name());
-        Call<ResponseBody> call = null;
+        Call<ResponseBody> call, floorMessageCall;
         if(messageType == MessageType.REGULAR) {
             call = apiInterface.insertRegularMessageFactoryObject(m, clickedObject.getObjectId());
         } else{
-            call = apiInterface.insertWarningMessageFactoryObject(m, clickedObject.getObjectId());
+            call = apiInterface.addBuildingWarningMessage(buildingId, m);
         }
 
 
