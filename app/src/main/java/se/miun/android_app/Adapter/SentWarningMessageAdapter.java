@@ -45,7 +45,14 @@ public class SentWarningMessageAdapter extends RecyclerView.Adapter<SentWarningM
 
     }
 
+    public void remove(int pos){
+        messages.remove(pos);
+        notifyItemRemoved(pos);
+    }
 
+    public String getMessageId(int pos){
+        return messages.get(pos).getMessageId();
+    }
 
     @Override
     public int getItemCount() {

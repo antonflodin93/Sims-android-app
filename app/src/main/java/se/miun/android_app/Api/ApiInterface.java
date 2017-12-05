@@ -146,6 +146,9 @@ public interface ApiInterface {
     @POST("messages/warning/{messageId}/employee/{employeeID}")
     Call<ResponseBody> acknowledgeMessage(@Path("messageId") int messageId, @Path("employeeID") int employeeID);
 
+    // Delete building message
+    @DELETE("messages/warning/building/{messageId}")
+    Call<ResponseBody> deleteBuildingMessage(@Path("messageId") String messageId);
 
 
     /*
