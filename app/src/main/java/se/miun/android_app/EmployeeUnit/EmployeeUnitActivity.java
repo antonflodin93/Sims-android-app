@@ -108,7 +108,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     };
 
 
-
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
 
@@ -143,7 +142,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     };
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,7 +151,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         employeeID = getIntent().getIntExtra("employeeId", 0);
         Toast.makeText(context, " " + employeeID, Toast.LENGTH_SHORT).show();
 
-        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             hasMinSdk = true;
         } else {
             hasMinSdk = false;
@@ -393,8 +391,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     // When user gets new floorplan messages
     private void displayDialog(final Message message) {
         dialogActive = true;
-        warningSignal.start();
-        warningSignal.start();
         final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
         dialog.setIcon(android.R.drawable.ic_dialog_alert);
@@ -539,44 +535,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         } else {
             Log.e("123", "MAP scanResults NULLPTR EXCEPTION");
         }
-        } else {
-            Log.e("123", "MAP scanResults NULLPTR EXCEPTION");
-        }
     }
-
-    private void changeFloorPlan(int floorId) {
-        Retrofit retrofit;
-        retrofit = ApiClient.getApiClient();
-        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-        Call<Floor> call;
-        call = apiInterface.getFloorById(floorId);
-        call.enqueue(new Callback<Floor>() {
-            @Override
-            public void onResponse(Call<Floor> call, Response<Floor> response) {
-                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
-                    floor = response.body();
-                    // Set floorplan
-                    employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
-                    employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
-                    floorplanLinearLayout.addView(employeeFloorPlanImageView);
-
-
-                } else {
-                    try {
-                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Floor> call, Throwable t) {
-                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
 
     //check if bluetooth is enabled or disabled
     private boolean bluetoothEnable() {
@@ -585,6 +544,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         }
         return true;
     }
+
     //request enable / turn on bluetooth
     private void requestBluetoothEnable() {
         // displays a dialog requesting user permission to enable Bluetooth.
@@ -794,15 +754,16 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             this.radius = radius;
         }
 
-        public void setOccupiedArea(int x, int y){
+        public void setOccupiedArea(int x, int y) {
             //set specified area as occupied by the beacon circle
             this.circleArea[x][y] = 1;
         }
-        public void clearOccupiedArea(int x, int y){
+
+        public void clearOccupiedArea(int x, int y) {
             this.circleArea[x][y] = 0;
         }
 
-        public int getArea(int x, int y){
+        public int getArea(int x, int y) {
             return circleArea[x][y];
         }
     }
@@ -842,12 +803,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 }
             }
         }
-    }
-    public void setImage() {
-        floorplanLinearLayout.removeView(employeeFloorPlanImageView);
-        employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
-        employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
-        floorplanLinearLayout.addView(employeeFloorPlanImageView);
     }
 
 }
