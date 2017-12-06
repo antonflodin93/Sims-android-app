@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -97,7 +98,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 2, 2, 2, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
@@ -105,6 +106,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
     };
+
 
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -141,6 +143,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     };
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,12 +153,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         employeeID = getIntent().getIntExtra("employeeId", 0);
         Toast.makeText(context, " " + employeeID, Toast.LENGTH_SHORT).show();
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             hasMinSdk = true;
         } else {
             hasMinSdk = false;
             Toast.makeText(context, "SDK version must be 21 or greater to be able to track location", Toast.LENGTH_SHORT).show();
-
+            drawAreas();
         }
 
         // Init components
@@ -183,7 +186,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         if (hasMinSdk) {
             setupBeaconAndScanner();
         }
-
 
     }
 
@@ -468,7 +470,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             //Toast.makeText(EmployeeUnitActivity.this, locationz, Toast.LENGTH_SHORT).show();
 
 
-            setImage();
+            drawAreas();
             //todo process myLocation to display..
 
         } else {
@@ -517,8 +519,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 } else if (deviceAddress.equals(beacon4.getDeviceID())) {
                     if (rssi > -75) {
 
-                        // Change floorplan
-                        changeFloorPlan(2);
+                        //todo call changeFloorPlan() here
 
                         getAreasInCircle(distArea, beacon4, nCircle);
                         Log.e("456", "Using Beacon 4");
@@ -535,6 +536,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //store new circles in map, clear map if needed
                 circleContainer.put(deviceAddress, nCircle);
             }
+        } else {
+            Log.e("123", "MAP scanResults NULLPTR EXCEPTION");
+        }
         } else {
             Log.e("123", "MAP scanResults NULLPTR EXCEPTION");
         }
@@ -581,7 +585,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         }
         return true;
     }
-
     //request enable / turn on bluetooth
     private void requestBluetoothEnable() {
         // displays a dialog requesting user permission to enable Bluetooth.
@@ -791,20 +794,55 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             this.radius = radius;
         }
 
-        public void setOccupiedArea(int x, int y) {
+        public void setOccupiedArea(int x, int y){
             //set specified area as occupied by the beacon circle
             this.circleArea[x][y] = 1;
         }
-
-        public void clearOccupiedArea(int x, int y) {
+        public void clearOccupiedArea(int x, int y){
             this.circleArea[x][y] = 0;
         }
 
-        public int getArea(int x, int y) {
+        public int getArea(int x, int y){
             return circleArea[x][y];
         }
     }
 
+    public void drawAreas() {
+        /*
+        floorplanLinearLayout.removeView(employeeFloorPlanImageView);
+            employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
+            employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
+            floorplanLinearLayout.addView(employeeFloorPlanImageView);
+        */
+        Log.d("MYTEST", "in drawarea");
+
+        int locationmax = 0;
+        for (int x = 0; x < collumnsize; x++) {
+            for (int y = 0; y < rowsize; y++) {
+                if (myLocation[y][x] > locationmax) {
+                    locationmax = myLocation[y][x];
+                }
+            }
+        }
+
+        //draws rectangle on locations
+        int currentarea = 0;
+        if (locationmax > 0) {
+            for (int x = 0; x < collumnsize; x++) {
+                for (int y = 0; y < rowsize; y++) {
+                    if (myLocation[y][x] == locationmax) {
+                        //draws rect based on limits of the current area in loop, all areas 0-79. 10*8
+                        float drawXstart = 0;
+                        float drawYstart = 0;
+                        float drawXend = 1000;
+                        float drawYend = 1000;
+                        employeeFloorPlanImageView.drawNewLocation(drawXstart, drawYstart, drawXend, drawYend);
+                    }
+                    currentarea++;
+                }
+            }
+        }
+    }
     public void setImage() {
         floorplanLinearLayout.removeView(employeeFloorPlanImageView);
         employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
