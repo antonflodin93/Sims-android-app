@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import se.miun.android_app.R;
 
@@ -17,14 +16,14 @@ import se.miun.android_app.Model.Employee;
 
 public class EmployeeStatusAdapter extends ArrayAdapter<Employee> {
 
+    private ArrayList<Employee> employees;
     public EmployeeStatusAdapter(Context context, ArrayList<Employee> employees) {
         super(context, 0, employees);
+        this.employees = employees;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Toast.makeText(getContext(), "GETVIEW " + getItem(position).getEmployeeFirstName(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(getContext(), "GETVIEW " + getItem(position).isAcknowledged(), Toast.LENGTH_SHORT).show();
         Employee employee = getItem(position);
 
         if (convertView == null) {

@@ -1,8 +1,12 @@
 package se.miun.android_app.MasterUnit;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -57,6 +61,23 @@ public class ListEmployeeInfo extends AppCompatActivity {
 
         employeeStatusAdapter = new EmployeeStatusAdapter(context, employeesInBuilding);
         employeeStatusListView.setAdapter(employeeStatusAdapter);
+        employeeStatusListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View arg1, int position,
+                                    long arg3) {
+                Employee employee = (Employee) adapterView.getItemAtPosition(position);
+
+                final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+
+                dialog.setIcon(android.R.drawable.ic_dialog_info);
+                dialog.setTitle("Contact information - " + employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName());
+                dialog.setMessage(employee.getEmployeeFirstName() + " " + employee.getEmployeeLastName() + " (" + employee.getEmployeeCompany() + ") - " + employee.getEmployeePhonenumber());
+                dialog.show();
+            }
+
+        });
+
     }
 
     private void getEmployeesAcknowledged(int messageId) {

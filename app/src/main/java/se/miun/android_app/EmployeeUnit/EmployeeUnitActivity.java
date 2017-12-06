@@ -54,7 +54,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     }
 
 
-
     private ImageButton warningMessageBtn, regularMessageBtn;
     private Context context;
     private Intent regularMessageIntent, warningMessageIntent, objectMessageIntent;
@@ -81,9 +80,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private boolean dialogActive = false;
 
     //ble
-    private BluetoothAdapter    mBluetoothAdapter;
-    private BleScanner          mBleScanner;
-    Map<String, Integer>        scanResults;
+    private BluetoothAdapter mBluetoothAdapter;
+    private BleScanner mBleScanner;
+    Map<String, Integer> scanResults;
 
     //triangulation
     Thread pollThread;  //needed for continues update of scan methods
@@ -95,18 +94,17 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     //test of my location
     //store my location in x,y (area coordinate), occupied area >= 1
     private int[][] myLocation = new int[][]{
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
     };
-
 
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -132,16 +130,15 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
                     warningSignal.start();
                 }
-            } else if (intent.getAction().equals("BuildingMessageService")){
+            } else if (intent.getAction().equals("BuildingMessageService")) {
                 ArrayList<Message> tempMessages = (ArrayList<Message>) intent.getSerializableExtra("messages");
                 // Check if there is any messages that is not acknowledged
-                if(!tempMessages.isEmpty() && !dialogActive){
+                if (!tempMessages.isEmpty() && !dialogActive) {
                     displayDialog(tempMessages.get(0));
                 }
             }
         }
     };
-
 
 
     @Override
@@ -153,7 +150,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         employeeID = getIntent().getIntExtra("employeeId", 0);
         Toast.makeText(context, " " + employeeID, Toast.LENGTH_SHORT).show();
 
-        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             hasMinSdk = true;
         } else {
             hasMinSdk = false;
@@ -176,7 +173,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         this.objectMessageIntent = new Intent(this, BuildingMessageService.class);
 
 
-
         // Get floor info and set imageview
         getFloorPlanInfo(floorId);
 
@@ -184,7 +180,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         setupAreas();
 
 //Only start scans if minimum sdk is achieved
-        if(hasMinSdk){
+        if (hasMinSdk) {
             setupBeaconAndScanner();
         }
 
@@ -204,7 +200,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
 
 
-                } else{
+                } else {
                     try {
                         Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
@@ -232,7 +228,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
 
 
-                } else{
+                } else {
                     try {
                         Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
@@ -249,7 +245,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     }
 
 
-    private void exitBuilding(){
+    private void exitBuilding() {
         Retrofit retrofit;
         retrofit = ApiClient.getApiClient();
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
@@ -261,7 +257,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
 
 
-                } else{
+                } else {
                     try {
                         Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
@@ -312,7 +308,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         circleContainer = new HashMap<>();
 
         /* Check and enable bluetooth if it is disabled */
-        if(!bluetoothEnable() ){
+        if (!bluetoothEnable()) {
             requestBluetoothEnable();
         }
         //init bluetooth manager
@@ -325,13 +321,13 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         mBleScanner.startScan(0);
 
         //Create a new thread to run updateLocation()
-        pollThread = new Thread(){
+        pollThread = new Thread() {
             @Override
-            public void run(){
+            public void run() {
                 //loop "forever"
-                while( !isInterrupted() ){
+                while (!isInterrupted()) {
                     try {
-                        Thread.sleep( 5000 );   // 5 seconds
+                        Thread.sleep(5000);   // 5 seconds
 
 
                         runOnUiThread(new Runnable() {
@@ -376,7 +372,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     EmployeeUnitActivity.this.objectMessageIntent.putExtra("employeeId", employeeID);
                     EmployeeUnitActivity.this.startService(EmployeeUnitActivity.this.objectMessageIntent);
 
-                } else{
+                } else {
                     try {
                         Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
@@ -395,21 +391,23 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     // When user gets new floorplan messages
     private void displayDialog(final Message message) {
         dialogActive = true;
-            final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        warningSignal.start();
+        warningSignal.start();
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
-            dialog.setIcon(android.R.drawable.ic_dialog_alert);
-            dialog.setTitle("ALERT: NEW WARNING MESSAGE, NEED CONFIRMATION");
-            dialog.setMessage(message.getMessageText());
-            dialog.setCancelable(false);
-            dialog.setPositiveButton("Yes, I understand", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                    acknowledgeMessage(Integer.parseInt(message.getMessageId()));
-                }
-            });
+        dialog.setIcon(android.R.drawable.ic_dialog_alert);
+        dialog.setTitle("ALERT: NEW WARNING MESSAGE, NEED CONFIRMATION");
+        dialog.setMessage(message.getMessageText());
+        dialog.setCancelable(false);
+        dialog.setPositiveButton("Yes, I understand", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                acknowledgeMessage(Integer.parseInt(message.getMessageId()));
+            }
+        });
 
-            dialog.show();
+        dialog.show();
 
     }
 
@@ -426,7 +424,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     dialogActive = false;
                     Toast.makeText(EmployeeUnitActivity.this, "Acknowledged message", Toast.LENGTH_SHORT).show();
 
-                } else{
+                } else {
                     try {
                         Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
@@ -442,11 +440,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         });
     }
 
-    private void updateLocation(){
+    private void updateLocation() {
         //needs to be a callback function to function in this way,
         // otherwise need to implement everything in the employeeScanCallback class
         // and use the callbacks in there
-        if( circleContainer != null) {
+        if (circleContainer != null) {
 
             //clear previous myLocation
             clearLocationArea();
@@ -473,16 +471,15 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             setImage();
             //todo process myLocation to display..
 
-        }
-        else {
+        } else {
             Log.e("123", "MAP circleContainer NULLPTR EXCEPTION");
         }
 
     }
 
-    private void processScanResults(){
+    private void processScanResults() {
 
-        if( scanResults != null ) {
+        if (scanResults != null) {
 
             //fetch results
             scanResults = mBleScanner.getResults();
@@ -518,15 +515,14 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     Log.e("456", "Using Beacon 3");
 
                 } else if (deviceAddress.equals(beacon4.getDeviceID())) {
-                    if(rssi > -75) {
+                    if (rssi > -75) {
 
                         // Change floorplan
                         changeFloorPlan(2);
 
                         getAreasInCircle(distArea, beacon4, nCircle);
                         Log.e("456", "Using Beacon 4");
-                    }
-                    else {
+                    } else {
                         Log.e("456", "Beacon4 to weak SNR");
                     }
 
@@ -539,8 +535,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //store new circles in map, clear map if needed
                 circleContainer.put(deviceAddress, nCircle);
             }
-        }
-        else {
+        } else {
             Log.e("123", "MAP scanResults NULLPTR EXCEPTION");
         }
     }
@@ -562,7 +557,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     floorplanLinearLayout.addView(employeeFloorPlanImageView);
 
 
-                } else{
+                } else {
                     try {
                         Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
@@ -580,14 +575,15 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
 
     //check if bluetooth is enabled or disabled
-    private boolean bluetoothEnable(){
+    private boolean bluetoothEnable() {
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             return false;
         }
         return true;
     }
+
     //request enable / turn on bluetooth
-    private void requestBluetoothEnable(){
+    private void requestBluetoothEnable() {
         // displays a dialog requesting user permission to enable Bluetooth.
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         int REQUEST_ENABLE_BT = 1;
@@ -598,53 +594,55 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         // Iterate through every area
         for (int x = 0; x < collumnsize; x++) {
-            for(int y = 0; y < rowsize; y++){
+            for (int y = 0; y < rowsize; y++) {
                 //compare (using circle equation)
-                if( (x-beacon.a)*(x-beacon.a)+(y-beacon.getB())*(y-beacon.getB()) <= radius*radius ){
+                if ((x - beacon.a) * (x - beacon.a) + (y - beacon.getB()) * (y - beacon.getB()) <= radius * radius) {
                     //store occupied area inside the circle
-                    circle.setOccupiedArea(x,y);
+                    circle.setOccupiedArea(x, y);
                 }
                 //this is for reuse, clear area "between" measurements.
                 //might be unnecessary...
-                else{
-                    circle.clearOccupiedArea(x,y);
+                else {
+                    circle.clearOccupiedArea(x, y);
                 }
             }
         }
     }
+
     //need to store every circle area somewhere in an array and pull everyone in there to compare
     //for an accurate assessment of the location...
     //one to do this would be to add +1 for every beacon found, thus
     //you could just print out the highest value in the matrix.
     //for example if the area reads: +3 then you know 3 beacons are detected in that
     //area and thus it is highly likely you are in that area.
-    private void setLocationArea(Circle circle){
+    private void setLocationArea(Circle circle) {
         //int xAreas=8, yAreas= 10;  //replace with xMax, yMax for dynamic control...
 
         // Iterate through every areas
         for (int x = 0;  /*#nr or areas in x direction*/ x < collumnsize; x++) {
-            for(int y = 0; /*#nr of areas in y direction*/ y < rowsize; y++){
+            for (int y = 0; /*#nr of areas in y direction*/ y < rowsize; y++) {
                 //compare all circles
-                if( circle.getArea(x,y) == 1 ){
+                if (circle.getArea(x, y) == 1) {
                     //set myLocation to +1 in specified area
                     myLocation[x][y] += 1;
                 }
             }
         }
     }
-    private void clearLocationArea(){
-        for(int x=0;x<collumnsize;x++){
-            for(int y=0;y<rowsize;y++){
+
+    private void clearLocationArea() {
+        for (int x = 0; x < collumnsize; x++) {
+            for (int y = 0; y < rowsize; y++) {
                 myLocation[y][x] = 0;
             }
         }
     }
 
-    private int meterToAreaBlockDistance(double rssiMeters, float xAreaPerMeter){
+    private int meterToAreaBlockDistance(double rssiMeters, float xAreaPerMeter) {
         //need to know areas/meter from floorplans, pass in as distanceToPixelCount...
         //as in 1 meter represents x amount of pixels(area blocks) in x or y direction.
         //  (# area count in x direction )/ (# meters  )
-        return Math.round( (float)rssiMeters / xAreaPerMeter );
+        return Math.round((float) rssiMeters / xAreaPerMeter);
         //xAreaPerMeter = xmax
     }
 
@@ -652,19 +650,15 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     // Returns distance for a given rssi
     double getDistance(int rssi) {
         //check for max? distance...
-        if(rssi < -100){
+        if (rssi < -100) {
             return 10.0;
-        }
-        else  {
+        } else {
             double e = 0.6859;
             double b = Math.pow(2389, e);
             double n = Math.pow((4447 + 50 * rssi), e);
             return b / n;
         }
     }
-
-
-
 
 
     public void onResume() {
@@ -686,7 +680,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         // User exits building
         exitBuilding();
@@ -694,7 +688,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
     public void onPause() {
         super.onPause();
-        if(!clickedButton){
+        if (!clickedButton) {
             this.unregisterReceiver(this.broadcastReceiver);
             this.stopService(this.regularMessageIntent);
             this.stopService(this.warningMessageIntent);
@@ -706,7 +700,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         // Maybee needed
         //this.unregisterReceiver(this.broadcastReceiver);
 
-        if(hasMinSdk){
+        if (hasMinSdk) {
             //stop polling the scan update functions
             pollThread.interrupt();
         }
@@ -743,11 +737,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         // Set location
         public Beacon(int a, int b, String deviceID) {
-            if (deviceID == null){
+            if (deviceID == null) {
                 this.deviceID = "00:00:00:00:00:00";
                 Log.e("555", "No Device ID set, Setting default 00:");
-            }
-            else {
+            } else {
                 this.deviceID = deviceID;
             }
             this.a = a;
@@ -770,11 +763,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             this.b = b;
         }
 
-        public void addArea(Area area){
+        public void addArea(Area area) {
             coverAreas.add(area);
         }
 
-        public String getDeviceID(){
+        public String getDeviceID() {
             return deviceID;
         }
     }
@@ -798,24 +791,25 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             this.radius = radius;
         }
 
-        public void setOccupiedArea(int x, int y){
+        public void setOccupiedArea(int x, int y) {
             //set specified area as occupied by the beacon circle
             this.circleArea[x][y] = 1;
         }
-        public void clearOccupiedArea(int x, int y){
+
+        public void clearOccupiedArea(int x, int y) {
             this.circleArea[x][y] = 0;
         }
 
-        public int getArea(int x, int y){
+        public int getArea(int x, int y) {
             return circleArea[x][y];
         }
     }
 
-        public void setImage(){
-            floorplanLinearLayout.removeView(employeeFloorPlanImageView);
-            employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
-            employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
-            floorplanLinearLayout.addView(employeeFloorPlanImageView);
-        }
+    public void setImage() {
+        floorplanLinearLayout.removeView(employeeFloorPlanImageView);
+        employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
+        employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
+        floorplanLinearLayout.addView(employeeFloorPlanImageView);
+    }
 
 }

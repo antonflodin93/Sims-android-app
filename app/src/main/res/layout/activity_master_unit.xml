@@ -15,18 +15,19 @@
     <TextView
         android:id="@+id/loginTextView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:gravity="center_horizontal"
         android:text="MASTER UNIT"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#222222"
+        android:layout_weight="1"
         android:textSize="50dp" />
 
     <Button
         android:id="@+id/sendMessagesBtn"
         android:layout_width="match_parent"
-        android:layout_height="101dp"
-        android:layout_weight="0.04"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="#222222"
         android:text="Send messages"
         android:textColor="@android:color/white"
@@ -35,14 +36,14 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="24dp" />
+        android:layout_height="0dp"
+        android:layout_weight="0.5"/>
 
     <Button
         android:id="@+id/employeeListBtn"
         android:layout_width="match_parent"
-        android:layout_height="99dp"
-        android:layout_weight="0.04"
-
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:text="Employee List"
         android:background="#222222"
         android:textColor="@android:color/white"
@@ -52,17 +53,23 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="19dp" />
+        android:layout_height="0dp"
+        android:layout_weight="0.5"/>
 
     <Button
         android:id="@+id/showBuildingsInfoBtn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.04"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="#222222"
         android:text="Show Buildings info"
         android:textColor="@android:color/white"
         android:textSize="30dp" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"/>
 
 
 </LinearLayout>
