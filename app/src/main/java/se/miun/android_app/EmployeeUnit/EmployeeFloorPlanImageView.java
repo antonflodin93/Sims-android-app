@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,6 +41,27 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
     private ArrayList<FactoryObject> objects;
     private FactoryObject clickedObject;
     private boolean blinking;
+    private float drawXstart, drawYstart, drawXend, drawYend;
+
+
+    public  void drawNewLocationTest(){
+        Log.d("MYTEST", "WORKS");
+    }
+    public void drawNewLocation(float drawXstart, float drawYstart, float drawXend, float drawYend) {
+
+        this.drawXstart = drawXstart;
+        this.drawYstart = drawYstart;
+        this.drawXend = drawXend;
+        this.drawYend = drawYend;
+
+        //canvas.drawRect((objectAreas.get(((5 + 0) * (5 + 0)) ).getxmin()*collumnsize), (objectAreas.get(((5 + 0) * (5 + 0)) ).getymin()*rowsize), (objectAreas.get(((5 + 0) * (5 + 0)) ).getxmax()*collumnsize), (objectAreas.get(((5 + 0) * (5 + 0)) ).getymax()*rowsize), transparent);
+
+        Log.d("MYTEST", "in imageview");
+        invalidate();
+    }
+
+
+
     private enum MessageType {
         WARNING, REGULAR
     }
@@ -133,7 +155,10 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
         red.setColor(Color.red(Color.RED));
         Paint transparent = new Paint();
         red.setColor(Color.TRANSPARENT);
+        Toast.makeText(context, "DRAWFUCKER", Toast.LENGTH_SHORT).show();
+        canvas.drawRect(drawXstart, drawYstart, drawXend, drawYend, transparent);
 
+        /*
 
         int locationmax = 0;
         for (int x = 0; x < collumnsize; x++) {
@@ -151,7 +176,7 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
                 for (int y = 0; y < rowsize; y++) {
                     if (myLocation[y][x] == locationmax) {
                         //draws rect based on limits of the current area in loop, all areas 0-79. 10*8
-                        canvas.drawRect(objectAreas.get(currentarea).getXstart(), objectAreas.get(currentarea).getYstart(), objectAreas.get(currentarea).getXend(), objectAreas.get(currentarea).getYend(), transparent);
+                       // canvas.drawRect(objectAreas.get(currentarea).getXstart(), objectAreas.get(currentarea).getYstart(), objectAreas.get(currentarea).getXend(), objectAreas.get(currentarea).getYend(), transparent);
                     }
                     currentarea++;
                 }
@@ -159,8 +184,8 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
         }
 
         //canvas.drawRect((objectAreas.get(((5 + 0) * (5 + 0)) ).getxmin()*collumnsize), (objectAreas.get(((5 + 0) * (5 + 0)) ).getymin()*rowsize), (objectAreas.get(((5 + 0) * (5 + 0)) ).getxmax()*collumnsize), (objectAreas.get(((5 + 0) * (5 + 0)) ).getymax()*rowsize), transparent);
-         //canvas.drawRect(objectAreas.get(65).getXstart(), objectAreas.get(65).getYstart(), objectAreas.get(65).getXend(), objectAreas.get(65).getYend(), transparent);
-
+         canvas.drawRect(drawXstart, objectAreas.get(1).getYstart(), objectAreas.get(1).getXend(), (objectAreas.get(1).getYend()-(objectAreas.get(1).getYend()- objectAreas.get(1).getYstart())/2), transparent);
+*/
         /*if (clickedObject != null) {
 
             // Just to show the area
