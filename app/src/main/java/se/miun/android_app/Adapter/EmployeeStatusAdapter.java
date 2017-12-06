@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import se.miun.android_app.R;
 
@@ -22,7 +23,8 @@ public class EmployeeStatusAdapter extends ArrayAdapter<Employee> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
+        Toast.makeText(getContext(), "GETVIEW " + getItem(position).getEmployeeFirstName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "GETVIEW " + getItem(position).isAcknowledged(), Toast.LENGTH_SHORT).show();
         Employee employee = getItem(position);
 
         if (convertView == null) {

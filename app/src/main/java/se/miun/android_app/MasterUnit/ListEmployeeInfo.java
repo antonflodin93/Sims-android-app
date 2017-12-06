@@ -26,7 +26,8 @@ import se.miun.android_app.R;
 public class ListEmployeeInfo extends AppCompatActivity {
     private Context context;
     private ListView employeeStatusListView;
-    private ArrayList<Employee> employeesInBuilding, employeesAcknowledged;
+    private ArrayList<Employee> employeesInBuilding, employeesAcknowledged,employees = new ArrayList<>();
+    private ArrayList<Integer> acknowledgedEmployees = new ArrayList<>(), employesInbuilding = new ArrayList<>();
     private EmployeeStatusAdapter employeeStatusAdapter;
     private Message message;
     private int buildingId;
@@ -43,15 +44,19 @@ public class ListEmployeeInfo extends AppCompatActivity {
         buildingId = message.getBuildingId();
         messageId = Integer.parseInt(message.getMessageId());
 
-        Toast.makeText(this, "MESSAGE " + message.getMessageText(), Toast.LENGTH_SHORT).show();
+
         // Init components
         employeeStatusListView = (ListView) findViewById(R.id.employeeStatusListView);
 
         getEmployeesInBuilding(buildingId);
         getEmployeesAcknowledged(messageId);
+    }
+
+    private void setAdapter() {
 
 
-
+        employeeStatusAdapter = new EmployeeStatusAdapter(context, employeesInBuilding);
+        employeeStatusListView.setAdapter(employeeStatusAdapter);
     }
 
     private void getEmployeesAcknowledged(int messageId) {
@@ -64,15 +69,16 @@ public class ListEmployeeInfo extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
                 if (response.code() == HTTP_RESPONSE_OK) {
-                    Toast.makeText(ListEmployeeInfo.this, " " + response.body().size(), Toast.LENGTH_SHORT).show();
                     employeesAcknowledged = response.body();
+
+                    // Add the employees to list
                     for(Employee e : employeesAcknowledged){
+                        acknowledgedEmployees.add(Integer.parseInt(e.getEmployeeId()));
                         e.setAcknowledged(true);
+                        employees.add(e);
                     }
-                    Toast.makeText(ListEmployeeInfo.this, "Acknowledged " + employeesAcknowledged.size(), Toast.LENGTH_SHORT).show();
-                    employeesInBuilding.addAll(employeesAcknowledged);
-                    employeeStatusAdapter = new EmployeeStatusAdapter(context, employeesInBuilding);
-                    employeeStatusListView.setAdapter(employeeStatusAdapter);
+
+                    getEmployeesInBuilding(buildingId);
 
                 } else{
                     try {
@@ -100,9 +106,18 @@ public class ListEmployeeInfo extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
                 if (response.code() == HTTP_RESPONSE_OK) {
-                    Toast.makeText(ListEmployeeInfo.this, " " + response.body().size(), Toast.LENGTH_SHORT).show();
                     employeesInBuilding = response.body();
-                    Toast.makeText(ListEmployeeInfo.this, "IN building " + employeesInBuilding.size(), Toast.LENGTH_SHORT).show();
+
+                    for(Employee e : employeesInBuilding){
+                        if(acknowledgedEmployees.contains(Integer.parseInt(e.getEmployeeId()))){
+                            e.setAcknowledged(true);
+                        } else {
+                            e.setAcknowledged(false);
+                        }
+                    }
+
+                    setAdapter();
+
 
 
                 } else{
