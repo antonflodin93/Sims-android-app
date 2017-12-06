@@ -158,6 +158,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         } else {
             hasMinSdk = false;
             Toast.makeText(context, "SDK version must be 21 or greater to be able to track location", Toast.LENGTH_SHORT).show();
+
         }
 
         // Init components
@@ -186,6 +187,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         if(hasMinSdk){
             setupBeaconAndScanner();
         }
+
 
     }
 
@@ -518,7 +520,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 } else if (deviceAddress.equals(beacon4.getDeviceID())) {
                     if(rssi > -75) {
 
-                        //todo call changeFloorPlan() here
+                        // Change floorplan
+                        changeFloorPlan(2);
 
                         getAreasInCircle(distArea, beacon4, nCircle);
                         Log.e("456", "Using Beacon 4");
@@ -541,6 +544,40 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             Log.e("123", "MAP scanResults NULLPTR EXCEPTION");
         }
     }
+
+    private void changeFloorPlan(int floorId) {
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<Floor> call;
+        call = apiInterface.getFloorById(floorId);
+        call.enqueue(new Callback<Floor>() {
+            @Override
+            public void onResponse(Call<Floor> call, Response<Floor> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+                    floor = response.body();
+                    // Set floorplan
+                    employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
+                    employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
+                    floorplanLinearLayout.addView(employeeFloorPlanImageView);
+
+
+                } else{
+                    try {
+                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Floor> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     //check if bluetooth is enabled or disabled
     private boolean bluetoothEnable(){
