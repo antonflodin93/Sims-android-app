@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/nameTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="25dp"
@@ -21,7 +21,7 @@
     <TextView
         android:id="@+id/statusTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignBaseline="@+id/nameTextView"
         android:layout_alignBottom="@+id/nameTextView"
         android:layout_alignParentEnd="true"
