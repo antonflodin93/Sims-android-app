@@ -155,7 +155,7 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
         red.setColor(Color.red(Color.RED));
         Paint transparent = new Paint();
         red.setColor(Color.TRANSPARENT);
-        Toast.makeText(context, "DRAWFUCKER", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "DRAWFUCKER: "+ drawXend, Toast.LENGTH_SHORT).show();
         canvas.drawRect(drawXstart, drawYstart, drawXend, drawYend, transparent);
 
         /*

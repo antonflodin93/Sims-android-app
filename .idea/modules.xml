@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Sims-android-app.iml" filepath="$PROJECT_DIR$/Sims-android-app.iml" />
       <module fileurl="file://C:\Users\Mamutz\AndroidStudioProjects\Sims-android-app\Sims-android-app.iml" filepath="C:\Users\Mamutz\AndroidStudioProjects\Sims-android-app\Sims-android-app.iml" />
       <module fileurl="file://C:\Users\Usuario\StudioProjects\Sims-android-app12\Sims-android-app.iml" filepath="C:\Users\Usuario\StudioProjects\Sims-android-app12\Sims-android-app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Sims-android-app12.iml" filepath="$PROJECT_DIR$/Sims-android-app12.iml" />
+      <module fileurl="file://C:\Users\Lena\AndroidStudioProjects\Sims-android-app\Sims-android-app12.iml" filepath="C:\Users\Lena\AndroidStudioProjects\Sims-android-app\Sims-android-app12.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://C:\Users\Mamutz\AndroidStudioProjects\Sims-android-app\app\app.iml" filepath="C:\Users\Mamutz\AndroidStudioProjects\Sims-android-app\app\app.iml" />
     </modules>
