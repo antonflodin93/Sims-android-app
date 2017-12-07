@@ -120,7 +120,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             if (intent.getAction().equals("RegularMessageService")) {
                 regularMessages = (ArrayList<Message>) intent.getSerializableExtra("messages");
                 if (regularMessages.size() > numOfReceievedRegularMessages) {
-                    regularMessageBtn.setBackgroundColor(Color.RED);
+                    regularMessageBtn.setImageResource(R.drawable.regularmessage_unread);
                     numOfReceievedRegularMessages = regularMessages.size();
                     regularSignal.start();
 
@@ -752,7 +752,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             Intent myIntent = new Intent(getApplicationContext(), ShowMessagesActivity.class);
             myIntent.putExtra("MESSAGETYPE", MessageType.REGULAR);
             myIntent.putExtra("REGULARMESSAGES", regularMessages);
-            regularMessageBtn.setBackgroundColor(Color.BLACK);
+            regularMessageBtn.setImageResource(R.drawable.regularmessage);
             context.startActivity(myIntent);
         }
     }
