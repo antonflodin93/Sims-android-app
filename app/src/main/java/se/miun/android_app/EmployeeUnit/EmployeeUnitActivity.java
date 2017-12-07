@@ -333,7 +333,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         beacon1 = new Beacon(0, 0, null);
         beacon2 = new Beacon(5, 5, "D7:1F:BE:CB:E0:16");
         beacon3 = new Beacon(rowsize, 0, null);
-        beacon4 = new Beacon(rowsize, collumnsize, null);
+        beacon4 = new Beacon(rowsize, collumnsize, "EE:2B:8F:54:76:14");
 
         //init map containers
         scanResults = new HashMap<>();
