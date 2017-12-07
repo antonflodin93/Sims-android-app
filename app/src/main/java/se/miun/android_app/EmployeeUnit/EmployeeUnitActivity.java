@@ -74,7 +74,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private EmployeeFloorPlanImageView employeeFloorPlanImageView;
     private MediaPlayer warningSignal, regularSignal;
     float xmax, ymax;
-    private int floorId = 2;
+    private int floorId = 1;
     private int buildingId = 1;
     private Floor floor;
     int rowsize, collumnsize;
@@ -346,8 +346,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         // The beacons locations
         beacon1 = new Beacon(0, 0, null);
         beacon2 = new Beacon(2, 2, "D7:1F:BE:CB:E0:16");
-        beacon3 = new Beacon(1, 1, "D4:C4:D4:66:72:C5");
-        beacon4 = new Beacon(0, 0, "EE:2B:8F:54:76:14");
+        beacon3 = new Beacon(1, 1, "EE:2B:8F:54:76:14");
+        beacon4 = new Beacon(0, 0, "D4:C4:D4:66:72:C5");
 
         //init map containers
         scanResults = new HashMap<>();
@@ -567,8 +567,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     Log.e("456", "Using Beacon 3");
 
                 } else if (deviceAddress.equals(beacon4.getDeviceID())) {
-                    // Employee enters building, or goes to floor 1
-                    if (rssi < -60) {
+                    // Check which floor employee goes to
+                    if (rssi < -70) {
                         if(floorId != 1){
                             floorId = 1;
                             getFloorPlanInfo(floorId);
@@ -585,7 +585,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                             floorId = 2;
                             getFloorPlanInfo(floorId);
                             changeFloorplan(floorId);
-                            getAreasInCircle(distArea, beacon4, nCircle);
                         }
                     }
                 } else {
@@ -696,6 +695,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
         this.startService(this.warningMessageIntent);
         this.startService(this.regularMessageIntent);
+        EmployeeUnitActivity.this.regularMessageIntent.putExtra("employeeId", employeeID);
 
 
         IntentFilter intentFilter = new IntentFilter();

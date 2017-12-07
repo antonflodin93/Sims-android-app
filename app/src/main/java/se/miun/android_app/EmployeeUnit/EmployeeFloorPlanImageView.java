@@ -161,6 +161,10 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
             }
         }
 
+        if(clickedObject != null){
+            canvas.drawRect(startx, starty, endx, endy, transparent);
+        }
+
         /*
 
         int locationmax = 0;
@@ -237,7 +241,7 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
                         // Check if there is any object in the area clicked
                         checkObjectForArea();
                         //Toast.makeText(context, "Clicked Area: " + objectAreas.get(i).getrow() + ", " + objectAreas.get(i).getcollumn() + ", Coordinates: " + px + ", " + py, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(context, "sx: " + startx + "sy: " + starty + "ex: " + endx + "ey: " + endy, Toast.LENGTH_SHORT).show();
+                       //Toast.makeText(context, "sx: " + startx + "sy: " + starty + "ex: " + endx + "ey: " + endy, Toast.LENGTH_SHORT).show();
                         //Toast.makeText(context, "Clicked Area: " + areas.get(i).getxmin() + "-" + areas.get(i).getxmax() + ", " + areas.get(i).getymin() + "-" + areas.get(i).getymax(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -253,19 +257,12 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
 
         // Check if there is any object in the given area
         for (FactoryObject object : objects) {
-    /*
-            if(object.getObjectId() == 1){
-                Toast.makeText(context, clickedArea.getrow() + " >= " + object.getAreaXStart(), Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, clickedArea.getrow() + " <= " + object.getAreaXEnd(), Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, clickedArea.getcollumn() + " >= " + object.getAreaYStart(), Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, clickedArea.getcollumn() + " <= " + object.getAreaYEnd(), Toast.LENGTH_SHORT).show();
 
-            }
-*/
 
             if (clickedArea.getrow() >= object.getAreaXStart() && clickedArea.getrow() <= object.getAreaXEnd() && clickedArea.getcollumn() >= object.getAreaYStart() && clickedArea.getcollumn() <= object.getAreaYEnd()) {
                 //Toast.makeText(context, "Its object " + object.getObjectName(), Toast.LENGTH_SHORT).show();
                 clickedObject = object;
+                //Toast.makeText(context, "Clicked object " + clickedObject.getObjectName() , Toast.LENGTH_SHORT).show();
                 setCoordinatesForObject(clickedObject);
 
 

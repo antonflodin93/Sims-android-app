@@ -184,5 +184,10 @@ public interface ApiInterface {
     @GET("floors/{floorId}")
     Call<Floor> getFloorById(@Path("floorId") int floorId);
 
+    // Get a floor that employee is inside
+    @GET("floors/{employeeID}")
+    Call<Floor> getFloorForEmployee(@Path("employeeID") int employeeID);
+
+
 
 }

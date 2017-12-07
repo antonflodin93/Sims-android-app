@@ -34,6 +34,10 @@ public class Employee {
 
     private boolean acknowledged;
 
+    private int floorId;
+
+    private int buildingId;
+
 
     public Employee(String employeeFirstName, String employeeLastName, String employeeUsername,
                     String employeeEmail, String employeePassword, String employeePhonenumber, String employeeCompany) {
@@ -61,6 +65,22 @@ public class Employee {
         this.employeeFirstName = employeeFirstName;
         this.employeeLastName = employeeLastName;
         this.employeeCompany = employeeCompany;
+    }
+
+    public int getFloorId() {
+        return floorId;
+    }
+
+    public void setFloorId(int floorId) {
+        this.floorId = floorId;
+    }
+
+    public int getBuildingId() {
+        return buildingId;
+    }
+
+    public void setBuildingId(int buildingId) {
+        this.buildingId = buildingId;
     }
 
     public boolean isAcknowledged() {
