@@ -72,7 +72,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private EmployeeFloorPlanImageView employeeFloorPlanImageView;
     private MediaPlayer warningSignal, regularSignal;
     float xmax, ymax;
-    private int floorId = 1; // Rejekthus, floor 1
+    private int floorId = 2;
     private int buildingId = 1;
     private Floor floor;
     int rowsize, collumnsize;
@@ -80,6 +80,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private boolean hasMinSdk;
     private boolean dialogActive = false;
     private boolean startedWarningService = false;
+    private boolean enteredBuilding = false;
 
     //ble
     private BluetoothAdapter mBluetoothAdapter;
@@ -150,7 +151,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         context = this;
 
         employeeID = getIntent().getIntExtra("employeeId", 0);
-        Toast.makeText(context, " " + employeeID, Toast.LENGTH_SHORT).show();
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             hasMinSdk = true;
@@ -175,8 +175,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         this.objectMessageIntent = new Intent(this, BuildingMessageService.class);
 
 
-        // Get floor info and set imageview
-        getFloorPlanInfo(floorId);
+
 
 
         setupAreas();
@@ -274,9 +273,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         });
     }
 
-    void changeFloorplan(int floorId){
-        Toast.makeText(context, "Change to " + 2, Toast.LENGTH_SHORT).show();
-        getFloorPlanInfo(floorId);
+    void changeFloorplan(final int floorId){
+
         Retrofit retrofit;
         retrofit = ApiClient.getApiClient();
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
@@ -286,8 +284,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
-                    Toast.makeText(EmployeeUnitActivity.this, "changed floor", Toast.LENGTH_SHORT).show();
-
+                    getFloorPlanInfo(floorId);
                 } else {
                     try {
                         Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
@@ -330,10 +327,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     // For tracking location
     private void setupBeaconAndScanner() {
         // The beacons locations
-        beacon1 = new Beacon(0, 0, "EE:2B:8F:54:76:14");
+        beacon1 = new Beacon(0, 0, null);
         beacon2 = new Beacon(2, 2, "D7:1F:BE:CB:E0:16");
-        beacon3 = new Beacon(1, 1, null);
-        beacon4 = new Beacon(0, 0, "D4:C4:D4:66:72:C5");
+        beacon3 = new Beacon(1, 1, "D4:C4:D4:66:72:C5");
+        beacon4 = new Beacon(0, 0, "EE:2B:8F:54:76:14");
 
         //init map containers
         scanResults = new HashMap<>();
@@ -544,6 +541,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     getAreasInCircle(distArea, beacon1, nCircle);
                     Log.e("456", "Using Beacon 1");
 
+
+
                 } else if (deviceAddress.equals(beacon2.getDeviceID())) {
                     getAreasInCircle(distArea, beacon2, nCircle);
                     Log.e("456", "Using Beacon 2");
@@ -553,16 +552,28 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     Log.e("456", "Using Beacon 3");
 
                 } else if (deviceAddress.equals(beacon4.getDeviceID())) {
-                    if (rssi > -75) {
+                    // Employee enters building, or goes to floor 1
+                    if (rssi < -60) {
+                        if(floorId != 1){
+                            floorId = 1;
+                            getFloorPlanInfo(floorId);
 
-                        //todo call changeFloorPlan() here
-                        floorId = 2;
-                        changeFloorplan(floorId);
+                            Log.e("456", "Beacon4 to weak SNR");
 
-                        getAreasInCircle(distArea, beacon4, nCircle);
+                            changeFloorplan(floorId);
+
+                        }
+
                         Log.e("456", "Using Beacon 4");
                     } else {
-                        Log.e("456", "Beacon4 to weak SNR");
+                        if(floorId != 2){
+                            floorId = 2;
+                            changeFloorplan(floorId);
+                            getAreasInCircle(distArea, beacon4, nCircle);
+                        }
+
+
+
                     }
 
                 } else {
