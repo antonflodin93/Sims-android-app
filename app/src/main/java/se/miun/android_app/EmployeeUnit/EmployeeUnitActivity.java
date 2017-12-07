@@ -17,7 +17,9 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -80,6 +82,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private boolean hasMinSdk;
     private boolean dialogActive = false;
     private boolean startedWarningService = false;
+    private ArrayList<Area> locationAreas;
 
     //ble
     private BluetoothAdapter mBluetoothAdapter;
@@ -99,7 +102,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 2, 2, 2, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
@@ -153,11 +156,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         Toast.makeText(context, " " + employeeID, Toast.LENGTH_SHORT).show();
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            hasMinSdk = true;
-        } else {
             hasMinSdk = false;
-            Toast.makeText(context, "SDK version must be 21 or greater to be able to track location", Toast.LENGTH_SHORT).show();
+            setupAreas();
             drawAreas();
+        } else {
+            hasMinSdk = true;
+            Toast.makeText(context, "SDK version must be 21 or greater to be able to track location", Toast.LENGTH_SHORT).show();
         }
 
         // Init components
@@ -178,8 +182,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         // Get floor info and set imageview
         getFloorPlanInfo(floorId);
 
-
-        setupAreas();
 
 //Only start scans if minimum sdk is achieved
         if (hasMinSdk) {
@@ -274,14 +276,14 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         });
     }
 
-    void changeFloorplan(int floorId){
+    void changeFloorplan(int floorId) {
         Toast.makeText(context, "Change to " + 2, Toast.LENGTH_SHORT).show();
         getFloorPlanInfo(floorId);
         Retrofit retrofit;
         retrofit = ApiClient.getApiClient();
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
         Call<ResponseBody> call;
-        call = apiInterface.changeFloorEmployee(floorId,employeeID);
+        call = apiInterface.changeFloorEmployee(floorId, employeeID);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -306,23 +308,35 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     }
 
     private void setupAreas() {
+
         collumnsize = 8;
         rowsize = 10;
         //number of total areas
 
-        Vector<Area> areas = new Vector<>();
+        locationAreas = new ArrayList<>();
 
         //get xmax and ymax for the first area
         xmax = 25 / collumnsize;
         ymax = 15 / rowsize;
 
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        float height = display.getHeight() * 0.9f;
+        Log.d("TEST", "" + height);
+        float width = display.getWidth();
+        float sizeX = height / rowsize;
+        float sizeY = width / collumnsize;
+
         //size is used for area position in vector
         int size = 0;
 
         //add areas according to row and collumn sizes
-        for (int c = 0; c < rowsize; c++) {
-            for (int r = 0; r < collumnsize; r++) {
-                areas.add(size, new Area(xmax * (r), xmax * (r + 1), ymax * (c), ymax * (c + 1), r + 1, c + 1));
+        for (int c = 0; c < collumnsize; c++) {
+            for (int r = 0; r < rowsize; r++) {
+                Area area = new Area(xmax * (r), xmax * (r + 1), ymax * (c), ymax * (c + 1), c, r);
+                area.setRealLimits(sizeY * c, sizeY * (c + 1), r * sizeX, sizeX * (r + 1));
+
+                locationAreas.add(area);
             }
         }
     }
@@ -330,10 +344,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     // For tracking location
     private void setupBeaconAndScanner() {
         // The beacons locations
-        beacon1 = new Beacon(0, 0, "EE:2B:8F:54:76:14");
-        beacon2 = new Beacon(2, 2, "D7:1F:BE:CB:E0:16");
-        beacon3 = new Beacon(1, 1, null);
-        beacon4 = new Beacon(0, 0, "D4:C4:D4:66:72:C5");
+        beacon1 = new Beacon(0, 0, null);
+        beacon2 = new Beacon(5, 5, "D7:1F:BE:CB:E0:16");
+        beacon3 = new Beacon(rowsize, 0, "D4:C4:D4:66:72:C5");
+        beacon4 = new Beacon(rowsize, collumnsize, "EE:2B:8F:54:76:14");
 
         //init map containers
         scanResults = new HashMap<>();
@@ -397,18 +411,20 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
                     floor = response.body();
                     // Set floorplan
-                    if(employeeFloorPlanImageView != null){
+                    if (employeeFloorPlanImageView != null) {
                         floorplanLinearLayout.removeView(employeeFloorPlanImageView);
                     }
                     employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
                     employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
                     floorplanLinearLayout.addView(employeeFloorPlanImageView);
-                    if(!startedWarningService) {
+                    if (!startedWarningService) {
                         EmployeeUnitActivity.this.objectMessageIntent.putExtra("buildingId", buildingId);
                         EmployeeUnitActivity.this.objectMessageIntent.putExtra("employeeId", employeeID);
                         EmployeeUnitActivity.this.startService(EmployeeUnitActivity.this.objectMessageIntent);
                         startedWarningService = true;
                     }
+
+                    drawAreas();
 
 
                 } else {
@@ -485,6 +501,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         // and use the callbacks in there
         if (circleContainer != null) {
 
+            drawAreas();
+
             //clear previous myLocation
             clearLocationArea();
 
@@ -497,16 +515,16 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             }
 
             //show myLocation with toast
-            String locationz = " ";
+            /*String locationz = " ";
             for(int y = 0; y < rowsize; y++) {
                 locationz += "\n";
                 for (int x = 0; x < collumnsize; x++) {
                     locationz += myLocation[y][x];
                 }
-            }
-            Log.e("778", locationz);
+            }*/
+            //Toast.makeText(EmployeeUnitActivity.this, locationz, Toast.LENGTH_SHORT).show();
 
-           // drawAreas();
+
             //todo process myLocation to display..
 
         } else {
@@ -566,9 +584,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     }
 
                 } else {
-
-                    //getAreasInCircle(distArea, beacon1, nCircle);
-                    Log.e("456", "Device ID not in list");
+                    getAreasInCircle(distArea, beacon1, nCircle);
+                    Log.e("456", "Using default beacon");
 
                 }
 
@@ -631,7 +648,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //compare all circles
                 if (circle.getArea(x, y) == 1) {
                     //set myLocation to +1 in specified area
-                    myLocation[y][x] += 1;
+                    myLocation[x][y] += 1;
                 }
             }
         }
@@ -657,8 +674,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     // Returns distance for a given rssi
     double getDistance(int rssi) {
         //check for max? distance...
-        if (rssi <= -100) {
-            return 15.0;
+        if (rssi < -100) {
+            return 10.0;
         } else {
             double e = 0.6859;
             double b = Math.pow(2389, e);
@@ -813,22 +830,20 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     }
 
     public void drawAreas() {
-        /*
-        floorplanLinearLayout.removeView(employeeFloorPlanImageView);
-            employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
-            employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
-            floorplanLinearLayout.addView(employeeFloorPlanImageView);
-        */
-        Log.d("MYTEST", "in drawarea");
+        Log.d("MYAPP", "UPDATE LOCATIOn");
 
+        // find the maximum value for beacons
         int locationmax = 0;
         for (int x = 0; x < collumnsize; x++) {
             for (int y = 0; y < rowsize; y++) {
                 if (myLocation[y][x] > locationmax) {
                     locationmax = myLocation[y][x];
+                    Log.d("MYAPP", " location max" + x + ", " + y);
                 }
             }
         }
+
+        ArrayList<Area> currentLocationAreas = new ArrayList<>();
 
         //draws rectangle on locations
         int currentarea = 0;
@@ -836,16 +851,29 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             for (int x = 0; x < collumnsize; x++) {
                 for (int y = 0; y < rowsize; y++) {
                     if (myLocation[y][x] == locationmax) {
-                        //draws rect based on limits of the current area in loop, all areas 0-79. 10*8
-                        float drawXstart = 0;
-                        float drawYstart = 0;
-                        float drawXend = 1000;
-                        float drawYend = 1000;
-//                        employeeFloorPlanImageView.drawNewLocation(drawXstart, drawYstart, drawXend, drawYend);
+                        int row = locationAreas.get(currentarea).getrow();
+                        int column = locationAreas.get(currentarea).getcollumn();
+                        for (Area area : locationAreas) {
+                            if (area.getcollumn() == column && area.getrow() == row) {
+                                currentLocationAreas.add(area);
+                                Log.d("MYAPP", "Inside " + row + ", " + column);
+                            }
+                        }
+
                     }
                     currentarea++;
                 }
             }
+        }
+
+        if (employeeFloorPlanImageView != null) {
+            if (currentLocationAreas != null) {
+                employeeFloorPlanImageView.drawNewLocation(currentLocationAreas);
+            } else {
+                Log.d("MYAPP", "currentLocationAreas null");
+            }
+        } else {
+            Log.d("MYAPP", "imageview null");
         }
     }
 
