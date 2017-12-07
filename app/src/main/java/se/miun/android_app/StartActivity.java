@@ -9,7 +9,7 @@ import android.view.View;
 
 public class StartActivity extends Activity implements View.OnClickListener {
 
-    private Button startEmployeeUnitAcvitivy, startMasterUnitAcvitivy;
+    private Button startEmployeeUnitAcvitivy, startMasterUnitAcvitivy, testButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +18,9 @@ public class StartActivity extends Activity implements View.OnClickListener {
 
         startEmployeeUnitAcvitivy = (Button) findViewById(R.id.startEmployeeUnitAcvitivy);
         startEmployeeUnitAcvitivy.setOnClickListener(this);
+
+        testButton = (Button) findViewById(R.id.testButton);
+        testButton.setOnClickListener(this);
 
         startMasterUnitAcvitivy = (Button) findViewById(R.id.startMasterUnitAcvitivy);
         startMasterUnitAcvitivy.setOnClickListener(this);
@@ -33,6 +36,9 @@ public class StartActivity extends Activity implements View.OnClickListener {
         } else if(view.getId() == R.id.startMasterUnitAcvitivy){
             Intent intent = new Intent(getBaseContext(), LoginActivity.class);
             intent.putExtra("userType", "MASTER");
+            startActivity(intent);
+        }  else if(view.getId() == R.id.testButton){
+            Intent intent = new Intent(getBaseContext(), MainActivity.class);
             startActivity(intent);
         }
 
