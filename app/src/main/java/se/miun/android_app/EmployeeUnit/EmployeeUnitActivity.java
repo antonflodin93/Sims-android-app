@@ -674,8 +674,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     // Returns distance for a given rssi
     double getDistance(int rssi) {
         //check for max? distance...
-        if (rssi < -100) {
-            return 10.0;
+        if (rssi <= -100) {
+            return 15.0;
         } else {
             double e = 0.6859;
             double b = Math.pow(2389, e);
