@@ -79,6 +79,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private int employeeID;
     private boolean hasMinSdk;
     private boolean dialogActive = false;
+    private boolean startedWarningService = false;
 
     //ble
     private BluetoothAdapter mBluetoothAdapter;
@@ -273,6 +274,37 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         });
     }
 
+    void changeFloorplan(int floorId){
+        Toast.makeText(context, "Change to " + 2, Toast.LENGTH_SHORT).show();
+        getFloorPlanInfo(floorId);
+        Retrofit retrofit;
+        retrofit = ApiClient.getApiClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+        Call<ResponseBody> call;
+        call = apiInterface.changeFloorEmployee(floorId,employeeID);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == HTTP_RESPONSE_ACCEPTED) {
+                    Toast.makeText(EmployeeUnitActivity.this, "changed floor", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    try {
+                        Toast.makeText(context, "Error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
     private void setupAreas() {
         collumnsize = 8;
         rowsize = 10;
@@ -365,12 +397,19 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
                     floor = response.body();
                     // Set floorplan
+                    if(employeeFloorPlanImageView != null){
+                        floorplanLinearLayout.removeView(employeeFloorPlanImageView);
+                    }
                     employeeFloorPlanImageView = new EmployeeFloorPlanImageView(context, floor.getFloorPlanFilePath(), floor.getObjects(), myLocation);
                     employeeFloorPlanImageView.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 0.8f));
                     floorplanLinearLayout.addView(employeeFloorPlanImageView);
-                    EmployeeUnitActivity.this.objectMessageIntent.putExtra("buildingId", buildingId);
-                    EmployeeUnitActivity.this.objectMessageIntent.putExtra("employeeId", employeeID);
-                    EmployeeUnitActivity.this.startService(EmployeeUnitActivity.this.objectMessageIntent);
+                    if(!startedWarningService) {
+                        EmployeeUnitActivity.this.objectMessageIntent.putExtra("buildingId", buildingId);
+                        EmployeeUnitActivity.this.objectMessageIntent.putExtra("employeeId", employeeID);
+                        EmployeeUnitActivity.this.startService(EmployeeUnitActivity.this.objectMessageIntent);
+                        startedWarningService = true;
+                    }
+
 
                 } else {
                     try {
@@ -390,6 +429,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
     // When user gets new floorplan messages
     private void displayDialog(final Message message) {
+        warningSignal.start();
+        warningSignal.start();
         dialogActive = true;
         final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
@@ -516,6 +557,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     if (rssi > -75) {
 
                         //todo call changeFloorPlan() here
+                        floorId = 2;
+                        changeFloorplan(floorId);
 
                         getAreasInCircle(distArea, beacon4, nCircle);
                         Log.e("456", "Using Beacon 4");
@@ -536,6 +579,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             Log.e("123", "MAP scanResults NULLPTR EXCEPTION");
         }
     }
+
 
     //check if bluetooth is enabled or disabled
     private boolean bluetoothEnable() {
