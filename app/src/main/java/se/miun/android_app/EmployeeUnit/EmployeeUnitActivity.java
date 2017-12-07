@@ -330,10 +330,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     // For tracking location
     private void setupBeaconAndScanner() {
         // The beacons locations
-        beacon1 = new Beacon(0, 0, null);
-        beacon2 = new Beacon(5, 5, "D7:1F:BE:CB:E0:16");
-        beacon3 = new Beacon(rowsize, 0, "D4:C4:D4:66:72:C5");
-        beacon4 = new Beacon(rowsize, collumnsize, "EE:2B:8F:54:76:14");
+        beacon1 = new Beacon(0, 0, "EE:2B:8F:54:76:14");
+        beacon2 = new Beacon(2, 2, "D7:1F:BE:CB:E0:16");
+        beacon3 = new Beacon(1, 1, null);
+        beacon4 = new Beacon(0, 0, "D4:C4:D4:66:72:C5");
 
         //init map containers
         scanResults = new HashMap<>();
@@ -497,17 +497,16 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             }
 
             //show myLocation with toast
-            /*String locationz = " ";
+            String locationz = " ";
             for(int y = 0; y < rowsize; y++) {
                 locationz += "\n";
                 for (int x = 0; x < collumnsize; x++) {
                     locationz += myLocation[y][x];
                 }
-            }*/
-            //Toast.makeText(EmployeeUnitActivity.this, locationz, Toast.LENGTH_SHORT).show();
+            }
+            Log.e("778", locationz);
 
-
-            drawAreas();
+           // drawAreas();
             //todo process myLocation to display..
 
         } else {
@@ -567,8 +566,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     }
 
                 } else {
-                    getAreasInCircle(distArea, beacon1, nCircle);
-                    Log.e("456", "Using default beacon");
+
+                    //getAreasInCircle(distArea, beacon1, nCircle);
+                    Log.e("456", "Device ID not in list");
 
                 }
 
@@ -631,7 +631,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //compare all circles
                 if (circle.getArea(x, y) == 1) {
                     //set myLocation to +1 in specified area
-                    myLocation[x][y] += 1;
+                    myLocation[y][x] += 1;
                 }
             }
         }
