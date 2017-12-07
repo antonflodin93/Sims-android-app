@@ -101,7 +101,7 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
             protected void onPostExecute(Void result) {
                 if (bmp != null) {
 
-                    setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.9f));
+                    setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.5f));
                     setScaleType(ScaleType.FIT_XY);
                     setImageBitmap(bmp);
                     setOnTouchListener(EmployeeFloorPlanImageView.this);

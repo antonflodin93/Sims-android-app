@@ -72,7 +72,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private EmployeeFloorPlanImageView employeeFloorPlanImageView;
     private MediaPlayer warningSignal, regularSignal;
     float xmax, ymax;
-    private int floorId = 2;
+    private int floorId = 1; // Rejekthus, floor 1
     private int buildingId = 1;
     private Floor floor;
     int rowsize, collumnsize;
@@ -80,6 +80,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     private boolean hasMinSdk;
     private boolean dialogActive = false;
     private boolean startedWarningService = false;
+    private ArrayList<Area> locationAreas;
     private boolean enteredBuilding = false;
 
     //ble
@@ -151,6 +152,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         context = this;
 
         employeeID = getIntent().getIntExtra("employeeId", 0);
+        Toast.makeText(context, " " + employeeID, Toast.LENGTH_SHORT).show();
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             hasMinSdk = true;
@@ -175,7 +177,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         this.objectMessageIntent = new Intent(this, BuildingMessageService.class);
 
 
-
+        // Get floor info and set imageview
+        getFloorPlanInfo(floorId);
 
 
         setupAreas();
@@ -541,8 +544,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     getAreasInCircle(distArea, beacon1, nCircle);
                     Log.e("456", "Using Beacon 1");
 
-
-
                 } else if (deviceAddress.equals(beacon2.getDeviceID())) {
                     getAreasInCircle(distArea, beacon2, nCircle);
                     Log.e("456", "Using Beacon 2");
@@ -552,28 +553,16 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     Log.e("456", "Using Beacon 3");
 
                 } else if (deviceAddress.equals(beacon4.getDeviceID())) {
-                    // Employee enters building, or goes to floor 1
-                    if (rssi < -60) {
-                        if(floorId != 1){
-                            floorId = 1;
-                            getFloorPlanInfo(floorId);
+                    if (rssi > -75) {
 
-                            Log.e("456", "Beacon4 to weak SNR");
+                        //todo call changeFloorPlan() here
+                        floorId = 2;
+                        changeFloorplan(floorId);
 
-                            changeFloorplan(floorId);
-
-                        }
-
+                        getAreasInCircle(distArea, beacon4, nCircle);
                         Log.e("456", "Using Beacon 4");
                     } else {
-                        if(floorId != 2){
-                            floorId = 2;
-                            changeFloorplan(floorId);
-                            getAreasInCircle(distArea, beacon4, nCircle);
-                        }
-
-
-
+                        Log.e("456", "Beacon4 to weak SNR");
                     }
 
                 } else {
