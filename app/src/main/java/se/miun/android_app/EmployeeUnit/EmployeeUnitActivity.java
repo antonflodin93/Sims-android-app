@@ -841,7 +841,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                         float drawYstart = 0;
                         float drawXend = 1000;
                         float drawYend = 1000;
-                        employeeFloorPlanImageView.drawNewLocation(drawXstart, drawYstart, drawXend, drawYend);
+//                        employeeFloorPlanImageView.drawNewLocation(drawXstart, drawYstart, drawXend, drawYend);
                     }
                     currentarea++;
                 }
