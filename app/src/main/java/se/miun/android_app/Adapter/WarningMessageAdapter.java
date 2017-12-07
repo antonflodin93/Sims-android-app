@@ -26,7 +26,6 @@ public class WarningMessageAdapter extends RecyclerView.Adapter<WarningMessageAd
         this.messages = messages;
         this.employeeId = employeeId;
         this.context = context;
-        Toast.makeText(context, " Size " + messages.size(), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -64,7 +63,6 @@ public class WarningMessageAdapter extends RecyclerView.Adapter<WarningMessageAd
             dateWarningTextView = (TextView) itemView.findViewById(R.id.dateWarningTextView);
             timeWarningTextView = (TextView) itemView.findViewById(R.id.timeWarningTextView);
 
-            Toast.makeText(context, " sfdsdSize " + messages.size(), Toast.LENGTH_SHORT).show();
 
 
 
@@ -72,9 +70,7 @@ public class WarningMessageAdapter extends RecyclerView.Adapter<WarningMessageAd
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(context, " Size " + this.messages.size(), Toast.LENGTH_SHORT).show();
             //int position = getAdapterPosition();
-            //Toast.makeText(context, " CLICKED " + this.messages.get(position).getMessageText(), Toast.LENGTH_SHORT).show();
         }
     }
 

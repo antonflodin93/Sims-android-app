@@ -99,7 +99,6 @@ public class BuildingFloorMessagesList extends AppCompatActivity {
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                Toast.makeText(context, "on Move", Toast.LENGTH_SHORT).show();
                 return false;
             }
 

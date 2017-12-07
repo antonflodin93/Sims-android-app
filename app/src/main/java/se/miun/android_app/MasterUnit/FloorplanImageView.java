@@ -259,7 +259,6 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
 
                         // Check if the message should be warning or regular and call respective function
                         if (messageType == MessageType.WARNING.ordinal()) {
-                            Toast.makeText(context, "warning", Toast.LENGTH_SHORT).show();
                             dialogSelectWarningMessage();
                             dialog.dismiss();
 
@@ -409,13 +408,13 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
 
 
     // Send the actual message
-    void sendMessage(String message, MessageType messageType) {
+    void sendMessage(final String message, final MessageType messageType) {
         Retrofit retrofit;
         retrofit = ApiClient.getApiClient();
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
 
 
-        Toast.makeText(context, "Sent " + message + ", " + messageType.name(), Toast.LENGTH_SHORT).show();
+
         Message m = new Message("(no subject)", message, messageType.name());
         Call<ResponseBody> call, floorMessageCall;
         if(messageType == MessageType.REGULAR) {
@@ -431,7 +430,7 @@ public class FloorplanImageView extends ImageView implements View.OnTouchListene
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() == RESPONSE_OK) {
-                    Toast.makeText(context, "inserted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Sent " + message + ", " + messageType.name(), Toast.LENGTH_SHORT).show();
 
                 } else {
 

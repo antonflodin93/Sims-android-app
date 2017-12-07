@@ -364,7 +364,6 @@ public class SendMessageActivity extends AppCompatActivity implements View.OnCli
             public void onResponse(Call<ArrayList<Company>> call, Response<ArrayList<Company>> response) {
                 if (response.code() == HTTP_RESPONSE_ACCEPTED) {
                     // Clear the list of companies and add all companies
-                    Toast.makeText(context, "size: " + response.body().size(), Toast.LENGTH_SHORT).show();
                     companyList.clear();
                     for (Company c : response.body()) {
                         companyList.add(c.getCompanyName());

@@ -72,10 +72,9 @@ public class RegisterAccountActivity extends AppCompatActivity implements View.O
 
     private void createNewAccount() {
         if (correctCredentials() == true) {
-            Toast.makeText(context, "correct", Toast.LENGTH_SHORT);
             insertToDatabase();
         } else{
-            Toast.makeText(context, "Something is wrong", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Something is wrong, please try again", Toast.LENGTH_SHORT).show();
         }
 
 

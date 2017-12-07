@@ -154,7 +154,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         context = this;
 
         employeeID = getIntent().getIntExtra("employeeId", 0);
-        Toast.makeText(context, " " + employeeID, Toast.LENGTH_SHORT).show();
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             hasMinSdk = true;
