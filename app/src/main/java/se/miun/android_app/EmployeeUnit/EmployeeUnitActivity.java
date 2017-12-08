@@ -343,10 +343,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     // For tracking location
     private void setupBeaconAndScanner() {
         // The beacons locations
-        beacon1 = new Beacon(0, 0, null);
-        beacon2 = new Beacon(2, 2, "D7:1F:BE:CB:E0:16");
-        beacon3 = new Beacon(1, 1, "EE:2B:8F:54:76:14");
-        beacon4 = new Beacon(0, 0, "D4:C4:D4:66:72:C5");
+        beacon1 = new Beacon(0, 0, "EB:09:BD:0E:78:37");
+        beacon2 = new Beacon(4, 4, "D7:1F:BE:CB:E0:16");
+        beacon3 = new Beacon(0, 8, "D4:C4:D4:66:72:C5");
+        beacon4 = new Beacon(0, 0, "EE:2B:8F:54:76:14");
 
         //init map containers
         scanResults = new HashMap<>();
