@@ -41,10 +41,15 @@ public class RollingAverage {
     //return average value of rssi from the storage container
     public int getAverageRssi(){
         int tmpRssi=0;
+        int tempCounter=0;
         for (int i = 0; i < rssiStorage.length ; i++) {
+            //check for first amount of measurements
+            if(rssiStorage[i] == 0) {
+                tempCounter++;
+            }
             tmpRssi += rssiStorage[i];
         }
-        double averageRssi = tmpRssi / rssiStorage.length;
+        double averageRssi = tmpRssi / (rssiStorage.length - tempCounter );
         return (int)Math.round(averageRssi);
     }
 
