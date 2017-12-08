@@ -95,6 +95,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
     private ArrayList<Area> areas;
     private Beacon beacon1, beacon2, beacon3, beacon4;
+    //for rolling average measurements for beacon 1,2,3
+    private RollingAverage rollingAverage1, rollingAverage2, rollingAverage3;
+
     Map<String, Circle> circleContainer;
 
     //test of my location
@@ -349,6 +352,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         beacon4 = new Beacon(0, 0, "EE:2B:8F:54:76:14");
 
 
+        //rolling average values for beacon 1-3
+        rollingAverage1 = new RollingAverage("EB:09:BD:0E:78:37", 5);
+        rollingAverage2 = new RollingAverage("D7:1F:BE:CB:E0:16", 5);
+        rollingAverage3 = new RollingAverage("D4:C4:D4:66:72:C5", 5);
+
+
         //init map containers
         scanResults = new HashMap<>();
         circleContainer = new HashMap<>();
@@ -364,7 +373,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         mBluetoothAdapter = bluetoothManager.getAdapter();
         mBleScanner = new BleScanner(scanResults, mBluetoothAdapter);
         //start scans
-        mBleScanner.startScan(0);
+        mBleScanner.startScan(0);   // 0 for slow scan mode, 1 for fast scan mode
 
         //Create a new thread to run updateLocation()
         pollThread = new Thread() {
@@ -373,7 +382,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //loop "forever"
                 while (!isInterrupted()) {
                     try {
-                        Thread.sleep(3000);   // 3 seconds
+                        Thread.sleep(5000);   // 5 seconds
 
 
                         runOnUiThread(new Runnable() {
@@ -510,20 +519,18 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 setLocationArea(mCircle);
             }
 
-            //show myLocation with toast
-            String locationz = " ";
-            for(int y = 0; y < rowsize; y++) {
-                locationz += "\n";
-                for (int x = 0; x < collumnsize; x++) {
-                    locationz += myLocation[y][x];
-                }
-            }
-            Log.e("778", locationz);
+//            //show myLocation with toast/log (test purposes)
+//            String locationz = " ";
+//            for(int y = 0; y < rowsize; y++) {
+//                locationz += "\n";
+//                for (int x = 0; x < collumnsize; x++) {
+//                    locationz += myLocation[y][x];
+//                }
+//            }
+//            Log.e("778", locationz);
 
+            //process myLocation ares into screen dots
             drawAreas();
-
-           // drawAreas();
-            //todo process myLocation to display..
 
         } else {
             Log.e("123", "MAP circleContainer NULLPTR EXCEPTION");
@@ -544,33 +551,51 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
             //go trough the map
             for (Map.Entry<String, Integer> entry : scanResults.entrySet()) {
-                String deviceAddress = entry.getKey();  //key
-                int rssi = entry.getValue();        //value
-
-                //get distance in meters from beacon
-                double dist = getDistance(rssi);
-                //convert from meters to area blocks
-                int distArea = meterToAreaBlockDistance(dist, xmax);
-                //create new circle object
-                Circle nCircle = new Circle(dist);
+                String deviceAddress = entry.getKey();      //key
+                int rssi = entry.getValue();                //value
+                Circle nCircle = new Circle(0);
 
                 //calculate the area coverage of the circle
                 //compare to beacon position (1,2,3 => first floor, >4 second floor)
                 if (deviceAddress.equals(beacon1.getDeviceID())) {
+                    //store rssi for averaging values in future
+                    rollingAverage1.setRssiStorage(rssi);
+                    //get distance in meters from beacon
+                    double dist = getDistance(rollingAverage1.getAverageRssi());
+                    //convert from meters to area blocks
+                    int distArea = meterToAreaBlockDistance(dist, ymax);    //xmax used previously
+                    //create new circle object
+                    nCircle.setRadius(dist);
+                    //compute the area coverage of the beacon
                     getAreasInCircle(distArea, beacon1, nCircle);
-                    Log.e("456", "Using Beacon 1");
 
                 } else if (deviceAddress.equals(beacon2.getDeviceID())) {
+                    //store rssi for averaging values in future
+                    rollingAverage2.setRssiStorage(rssi);
+                    //get distance in meters from beacon
+                    double dist = getDistance(rollingAverage2.getAverageRssi());
+                    //convert from meters to area blocks
+                    int distArea = meterToAreaBlockDistance(dist, ymax);    //xmax used previously
+                    //create new circle object
+                    nCircle.setRadius(dist);
+                    //compute the area coverage of the beacon
                     getAreasInCircle(distArea, beacon2, nCircle);
-                    Log.e("456", "Using Beacon 2");
 
                 } else if (deviceAddress.equals(beacon3.getDeviceID())) {
+                    //store rssi for averaging values in future
+                    rollingAverage3.setRssiStorage(rssi);
+                    //get distance in meters from beacon
+                    double dist = getDistance(rollingAverage3.getAverageRssi());
+                    //convert from meters to area blocks
+                    int distArea = meterToAreaBlockDistance(dist, ymax);    //xmax used previously
+                    //create new circle object
+                    nCircle.setRadius(dist);
+                    //compute the area coverage of the beacon
                     getAreasInCircle(distArea, beacon3, nCircle);
-                    Log.e("456", "Using Beacon 3");
 
                 } else if (deviceAddress.equals(beacon4.getDeviceID())) {
                     // Check which floor employee goes to
-                    if (rssi < -70) {
+                    if (rssi < -75) {
                         if(floorId != 1){
                             floorId = 1;
                             getFloorPlanInfo(floorId);
@@ -687,7 +712,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             double e = 0.6859;
             double b = Math.pow(2389, e);
             double n = Math.pow((4447 + 50 * rssi), e);
-            return (b / n)+3;
+            return (b / n);
         }
     }
 

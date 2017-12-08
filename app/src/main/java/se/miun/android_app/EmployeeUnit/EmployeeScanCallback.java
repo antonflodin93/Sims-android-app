@@ -4,6 +4,7 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.util.Log;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ class EmployeeScanCallback extends ScanCallback {
 
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
-        Log.e("201", "onScanResult: " + result.getDevice().getAddress());
+//        Log.e("201", "onScanResult: " + result.getDevice().getAddress());
         addResults(result);
     }
 
@@ -43,8 +44,8 @@ class EmployeeScanCallback extends ScanCallback {
         int rssi = result.getRssi();
         String deviceAddress = result.getDevice().getAddress();
 
-        Log.e("202", "scanResults.put " + deviceAddress);
-        Log.e("202", "rssi.put " + rssi);
+//        Log.e("202", "scanResults.put " + deviceAddress);
+//        Log.e("202", "rssi.put " + rssi);
 
         scanResults.put(deviceAddress, rssi);
     }
