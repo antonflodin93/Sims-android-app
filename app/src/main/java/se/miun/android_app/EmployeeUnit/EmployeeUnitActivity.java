@@ -103,7 +103,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 2, 2, 2, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
@@ -315,8 +315,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         locationAreas = new ArrayList<>();
 
         //get xmax and ymax for the first area
-        xmax = 25 / collumnsize;
-        ymax = 15 / rowsize;
+        xmax = 15 / collumnsize;
+        ymax = 10 / rowsize;
 
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -343,10 +343,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     // For tracking location
     private void setupBeaconAndScanner() {
         // The beacons locations
-        beacon1 = new Beacon(0, 0, "EB:09:BD:0E:78:37");
-        beacon2 = new Beacon(4, 4, "D7:1F:BE:CB:E0:16");
-        beacon3 = new Beacon(0, 8, "D4:C4:D4:66:72:C5");
+        beacon1 = new Beacon(7, 1, "EB:09:BD:0E:78:37"); // right side when entering building
+        beacon2 = new Beacon(4, 9, "D7:1F:BE:CB:E0:16"); // between tanks
+        beacon3 = new Beacon(0, 0, "D4:C4:D4:66:72:C5"); // At stairs
         beacon4 = new Beacon(0, 0, "EE:2B:8F:54:76:14");
+
 
         //init map containers
         scanResults = new HashMap<>();
@@ -518,6 +519,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 }
             }
             Log.e("778", locationz);
+            Toast.makeText(context, locationz, Toast.LENGTH_SHORT).show();
 
            // drawAreas();
             //todo process myLocation to display..

@@ -129,8 +129,8 @@ public class EmployeeFloorPlanImageView extends ImageView implements View.OnTouc
         float sizeX = width / rowsize;
 
         //get xmax and ymax for the first area
-        float xmax = 25 / collumnsize;
-        float ymax = 15 / rowsize;
+        float xmax = 15 / collumnsize;
+        float ymax = 10 / rowsize;
 
 
         //add areas according to row and collumn sizes
