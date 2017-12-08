@@ -373,7 +373,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //loop "forever"
                 while (!isInterrupted()) {
                     try {
-                        Thread.sleep(5000);   // 5 seconds
+                        Thread.sleep(3000);   // 3 seconds
 
 
                         runOnUiThread(new Runnable() {
@@ -498,7 +498,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         // otherwise need to implement everything in the employeeScanCallback class
         // and use the callbacks in there
         if (circleContainer != null) {
-            drawAreas();
+
             //clear previous myLocation
             clearLocationArea();
 
@@ -519,7 +519,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 }
             }
             Log.e("778", locationz);
-            Toast.makeText(context, locationz, Toast.LENGTH_SHORT).show();
+
+            drawAreas();
 
            // drawAreas();
             //todo process myLocation to display..
@@ -681,12 +682,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     double getDistance(int rssi) {
         //check for max? distance...
         if (rssi < -100) {
-            return 10.0;
+            return 15.0;
         } else {
             double e = 0.6859;
             double b = Math.pow(2389, e);
             double n = Math.pow((4447 + 50 * rssi), e);
-            return b / n;
+            return (b / n)+3;
         }
     }
 
