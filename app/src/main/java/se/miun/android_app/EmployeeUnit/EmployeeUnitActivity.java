@@ -512,15 +512,15 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 setLocationArea(mCircle);
             }
 
-//            //show myLocation with toast/log (test purposes)
-//            String locationz = " ";
-//            for(int y = 0; y < rowsize; y++) {
-//                locationz += "\n";
-//                for (int x = 0; x < collumnsize; x++) {
-//                    locationz += myLocation[y][x];
-//                }
-//            }
-//            Log.e("778", locationz);
+            //show myLocation with toast/log (test purposes)
+            String locationz = " ";
+            for(int y = 0; y < rowsize; y++) {
+                locationz += "\n";
+                for (int x = 0; x < collumnsize; x++) {
+                    locationz += myLocation[y][x];
+                }
+            }
+            Log.e("Location", locationz);
 
             //process myLocation ares into screen dots
             drawAreas();
@@ -544,8 +544,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
             //go trough the map
             for (Map.Entry<String, Integer> entry : scanResults.entrySet()) {
-                String deviceAddress = entry.getKey();  //key
-                int rssi = entry.getValue();        //value
+                String deviceAddress = entry.getKey();      //key
+                int rssi = entry.getValue();                //value
+                Log.e("Rssi", String.valueOf(rssi));
+
 
                 //get distance in meters from beacon
                 double dist = getDistance(rssi);
@@ -558,15 +560,15 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //compare to beacon position (1,2,3 => first floor, >4 second floor)
                 if (deviceAddress.equals(beacon1.getDeviceID())) {
                     getAreasInCircle(distArea, beacon1, nCircle);
-                    Log.e("456", "Using Beacon 1");
+                    Log.e("beacon", "Using Beacon 1");
 
                 } else if (deviceAddress.equals(beacon2.getDeviceID())) {
                     getAreasInCircle(distArea, beacon2, nCircle);
-                    Log.e("456", "Using Beacon 2");
+                    Log.e("beacon", "Using Beacon 2");
 
                 } else if (deviceAddress.equals(beacon3.getDeviceID())) {
                     getAreasInCircle(distArea, beacon3, nCircle);
-                    Log.e("456", "Using Beacon 3");
+                    Log.e("beacon", "Using Beacon 3");
 
                 } else if (deviceAddress.equals(beacon4.getDeviceID())) {
                     // Check which floor employee goes to
@@ -575,13 +577,14 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                             floorId = 1;
                             getFloorPlanInfo(floorId);
 
-                            Log.e("456", "Beacon4 to weak SNR");
+                            Log.e("beacon", "Beacon4 to weak SNR");
 
                             changeFloorplan(floorId);
 
                         }
 
-                        Log.e("456", "Using Beacon 4");
+                        Log.e("beacon", "Using Beacon 4");
+
                     } else {
                         if(floorId != 2){
                             floorId = 2;
@@ -592,7 +595,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 } else {
 
                     //getAreasInCircle(distArea, beacon1, nCircle);
-                    Log.e("456", "Device ID not in list");
+                    Log.e("LegalDevice", "Device ID not in list");
 
                 }
 

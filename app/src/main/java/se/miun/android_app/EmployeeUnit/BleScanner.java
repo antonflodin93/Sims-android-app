@@ -48,12 +48,12 @@ public class BleScanner {
     public void startScan(int scanMode){
         //exit if scan is already going
         if(mScanning){
-            Log.e("101", "BLE already scanning");
+            Log.e("BLE", "BLE already scanning");
             return;
         }
         //exit if bluetooth is NOT turned on
         else if (! bluetoothEnable() ){
-            Log.e("100", "Bluetooth not enabled");
+            Log.e("BLE", "Bluetooth not enabled");
             return;
         }
         else {
@@ -77,10 +77,10 @@ public class BleScanner {
 
 
             //start the scan
-            mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
+            mBluetoothLeScanner.startScan(filtersTmp, settings, mScanCallback);
             mScanning = true;
 
-            Log.e("543", "Starting Scans");
+            Log.e("Scans", "Starting Scans");
         }
     }
 
@@ -88,7 +88,7 @@ public class BleScanner {
     public void stopScan(){
         if(mScanning && mBluetoothAdapter != null && mBluetoothAdapter.isEnabled() && mBluetoothLeScanner != null) {
             mBluetoothLeScanner.stopScan(mScanCallback);
-            Log.e("543", "Stopping Scans");
+            Log.e("Scans", "Stopping Scans");
         }
         mScanCallback = null;
         mScanning = false;

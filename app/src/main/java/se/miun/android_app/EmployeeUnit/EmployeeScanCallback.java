@@ -84,7 +84,7 @@ class EmployeeScanCallback extends ScanCallback {
         }
         else {
             //do nothing
-            Log.e("0005","No legal Device ID set");
+            Log.e("LegalDevice","No legal Device ID set");
             return 0;
         }
     }
