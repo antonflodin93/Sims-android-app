@@ -13,7 +13,7 @@ public class RollingAverage {
     //use the x last measurements to determine average
     private int[] rssiStorage;
     private int counter;
-    String deviceId;
+    private String deviceId;
 
     RollingAverage(String deviceID, int averageSize){
         this.deviceId = deviceID;
@@ -26,6 +26,10 @@ public class RollingAverage {
 
     public String getDeviceId(){
         return deviceId;
+    }
+
+    public int[] getRssiStorage(){
+        return rssiStorage;
     }
 
     //fills up the rssi container with last measured value, uses FIFO
@@ -48,6 +52,9 @@ public class RollingAverage {
                 tempCounter++;
             }
             tmpRssi += rssiStorage[i];
+        }
+        if(tempCounter == rssiStorage.length){
+            return 0;
         }
         double averageRssi = tmpRssi / (rssiStorage.length - tempCounter );
         return (int)Math.round(averageRssi);

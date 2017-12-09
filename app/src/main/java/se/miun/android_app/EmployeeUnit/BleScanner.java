@@ -77,7 +77,7 @@ public class BleScanner {
 
 
             //start the scan
-            mBluetoothLeScanner.startScan(filtersTmp, settings, mScanCallback);
+            mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
             mScanning = true;
 
             Log.e("543", "Starting Scans");
