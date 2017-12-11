@@ -80,7 +80,7 @@ public class BleScanner {
             mBluetoothLeScanner.startScan(filtersTmp, settings, mScanCallback);
             mScanning = true;
 
-            Log.e("Scans", "Starting Scans");
+            Log.i("Scans", "Starting Scans");
         }
     }
 
@@ -88,7 +88,7 @@ public class BleScanner {
     public void stopScan(){
         if(mScanning && mBluetoothAdapter != null && mBluetoothAdapter.isEnabled() && mBluetoothLeScanner != null) {
             mBluetoothLeScanner.stopScan(mScanCallback);
-            Log.e("Scans", "Stopping Scans");
+            Log.i("Scans", "Stopping Scans");
         }
         mScanCallback = null;
         mScanning = false;

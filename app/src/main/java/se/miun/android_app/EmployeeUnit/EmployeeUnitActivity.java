@@ -520,13 +520,13 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                     locationz += myLocation[y][x];
                 }
             }
-            Log.e("Location", locationz);
+            Log.i("Location", locationz);
 
             //process myLocation ares into screen dots
             drawAreas();
 
         } else {
-            Log.e("123", "MAP circleContainer NULLPTR EXCEPTION");
+            Log.e("Container", "MAP circleContainer NULLPTR EXCEPTION");
         }
 
     }
@@ -546,11 +546,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             for (Map.Entry<String, Integer> entry : scanResults.entrySet()) {
                 String deviceAddress = entry.getKey();      //key
                 int rssi = entry.getValue();                //value
-                Log.e("Rssi", String.valueOf(rssi));
+                Log.i("AvgRssi", deviceAddress + " " + String.valueOf(rssi));
 
 
                 //get distance in meters from beacon
                 double dist = getDistance(rssi);
+                Log.i("distance", deviceAddress + " " + dist);
                 //convert from meters to area blocks
                 int distArea = meterToAreaBlockDistance(dist, xmax);
                 //create new circle object
@@ -560,15 +561,15 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 //compare to beacon position (1,2,3 => first floor, >4 second floor)
                 if (deviceAddress.equals(beacon1.getDeviceID())) {
                     getAreasInCircle(distArea, beacon1, nCircle);
-                    Log.e("beacon", "Using Beacon 1");
+                    Log.i("beacon", "Using Beacon 1");
 
                 } else if (deviceAddress.equals(beacon2.getDeviceID())) {
                     getAreasInCircle(distArea, beacon2, nCircle);
-                    Log.e("beacon", "Using Beacon 2");
+                    Log.i("beacon", "Using Beacon 2");
 
                 } else if (deviceAddress.equals(beacon3.getDeviceID())) {
                     getAreasInCircle(distArea, beacon3, nCircle);
-                    Log.e("beacon", "Using Beacon 3");
+                    Log.i("beacon", "Using Beacon 3");
 
                 } else if (deviceAddress.equals(beacon4.getDeviceID())) {
                     // Check which floor employee goes to
@@ -577,13 +578,13 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                             floorId = 1;
                             getFloorPlanInfo(floorId);
 
-                            Log.e("beacon", "Beacon4 to weak SNR");
+                            Log.i("beacon", "Beacon4 to weak SNR");
 
                             changeFloorplan(floorId);
 
                         }
 
-                        Log.e("beacon", "Using Beacon 4");
+                        Log.i("beacon", "Using Beacon 4");
 
                     } else {
                         if(floorId != 2){
@@ -603,7 +604,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
                 circleContainer.put(deviceAddress, nCircle);
             }
         } else {
-            Log.e("123", "MAP scanResults NULLPTR EXCEPTION");
+            Log.e("Container", "MAP scanResults NULLPTR EXCEPTION");
         }
     }
 
@@ -672,11 +673,11 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         }
     }
 
-    private int meterToAreaBlockDistance(double rssiMeters, float xAreaPerMeter) {
+    private int meterToAreaBlockDistance(double rssiMeters, float areaUnitsPerMeter) {
         //need to know areas/meter from floorplans, pass in as distanceToPixelCount...
         //as in 1 meter represents x amount of pixels(area blocks) in x or y direction.
         //  (# area count in x direction )/ (# meters  )
-        return Math.round((float) rssiMeters / xAreaPerMeter);
+        return Math.round((float) rssiMeters / areaUnitsPerMeter);
         //xAreaPerMeter = xmax
     }
 
@@ -690,7 +691,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             double e = 0.6859;
             double b = Math.pow(2389, e);
             double n = Math.pow((4447 + 50 * rssi), e);
-            return (b / n);
+            return (b / n)+0.5;
         }
     }
 

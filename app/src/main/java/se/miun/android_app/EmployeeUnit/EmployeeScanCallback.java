@@ -17,16 +17,17 @@ import static android.content.ContentValues.TAG;
 class EmployeeScanCallback extends ScanCallback {
     private Map<String, Integer> scanResults;
     //calculate average rssi values for beacon 1-3
-    private RollingAverage rB1, rB2, rB3;
+    private RollingAverage rB1, rB2, rB3, rB4;
 
     EmployeeScanCallback(Map<String, Integer> scanResults) {
         this.scanResults = scanResults;
 
         //hardcoded addresses...
         //do rolling average on 10 measurements
-        rB1 = new RollingAverage("EB:09:BD:0E:78:37", 10);
-        rB2 = new RollingAverage("D7:1F:BE:CB:E0:16", 10);
-        rB3 = new RollingAverage("D4:C4:D4:66:72:C5", 10);
+        rB1 = new RollingAverage("EB:09:BD:0E:78:37", 20);
+        rB2 = new RollingAverage("D7:1F:BE:CB:E0:16", 20);
+        rB3 = new RollingAverage("D4:C4:D4:66:72:C5", 20);
+        rB4 = new RollingAverage("EE:2B:8F:54:76:14", 5);
     }
 
     @Override
@@ -58,7 +59,7 @@ class EmployeeScanCallback extends ScanCallback {
             scanResults.put(deviceAddress, rssi);
         }
         else{
-            scanResults.put(deviceAddress, result.getRssi() );
+//            scanResults.put(deviceAddress, result.getRssi() );
         }
     }
 
@@ -81,6 +82,11 @@ class EmployeeScanCallback extends ScanCallback {
             //todo beacon 3
             rB3.setRssiStorage(rssi);
             return rB3.getAverageRssi();
+        }
+        else if (deviceId.equals( rB4.getDeviceId() ) ){
+            //todo beacon 4
+            rB4.setRssiStorage(rssi);
+            return rB4.getAverageRssi();
         }
         else {
             //do nothing
