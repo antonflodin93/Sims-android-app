@@ -154,7 +154,10 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         setContentView(R.layout.activity_employee_unit);
         context = this;
 
+
         employeeID = getIntent().getIntExtra("employeeId", 0);
+
+
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             hasMinSdk = true;
@@ -162,6 +165,8 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             hasMinSdk = false;
             Toast.makeText(context, "SDK version must be 21 or greater to be able to track location", Toast.LENGTH_SHORT).show();
         }
+
+
 
         // Init components
         warningMessageBtn = (ImageButton) findViewById(R.id.warningMessageBtn);
@@ -714,9 +719,12 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
     public void onResume() {
         super.onResume();
 
+        EmployeeUnitActivity.this.regularMessageIntent.putExtra("employeeId", employeeID);
+
         this.startService(this.warningMessageIntent);
         this.startService(this.regularMessageIntent);
-        EmployeeUnitActivity.this.regularMessageIntent.putExtra("employeeId", employeeID);
+
+
 
 
         IntentFilter intentFilter = new IntentFilter();
@@ -728,6 +736,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         // Simulate that user enters building 1 and floor 1
         enterBuilding(buildingId);
         enterFloor(floorId);
+
     }
 
     @Override
@@ -748,8 +757,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             exitBuilding();
         }
 
-        // Maybee needed
-        //this.unregisterReceiver(this.broadcastReceiver);
 
         if (hasMinSdk) {
             //stop polling the scan update functions
