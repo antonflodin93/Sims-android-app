@@ -21,6 +21,7 @@ public class StartActivity extends Activity implements View.OnClickListener {
 
         testButton = (Button) findViewById(R.id.testButton);
         testButton.setOnClickListener(this);
+        testButton.setVisibility(View.GONE);
 
         startMasterUnitAcvitivy = (Button) findViewById(R.id.startMasterUnitAcvitivy);
         startMasterUnitAcvitivy.setOnClickListener(this);
