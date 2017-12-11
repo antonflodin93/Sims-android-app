@@ -742,8 +742,6 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             exitBuilding();
         }
 
-        // Maybee needed
-        //this.unregisterReceiver(this.broadcastReceiver);
 
         if (hasMinSdk) {
             //stop polling the scan update functions
