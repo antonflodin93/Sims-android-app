@@ -677,8 +677,9 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
         //need to know areas/meter from floorplans, pass in as distanceToPixelCount...
         //as in 1 meter represents x amount of pixels(area blocks) in x or y direction.
         //  (# area count in x direction )/ (# meters  )
-        return Math.round((float) rssiMeters / areaUnitsPerMeter);
-        //xAreaPerMeter = xmax
+        int r = Math.round((float) rssiMeters / areaUnitsPerMeter);
+        Log.i("meterToArea", String.valueOf(r));
+        return r;
     }
 
     // EXPERIMENTALLY DEVELOPED FORMULA
@@ -691,7 +692,21 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             double e = 0.6859;
             double b = Math.pow(2389, e);
             double n = Math.pow((4447 + 50 * rssi), e);
-            return (b / n)+0.5;
+            return (b / n);
+        }
+    }
+
+    //updated getDistance formula, from measurement data using rolling averages
+    //on distances between 0-7 meters.
+    double getDistance2(int rssi) {
+        if (rssi < -100) {
+            return 15.0;
+        } else {
+            //exponent
+            double e = 1/0.2355;
+//            expression
+            double exp = -1*(rssi+29.74 / 31.32);
+            return Math.pow(exp, e);
         }
     }
 

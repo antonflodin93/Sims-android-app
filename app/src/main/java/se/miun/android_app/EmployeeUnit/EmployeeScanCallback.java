@@ -19,6 +19,9 @@ class EmployeeScanCallback extends ScanCallback {
     //calculate average rssi values for beacon 1-3
     private RollingAverage rB1, rB2, rB3, rB4;
 
+    //log variable
+    private static final String TAG = "Ble error scan";
+
     EmployeeScanCallback(Map<String, Integer> scanResults) {
         this.scanResults = scanResults;
 
@@ -69,22 +72,18 @@ class EmployeeScanCallback extends ScanCallback {
 
     private int setRollingAverage(String deviceId, int rssi){
         if(deviceId.equals( rB1.getDeviceId() ) ){
-            //todo beacon 1
             rB1.setRssiStorage(rssi);
             return rB1.getAverageRssi();
         }
         else if (deviceId.equals( rB2.getDeviceId() ) ){
-            //todo beacon 2
             rB2.setRssiStorage(rssi);
             return rB2.getAverageRssi();
         }
         else if (deviceId.equals( rB3.getDeviceId() ) ){
-            //todo beacon 3
             rB3.setRssiStorage(rssi);
             return rB3.getAverageRssi();
         }
         else if (deviceId.equals( rB4.getDeviceId() ) ){
-            //todo beacon 4
             rB4.setRssiStorage(rssi);
             return rB4.getAverageRssi();
         }
