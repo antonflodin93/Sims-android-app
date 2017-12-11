@@ -710,7 +710,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
             //exponent
             double e = 1/0.2355;
 //            expression
-            double exp = -1*(rssi+29.74 / 31.32);
+            double exp = -1*((rssi+29.74) / 31.32);
             return Math.pow(exp, e);
         }
     }
