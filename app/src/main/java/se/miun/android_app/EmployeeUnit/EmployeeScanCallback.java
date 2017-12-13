@@ -30,7 +30,7 @@ class EmployeeScanCallback extends ScanCallback {
         rB1 = new RollingAverage("EB:09:BD:0E:78:37", 20);
         rB2 = new RollingAverage("D7:1F:BE:CB:E0:16", 20);
         rB3 = new RollingAverage("D4:C4:D4:66:72:C5", 20);
-        rB4 = new RollingAverage("EE:2B:8F:54:76:14", 5);
+        rB4 = new RollingAverage("EE:2B:8F:54:76:14", 10);
     }
 
     @Override

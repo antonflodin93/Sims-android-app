@@ -555,7 +555,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
 
                 //get distance in meters from beacon
-                double dist = getDistance(rssi);
+                double dist = getDistance2(rssi);
                 Log.i("distance", deviceAddress + " " + dist);
                 //convert from meters to area blocks
                 int distArea = meterToAreaBlockDistance(dist, xmax);
@@ -578,7 +578,7 @@ public class EmployeeUnitActivity extends Activity implements View.OnClickListen
 
                 } else if (deviceAddress.equals(beacon4.getDeviceID())) {
                     // Check which floor employee goes to
-                    if (rssi < -70) {
+                    if (rssi < -55) {
                         if(floorId != 1){
                             floorId = 1;
                             getFloorPlanInfo(floorId);
